@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéMart - Premium Pokémon Card Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Poké<span>Mart</span></span>
+            </a>
+            <nav class="nav">
+                <a href="#" class="nav-link active">Shop</a>
+                <a href="#" class="nav-link">New Arrivals</a>
+                <a href="#" class="nav-link">Best Sellers</a>
+                <a href="#" class="nav-link">About</a>
+            </nav>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search cards..." />
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </div>
+                <button class="cart-btn" id="cartToggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuToggle">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#" class="mobile-link active">Shop</a>
+        <a href="#" class="mobile-link">New Arrivals</a>
+        <a href="#" class="mobile-link">Best Sellers</a>
+        <a href="#" class="mobile-link">About</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">🔥 Limited Stock Available</span>
+                <h1>Collect the <span class="gradient-text">Rarest</span> Pokémon Cards</h1>
+                <p>Discover premium Pokémon TCG cards from every generation. From classic Charizards to ultra-rare full arts — start your collection today.</p>
+                <div class="hero-buttons">
+                    <a href="#products" class="btn btn-primary">
+                        Browse Collection
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#" class="btn btn-outline">
+                        Learn More
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">250+</span>
+                        <span class="stat-label">Unique Cards</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">4.9</span>
+                        <span class="stat-label">Rating</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">10k+</span>
+                        <span class="stat-label">Happy Collectors</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card orbit-card-1">
+                    <img src="https://images.pokemontcg.io/base1/4_hires.png" alt="Charizard" onerror="this.style.display='none'">
+                </div>
+                <div class="hero-card orbit-card-2">
+                    <img src="https://images.pokemontcg.io/base1/2_hires.png" alt="Blastoise" onerror="this.style.display='none'">
+                </div>
+                <div class="hero-card orbit-card-3">
+                    <img src="https://images.pokemontcg.io/base1/15_hires.png" alt="Venusaur" onerror="this.style.display='none'">
+                </div>
+                <div class="hero-center-glow"></div>
+            </div>
+        </div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 100" fill="none"><path d="M0 50C240 0 480 100 720 50S1200 0 1440 50v50H0z" fill="var(--bg)"/></svg>
+        </div>
+    </section>
+
+    <!-- Filter Bar -->
+    <section class="filter-bar" id="products">
+        <div class="container">
+            <div class="filter-scroll">
+                <button class="filter-chip active" data-filter="all">All Cards</button>
+                <button class="filter-chip" data-filter="fire">🔥 Fire</button>
+                <button class="filter-chip" data-filter="water">💧 Water</button>
+                <button class="filter-chip" data-filter="grass">🌿 Grass</button>
+                <button class="filter-chip" data-filter="electric">⚡ Electric</button>
+                <button class="filter-chip" data-filter="psychic">🔮 Psychic</button>
+                <button class="filter-chip" data-filter="rare">⭐ Ultra Rare</button>
+                <button class="filter-chip" data-filter="holo">✨ Holo</button>
+            </div>
+            <div class="sort-select">
+                <select id="sortSelect">
+                    <option value="default">Sort: Featured</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A-Z</option>
+                    <option value="name-desc">Name: Z-A</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Grid -->
+    <section class="products">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our <span class="gradient-text">Collection</span></h2>
+                <p>Each card is authenticated and graded for quality</p>
+            </div>
+            <div class="product-grid" id="productGrid">
+                <!-- Cards rendered by JS -->
+            </div>
+            <div class="no-results" id="noResults" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <p>No cards found matching your criteria</p>
+                <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-card">
+                <div class="newsletter-content">
+                    <h3>Join the PokéMart Community</h3>
+                    <p>Get notified about new arrivals, restocks, and exclusive deals.</p>
+                    <form class="newsletter-form" onsubmit="subscribe(event)">
+                        <input type="email" placeholder="Enter your email" required>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+                <div class="newsletter-decor">
+                    <div class="pikachu-silhouette">⚡</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">⚡</span>
+                        <span class="logo-text">Poké<span>Mart</span></span>
+                    </a>
+                    <p>The premier destination for Pokémon TCG collectors worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="#">All Cards</a>
+                    <a href="#">New Arrivals</a>
+                    <a href="#">Best Sellers</a>
+                    <a href="#">Sale Items</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="#">Contact Us</a>
+                    <a href="#">FAQs</a>
+                    <a href="#">Shipping Info</a>
+                    <a href="#">Returns</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">📱</a>
+                        <a href="#" class="social-link">📘</a>
+                        <a href="#" class="social-link">📸</a>
+                        <a href="#" class="social-link">🐦</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 PokéMart. This is a fan project and is not affiliated with Nintendo or The Pokémon Company.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="cart-close" id="cartClose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <p class="cart-empty">Your cart is empty</p>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="checkout()">
+                Proceed to Checkout
+            </button>
+            <button class="btn btn-outline btn-block" onclick="clearCart()">
+                Clear Cart
+            </button>
+        </div>
+    </aside>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal">
+            <h2>🎉 Order Confirmed!</h2>
+            <p>Your Pokémon cards are on the way!</p>
+            <div class="modal-details" id="modalDetails"></div>
+            <button class="btn btn-primary" onclick="closeCheckout()">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
