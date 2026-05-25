@@ -16,10 +16,9 @@
                 <span class="logo-text">Poké<span>Mart</span></span>
             </a>
             <nav class="nav">
-                <a href="#" class="nav-link active">Shop</a>
-                <a href="#" class="nav-link">New Arrivals</a>
-                <a href="#" class="nav-link">Best Sellers</a>
-                <a href="admin.html" class="nav-link">⚙️ Admin</a>
+                <a href="#" class="nav-link active" id="navShop" onclick="setNavFilter('all'); return false;">Shop</a>
+                <a href="#" class="nav-link" id="navNew" onclick="setNavFilter('new'); return false;">✨ New Arrivals</a>
+                <a href="#" class="nav-link" id="navBest" onclick="setNavFilter('bestseller'); return false;">🏆 Best Sellers</a>
             </nav>
             <div class="header-actions">
                 <div class="search-box">
@@ -45,10 +44,9 @@
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
-        <a href="#" class="mobile-link active">Shop</a>
-        <a href="#" class="mobile-link">New Arrivals</a>
-        <a href="#" class="mobile-link">Best Sellers</a>
-        <a href="admin.html" class="mobile-link">⚙️ Admin</a>
+        <a href="#" class="mobile-link active" id="mobShop" onclick="setNavFilter('all'); return false;">Shop</a>
+        <a href="#" class="mobile-link" id="mobNew" onclick="setNavFilter('new'); return false;">✨ New Arrivals</a>
+        <a href="#" class="mobile-link" id="mobBest" onclick="setNavFilter('bestseller'); return false;">🏆 Best Sellers</a>
     </div>
 
     <!-- Hero Section -->
@@ -63,7 +61,7 @@
                         Browse Collection
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
-                    <a href="#" class="btn btn-outline">
+                    <a href="#products" class="btn btn-outline">
                         Learn More
                     </a>
                 </div>
@@ -175,25 +173,25 @@
                 </div>
                 <div class="footer-col">
                     <h4>Shop</h4>
-                    <a href="#">All Cards</a>
-                    <a href="#">New Arrivals</a>
-                    <a href="#">Best Sellers</a>
-                    <a href="#">Sale Items</a>
+                    <a href="#products">All Cards</a>
+                    <a href="#products">New Arrivals</a>
+                    <a href="#products">Best Sellers</a>
+                    <a href="#products">Sale Items</a>
                 </div>
                 <div class="footer-col">
                     <h4>Support</h4>
-                    <a href="#">Contact Us</a>
-                    <a href="#">FAQs</a>
-                    <a href="#">Shipping Info</a>
-                    <a href="#">Returns</a>
+                    <a href="#" onclick="showComingSoon(); return false;">Contact Us</a>
+                    <a href="#" onclick="showComingSoon(); return false;">FAQs</a>
+                    <a href="#" onclick="showComingSoon(); return false;">Shipping Info</a>
+                    <a href="#" onclick="showComingSoon(); return false;">Returns</a>
                 </div>
                 <div class="footer-col">
                     <h4>Connect</h4>
                     <div class="social-links">
-                        <a href="#" class="social-link">📱</a>
-                        <a href="#" class="social-link">📘</a>
-                        <a href="#" class="social-link">📸</a>
-                        <a href="#" class="social-link">🐦</a>
+                        <a href="#" class="social-link" onclick="showComingSoon(); return false;">📱</a>
+                        <a href="#" class="social-link" onclick="showComingSoon(); return false;">📘</a>
+                        <a href="#" class="social-link" onclick="showComingSoon(); return false;">📸</a>
+                        <a href="#" class="social-link" onclick="showComingSoon(); return false;">🐦</a>
                     </div>
                 </div>
             </div>

@@ -596,6 +596,58 @@ input, select { font-family: inherit; }
 
 .product-card:hover .like-btn { opacity: 1; transform: translateY(0); }
 .like-btn:hover { transform: scale(1.15) !important; }
+.like-btn.liked { opacity: 1; transform: translateY(0); }
+
+/* New Arrival & Best Seller Badges */
+.new-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #7c5cfc, #a78bfa);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    z-index: 3;
+}
+.best-seller-badge {
+    position: absolute;
+    top: 36px;
+    right: 12px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 3;
+    white-space: nowrap;
+}
+
+/* Rank Badge (Best Sellers ranking) */
+.rank-badge {
+    position: absolute;
+    top: 40px;
+    left: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    z-index: 3;
+    white-space: nowrap;
+}
+.rank-badge.rank-podium {
+    background: linear-gradient(135deg, #ffcc02, #ff6b35);
+    border-color: #ffcc02;
+    color: #0a0a1a;
+    font-size: 0.75rem;
+    padding: 5px 12px;
+}
 
 .card-info { padding: 20px; }
 

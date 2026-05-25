@@ -51,9 +51,17 @@ const CONDITION_COLORS = {
 function loadCardData() {
     try {
         const saved = localStorage.getItem('pokemart-cards');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+            const cards = JSON.parse(saved);
+            const now = Date.now();
+            cards.forEach(c => { if (!c.lastRestocked) c.lastRestocked = now; });
+            return cards;
+        }
     } catch { /* ignore */ }
-    return JSON.parse(JSON.stringify(defaultCardData));
+    const defaults = JSON.parse(JSON.stringify(defaultCardData));
+    const now = Date.now();
+    defaults.forEach(c => { c.lastRestocked = now; });
+    return defaults;
 }
 
 let cardData = loadCardData();
@@ -80,6 +88,68 @@ function loadCart() {
 
 function saveCart() {
     localStorage.setItem('pokemart-cart', JSON.stringify(cart));
+}
+
+// ========== Wishlist ==========
+let wishlist = loadWishlist();
+
+function loadWishlist() {
+    try {
+        return JSON.parse(localStorage.getItem('pokemart-wishlist')) || [];
+    } catch {
+        return [];
+    }
+}
+
+function saveWishlist() {
+    localStorage.setItem('pokemart-wishlist', JSON.stringify(wishlist));
+}
+
+function toggleWishlist(id) {
+    const idx = wishlist.indexOf(id);
+    if (idx > -1) {
+        wishlist.splice(idx, 1);
+        showToast('💔 Removed from wishlist');
+    } else {
+        wishlist.push(id);
+        showToast('❤️ Added to wishlist!');
+    }
+    saveWishlist();
+    renderProducts();
+}
+
+// ========== Purchase Tracking (for Best Sellers) ==========
+let purchaseLog = loadPurchases();
+
+function loadPurchases() {
+    try {
+        const logs = JSON.parse(localStorage.getItem('pokemart-purchases')) || [];
+        // Clean entries older than 30 days
+        const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+        return logs.filter(p => p.timestamp > cutoff);
+    } catch {
+        return [];
+    }
+}
+
+function savePurchases() {
+    localStorage.setItem('pokemart-purchases', JSON.stringify(purchaseLog));
+}
+
+function logPurchase(cardId, quantity) {
+    purchaseLog.push({ cardId, quantity, timestamp: Date.now() });
+    savePurchases();
+}
+
+function getBestSellerCounts() {
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const counts = {};
+    purchaseLog.forEach(p => {
+        if (p.timestamp > cutoff) {
+            counts[p.cardId] = (counts[p.cardId] || 0) + p.quantity;
+        }
+    });
+    return counts;
 }
 
 // ========== DOM References ==========
@@ -119,6 +189,15 @@ function getFilteredCards() {
             cards = cards.filter(c => c.rarity === 'ultra-rare');
         } else if (activeFilter === 'holo') {
             cards = cards.filter(c => c.rarity === 'rare-holo');
+        } else if (activeFilter === 'new') {
+            const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+            cards = cards.filter(c => (c.lastRestocked || 0) > oneWeekAgo);
+        } else if (activeFilter === 'bestseller') {
+            const counts = getBestSellerCounts();
+            cards = cards.filter(c => (counts[c.id] || 0) > 0);
+            // Rank by purchase count (descending) — return early to skip general sort
+            cards.sort((a, b) => (counts[b.id] || 0) - (counts[a.id] || 0));
+            return cards;
         } else {
             cards = cards.filter(c => c.type === activeFilter);
         }
@@ -153,7 +232,10 @@ function renderProducts() {
     
     noResults.style.display = 'none';
     
-    productGrid.innerHTML = cards.map(card => {
+    const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const bestSellerCounts = getBestSellerCounts();
+    
+    productGrid.innerHTML = cards.map((card, index) => {
         const typeBadgeClass = `badge-${card.type}`;
         const starCount = card.rarity === 'ultra-rare' ? '⭐⭐⭐' : card.rarity === 'rare-holo' ? '⭐⭐' : '⭐';
         const condition = card.condition || 'NM';
@@ -161,6 +243,11 @@ function renderProducts() {
         const condLabel = CONDITION_LABELS[condition] || 'Near Mint';
         const stock = card.stock ?? 0;
         const outOfStock = stock <= 0;
+        const isWishlisted = wishlist.includes(card.id);
+        const isNewArrival = (card.lastRestocked || 0) > oneWeekAgo;
+        const isBestSeller = stock > 0 && (bestSellerCounts[card.id] || 0) > 0;
+        const rankNum = activeFilter === 'bestseller' ? index + 1 : 0;
+        const rankMedal = rankNum === 1 ? '🥇' : rankNum === 2 ? '🥈' : rankNum === 3 ? '🥉' : '';
         
         return `
             <div class="product-card ${outOfStock ? 'out-of-stock' : ''}" data-id="${card.id}">
@@ -168,12 +255,15 @@ function renderProducts() {
                     <span class="card-type-badge ${typeBadgeClass}">${card.type}</span>
                     <span class="rarity-badge">${starCount}</span>
                     <span class="condition-badge" style="background:${condColor}">${condition}</span>
+                    ${rankNum > 0 ? `<span class="rank-badge ${rankNum <= 3 ? 'rank-podium' : ''}">${rankMedal ? rankMedal + ' #' + rankNum : '#' + rankNum}</span>` : ''}
+                    ${isNewArrival ? '<span class="new-badge">NEW</span>' : ''}
+                    ${isBestSeller ? '<span class="best-seller-badge">🔥 Best Seller</span>' : ''}
                     <img src="${card.image}" 
                          alt="${card.name}" 
                          loading="lazy"
                          onerror="this.src='data:image/svg+xml,${generatePlaceholder(card.id)}'">
                     ${outOfStock ? '<div class="out-of-stock-overlay"><span>Sold Out</span></div>' : ''}
-                    <button class="like-btn" onclick="event.stopPropagation();" title="Add to wishlist">🤍</button>
+                    <button class="like-btn ${isWishlisted ? 'liked' : ''}" onclick="toggleWishlist(${card.id}); event.stopPropagation();" title="${isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}">${isWishlisted ? '❤️' : '🤍'}</button>
                 </div>
                 <div class="card-info">
                     <h3>${card.name}</h3>
@@ -332,6 +422,11 @@ function checkout() {
     });
     saveCardData();
     
+    // Log purchases for best-seller tracking
+    cart.forEach(item => {
+        logPurchase(item.id, item.quantity);
+    });
+    
     closeCart();
     
     modalDetails.innerHTML = cart.map(item => `
@@ -394,8 +489,59 @@ function resetFilters() {
     currentSort = 'default';
     searchInput.value = '';
     sortSelect.value = 'default';
+    updateNavActive('all');
     updateFilterChips();
+    updateSectionHeader();
     renderProducts();
+}
+
+// ========== Smooth Scroll ==========
+function smoothScroll(target) {
+    const el = document.querySelector(target);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========== Nav Filter ==========
+function setNavFilter(filter) {
+    activeFilter = filter;
+    searchTerm = '';
+    currentSort = 'default';
+    searchInput.value = '';
+    sortSelect.value = 'default';
+    updateNavActive(filter);
+    updateFilterChips();
+    updateSectionHeader();
+    renderProducts();
+    smoothScroll('#products');
+    mobileMenu.classList.remove('open');
+}
+
+function updateNavActive(filter) {
+    document.querySelectorAll('.nav-link, .mobile-link').forEach(link => link.classList.remove('active'));
+    const navMap = { all: 'navShop,mobShop', new: 'navNew,mobNew', bestseller: 'navBest,mobBest' };
+    const ids = (navMap[filter] || 'navShop,mobShop').split(',');
+    ids.forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('active'); });
+}
+
+function updateSectionHeader() {
+    const title = document.querySelector('.section-header h2');
+    const subtitle = document.querySelector('.section-header p');
+    if (!title || !subtitle) return;
+    if (activeFilter === 'new') {
+        title.innerHTML = '✨ <span class="gradient-text">New Arrivals</span>';
+        subtitle.textContent = 'Freshly stocked cards — added within the last 7 days';
+    } else if (activeFilter === 'bestseller') {
+        title.innerHTML = '🏆 <span class="gradient-text">Best Sellers</span>';
+        subtitle.textContent = 'Ranked by number of sales in the last 30 days';
+    } else {
+        title.innerHTML = 'Our <span class="gradient-text">Collection</span>';
+        subtitle.textContent = 'Each card is authenticated and graded for quality';
+    }
+}
+
+// ========== Coming Soon ==========
+function showComingSoon() {
+    showToast('🚧 Coming soon — stay tuned!');
 }
 
 // ========== Filter Chips ==========
@@ -423,7 +569,9 @@ sortSelect.addEventListener('change', (e) => {
 document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
         activeFilter = chip.dataset.filter;
+        updateNavActive('all');
         updateFilterChips();
+        updateSectionHeader();
         renderProducts();
     });
 });
@@ -442,6 +590,17 @@ window.addEventListener('scroll', () => {
     if (mobileMenu.classList.contains('open')) {
         mobileMenu.classList.remove('open');
     }
+});
+
+// Smooth scroll for footer links (nav uses onclick handlers now)
+document.querySelectorAll('.footer a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            smoothScroll(href);
+        }
+    });
 });
 
 // Keyboard shortcuts

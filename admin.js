@@ -1,5 +1,32 @@
 // ========== Admin JS — Card Inventory Manager ==========
 
+// ========== Auth ==========
+const ADMIN_PASSWORD = 'admin123';
+
+function checkAuth() {
+    if (sessionStorage.getItem('pokemart-admin-auth') === 'true') return true;
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    return false;
+}
+
+function attemptLogin() {
+    const input = document.getElementById('loginPassword');
+    const error = document.getElementById('loginError');
+    if (input.value === ADMIN_PASSWORD) {
+        sessionStorage.setItem('pokemart-admin-auth', 'true');
+        document.getElementById('loginOverlay').classList.add('hidden');
+        error.style.display = 'none';
+        input.value = '';
+    } else {
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
+    }
+}
+
+// Expose to global scope
+window.attemptLogin = attemptLogin;
+
 const CONDITION_LABELS = {
     'NM': 'Near Mint', 'LP': 'Lightly Played', 'MP': 'Moderately Played',
     'HP': 'Heavily Played', 'DMG': 'Damaged',
@@ -53,10 +80,14 @@ function loadCards() {
         const saved = localStorage.getItem('pokemart-cards');
         if (saved) {
             cards = JSON.parse(saved);
+            const now = Date.now();
+            cards.forEach(c => { if (!c.lastRestocked) c.lastRestocked = now; });
             return;
         }
     } catch { /* ignore */ }
     cards = JSON.parse(JSON.stringify(defaultCardData));
+    const now = Date.now();
+    cards.forEach(c => { c.lastRestocked = now; });
 }
 
 function saveCards() {
@@ -159,7 +190,11 @@ function updateField(id, field, value) {
     if (field === 'price') {
         card.price = Math.max(0, parseFloat(value) || 0);
     } else if (field === 'stock') {
+        const oldStock = card.stock || 0;
         card.stock = Math.max(0, parseInt(value) || 0);
+        if (oldStock === 0 && card.stock > 0) {
+            card.lastRestocked = Date.now();
+        }
     } else if (field === 'condition') {
         card.condition = value;
     }
@@ -208,6 +243,7 @@ function saveCard() {
     if (!name) { alert('Card name is required!'); return; }
 
     const id = Date.now();
+    const now = Date.now();
     cards.push({
         id: id,
         name: name,
@@ -220,6 +256,7 @@ function saveCard() {
         condition: document.getElementById('modalCondition').value,
         image: document.getElementById('modalImage').value.trim(),
         description: document.getElementById('modalDesc').value.trim() || 'No description.',
+        lastRestocked: now,
     });
 
     saveCards();
@@ -238,6 +275,12 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ========== Init ==========
-loadCards();
-renderStats();
-renderTable();
+if (!checkAuth()) {
+    document.querySelector('.header').style.display = 'none';
+    document.querySelector('.products').style.display = 'none';
+} else {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    loadCards();
+    renderStats();
+    renderTable();
+}
