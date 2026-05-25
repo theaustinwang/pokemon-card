@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéMart — Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { padding-top: 80px; }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .admin-header h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-header h1 span { font-size: 1.4rem; }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.82rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover { border-color: var(--text-muted); }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .stat-card .stat-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .admin-table-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .admin-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-table-header h3 { font-size: 1.1rem; }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .admin-table tr:last-child td { border-bottom: none; }
+
+        .row-img {
+            width: 50px;
+            height: 68px;
+            border-radius: 6px;
+            object-fit: contain;
+            background: linear-gradient(135deg, rgba(124,92,252,0.15), rgba(255,107,53,0.15));
+        }
+
+        .row-name { font-weight: 600; }
+        .row-set   { font-size: 0.75rem; color: var(--text-muted); }
+
+        .field-price {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-price span { color: var(--text-muted); }
+
+        .field-price input {
+            width: 80px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: var(--text);
+            font-size: 0.85rem;
+            text-align: right;
+            outline: none;
+        }
+
+        .field-price input:focus { border-color: var(--primary); }
+
+        .field-stock input {
+            width: 60px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: var(--text);
+            font-size: 0.85rem;
+            text-align: center;
+            outline: none;
+        }
+
+        .field-stock input:focus { border-color: var(--primary); }
+
+        .field-condition select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: var(--text);
+            font-size: 0.82rem;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            padding-right: 28px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238888aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        .field-condition select:focus { border-color: var(--accent); }
+
+        .delete-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .delete-btn:hover {
+            background: rgba(239,68,68,0.15);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .saved-indicator {
+            font-size: 0.75rem;
+            color: #22c55e;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .saved-indicator.show { opacity: 1; }
+
+        /* Modal for add/edit */
+        .admin-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .admin-modal.open { opacity: 1; pointer-events: all; }
+
+        .admin-modal-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .admin-modal-box h2 {
+            font-size: 1.4rem;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus { border-color: var(--primary); }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Responsive table */
+        @media (max-width: 768px) {
+            .admin-table { font-size: 0.78rem; }
+            .admin-table th,
+            .admin-table td { padding: 10px 8px; }
+            .row-img { width: 36px; height: 50px; }
+            .field-price input { width: 60px; }
+            .field-stock input { width: 48px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Poké<span>Mart</span></span>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">🏪 Storefront</a>
+                <a href="admin.html" class="nav-link active">⚙️ Admin</a>
+            </nav>
+            <div class="header-actions">
+                <span class="saved-indicator" id="saveIndicator">✅ All changes saved locally</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="products">
+        <div class="container">
+
+            <div class="admin-header">
+                <h1><span>⚙️</span> Inventory Management</h1>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Add New Card</button>
+                    <button class="btn-secondary btn-sm" onclick="resetAllCards()">🔄 Reset All</button>
+                </div>
+            </div>
+
+            <div class="stats-row" id="statsRow"></div>
+
+            <div class="admin-table-wrap">
+                <div class="admin-table-header">
+                    <h3>All Cards</h3>
+                    <span class="saved-indicator" id="tableSaveIndicator">✅ Auto-saved</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Card</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Condition</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Add / Edit Modal -->
+    <div class="admin-modal" id="cardModal">
+        <div class="admin-modal-box">
+            <h2 id="modalTitle">Add New Card</h2>
+            <input type="hidden" id="modalCardId">
+            <div class="form-group">
+                <label>Card Name</label>
+                <input type="text" id="modalName" placeholder="e.g. Pikachu" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Set Name</label>
+                    <input type="text" id="modalSetName" placeholder="e.g. Base Set">
+                </div>
+                <div class="form-group">
+                    <label>Set Code</label>
+                    <input type="text" id="modalSetCode" placeholder="e.g. BS">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="modalType">
+                        <option value="fire">🔥 Fire</option>
+                        <option value="water">💧 Water</option>
+                        <option value="grass">🌿 Grass</option>
+                        <option value="electric">⚡ Electric</option>
+                        <option value="psychic">🔮 Psychic</option>
+                        <option value="normal">◻️ Normal</option>
+                        <option value="fighting">👊 Fighting</option>
+                        <option value="dark">🌑 Dark</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rarity</label>
+                    <select id="modalRarity">
+                        <option value="common">Common</option>
+                        <option value="rare-holo">Rare Holo</option>
+                        <option value="ultra-rare">Ultra Rare</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Price ($)</label>
+                    <input type="number" id="modalPrice" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" id="modalStock" min="0" placeholder="0" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Condition</label>
+                <select id="modalCondition">
+                    <option value="NM">Near Mint</option>
+                    <option value="LP">Lightly Played</option>
+                    <option value="MP">Moderately Played</option>
+                    <option value="HP">Heavily Played</option>
+                    <option value="DMG">Damaged</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" id="modalImage" placeholder="https://images.pokemontcg.io/...">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" id="modalDesc" placeholder="Brief description...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="saveCard()" style="flex:1;">Save Card</button>
+                <button class="btn btn-outline" onclick="closeModal()" style="flex:1;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

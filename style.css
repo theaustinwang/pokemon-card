@@ -534,6 +534,48 @@ input, select { font-family: inherit; }
     backdrop-filter: blur(8px);
 }
 
+.condition-badge {
+    position: absolute;
+    bottom: 48px;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 1px;
+}
+
+.out-of-stock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.out-of-stock-overlay span {
+    background: #ef4444;
+    color: white;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.out-of-stock { opacity: 0.7; }
+.out-of-stock .add-to-cart-btn {
+    background: #555;
+    cursor: not-allowed;
+}
+.out-of-stock .add-to-cart-btn:hover {
+    background: #555;
+    transform: none;
+}
+
 .like-btn {
     position: absolute;
     bottom: 12px;
@@ -569,7 +611,29 @@ input, select { font-family: inherit; }
 .card-set {
     font-size: 0.8rem;
     color: var(--text-muted);
-    margin-bottom: 12px;
+    margin-bottom: 6px;
+}
+
+.card-condition {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cond-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.card-stock {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
 .card-bottom {

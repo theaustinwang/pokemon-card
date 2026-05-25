@@ -1,314 +1,67 @@
-// ========== Pokémon Card Data ==========
-const cardData = [
-    {
-        id: 1,
-        name: "Charizard",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "fire",
-        rarity: "rare-holo",
-        price: 299.99,
-        image: "https://images.pokemontcg.io/base1/4_hires.png",
-        description: "The iconic holographic Charizard from the original Base Set."
-    },
-    {
-        id: 2,
-        name: "Blastoise",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "water",
-        rarity: "rare-holo",
-        price: 179.99,
-        image: "https://images.pokemontcg.io/base1/2_hires.png",
-        description: "Powerful holographic Blastoise card with Hydro Pump."
-    },
-    {
-        id: 3,
-        name: "Venusaur",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "grass",
-        rarity: "rare-holo",
-        price: 149.99,
-        image: "https://images.pokemontcg.io/base1/15_hires.png",
-        description: "Lush Venusaur holographic card with Solar Beam attack."
-    },
-    {
-        id: 4,
-        name: "Pikachu",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "electric",
-        rarity: "common",
-        price: 24.99,
-        image: "https://images.pokemontcg.io/base1/58_hires.png",
-        description: "The beloved electric mouse Pokémon — a must-have for any collection."
-    },
-    {
-        id: 5,
-        name: "Mewtwo",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "psychic",
-        rarity: "rare-holo",
-        price: 189.99,
-        image: "https://images.pokemontcg.io/base1/10_hires.png",
-        description: "Legendary psychic-type Mewtwo holographic card."
-    },
-    {
-        id: 6,
-        name: "Gyarados",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "water",
-        rarity: "rare-holo",
-        price: 129.99,
-        image: "https://images.pokemontcg.io/base1/6_hires.png",
-        description: "Fearsome Gyarados holographic with devastating attacks."
-    },
-    {
-        id: 7,
-        name: "Raichu",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "electric",
-        rarity: "rare-holo",
-        price: 99.99,
-        image: "https://images.pokemontcg.io/base1/14_hires.png",
-        description: "Evolved form of Pikachu — rare holographic edition."
-    },
-    {
-        id: 8,
-        name: "Alakazam",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "psychic",
-        rarity: "rare-holo",
-        price: 119.99,
-        image: "https://images.pokemontcg.io/base1/1_hires.png",
-        description: "Mystic Alakazam with powerful psychic abilities."
-    },
-    {
-        id: 9,
-        name: "Charizard GX",
-        setName: "Burning Shadows",
-        setCode: "BUS",
-        type: "fire",
-        rarity: "ultra-rare",
-        price: 449.99,
-        image: "https://images.pokemontcg.io/sm3/150_hires.png",
-        description: "Rainbow Rare Charizard GX — one of the most sought-after modern cards."
-    },
-    {
-        id: 10,
-        name: "Umbreon VMAX",
-        setName: "Evolving Skies",
-        setCode: "EVS",
-        type: "dark",
-        rarity: "ultra-rare",
-        price: 599.99,
-        image: "https://images.pokemontcg.io/swsh7/215_hires.png",
-        description: "The legendary Moonbreon — alternate art Umbreon VMAX."
-    },
-    {
-        id: 11,
-        name: "Mew",
-        setName: "Fossil",
-        setCode: "FO",
-        type: "psychic",
-        rarity: "rare-holo",
-        price: 89.99,
-        image: "https://images.pokemontcg.io/base3/8_hires.png",
-        description: "Mysterious Mew from the Fossil expansion set."
-    },
-    {
-        id: 12,
-        name: "Dragonite",
-        setName: "Fossil",
-        setCode: "FO",
-        type: "normal",
-        rarity: "rare-holo",
-        price: 109.99,
-        image: "https://images.pokemontcg.io/base3/4_hires.png",
-        description: "Gentle giant Dragonite holographic from Fossil set."
-    },
-    {
-        id: 13,
-        name: "Ninetales",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "fire",
-        rarity: "rare-holo",
-        price: 69.99,
-        image: "https://images.pokemontcg.io/base1/12_hires.png",
-        description: "Elegant Ninetales holographic with fiery elegance."
-    },
-    {
-        id: 14,
-        name: "Zapdos",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "electric",
-        rarity: "rare-holo",
-        price: 84.99,
-        image: "https://images.pokemontcg.io/base1/16_hires.png",
-        description: "Legendary bird Zapdos — the electric powerhouse."
-    },
-    {
-        id: 15,
-        name: "Articuno",
-        setName: "Fossil",
-        setCode: "FO",
-        type: "water",
-        rarity: "rare-holo",
-        price: 79.99,
-        image: "https://images.pokemontcg.io/base3/2_hires.png",
-        description: "Legendary bird Articuno with ice-cold attacks."
-    },
-    {
-        id: 16,
-        name: "Moltres",
-        setName: "Fossil",
-        setCode: "FO",
-        type: "fire",
-        rarity: "rare-holo",
-        price: 74.99,
-        image: "https://images.pokemontcg.io/base3/12_hires.png",
-        description: "Legendary bird Moltres ablaze with fire power."
-    },
-    {
-        id: 17,
-        name: "Hitmonchan",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "fighting",
-        rarity: "rare-holo",
-        price: 59.99,
-        image: "https://images.pokemontcg.io/base1/7_hires.png",
-        description: "Fighting-type Hitmonchan with special punch attacks."
-    },
-    {
-        id: 18,
-        name: "Machamp",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "fighting",
-        rarity: "rare-holo",
-        price: 64.99,
-        image: "https://images.pokemontcg.io/base1/8_hires.png",
-        description: "First Edition Machamp holographic card."
-    },
-    {
-        id: 19,
-        name: "Poliwrath",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "water",
-        rarity: "rare-holo",
-        price: 54.99,
-        image: "https://images.pokemontcg.io/base1/13_hires.png",
-        description: "Water-type Poliwrath holographic with Water Gun."
-    },
-    {
-        id: 20,
-        name: "Clefairy",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "normal",
-        rarity: "rare-holo",
-        price: 49.99,
-        image: "https://images.pokemontcg.io/base1/5_hires.png",
-        description: "Fairy-type Clefairy holographic with Metronome."
-    },
-    {
-        id: 21,
-        name: "Vaporeon",
-        setName: "Jungle",
-        setCode: "JU",
-        type: "water",
-        rarity: "rare-holo",
-        price: 44.99,
-        image: "https://images.pokemontcg.io/base2/12_hires.png",
-        description: "Eeveelution Vaporeon from the Jungle set."
-    },
-    {
-        id: 22,
-        name: "Jolteon",
-        setName: "Jungle",
-        setCode: "JU",
-        type: "electric",
-        rarity: "rare-holo",
-        price: 44.99,
-        image: "https://images.pokemontcg.io/base2/4_hires.png",
-        description: "Speedy Jolteon from the Jungle expansion."
-    },
-    {
-        id: 23,
-        name: "Flareon",
-        setName: "Jungle",
-        setCode: "JU",
-        type: "fire",
-        rarity: "rare-holo",
-        price: 49.99,
-        image: "https://images.pokemontcg.io/base2/3_hires.png",
-        description: "Flame-tailed Flareon from the Jungle set."
-    },
-    {
-        id: 24,
-        name: "Squirtle",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "water",
-        rarity: "common",
-        price: 12.99,
-        image: "https://images.pokemontcg.io/base1/63_hires.png",
-        description: "Classic starter Squirtle — perfect for new collectors."
-    },
-    {
-        id: 25,
-        name: "Bulbasaur",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "grass",
-        rarity: "common",
-        price: 14.99,
-        image: "https://images.pokemontcg.io/base1/44_hires.png",
-        description: "Grass starter Bulbasaur with Leech Seed."
-    },
-    {
-        id: 26,
-        name: "Charmander",
-        setName: "Base Set",
-        setCode: "BS",
-        type: "fire",
-        rarity: "common",
-        price: 16.99,
-        image: "https://images.pokemontcg.io/base1/46_hires.png",
-        description: "Fire starter Charmander with Ember attack."
-    },
-    {
-        id: 27,
-        name: "Rayquaza VMAX",
-        setName: "Evolving Skies",
-        setCode: "EVS",
-        type: "normal",
-        rarity: "ultra-rare",
-        price: 249.99,
-        image: "https://images.pokemontcg.io/swsh7/218_hires.png",
-        description: "Alternate art Rayquaza VMAX — a true masterpiece."
-    },
-    {
-        id: 28,
-        name: "Gardevoir ex",
-        setName: "Scarlet & Violet",
-        setCode: "SV",
-        type: "psychic",
-        rarity: "ultra-rare",
-        price: 179.99,
-        image: "https://images.pokemontcg.io/sv1/245_hires.png",
-        description: "Special illustration rare Gardevoir ex."
-    },
+// ========== Pokémon Card Data (defaults — overridden by localStorage admin data) ==========
+const defaultCardData = [
+    { id: 1,  name: "Charizard",      setName: "Base Set",        setCode: "BS",  type: "fire",      rarity: "rare-holo",  price: 299.99, stock: 3,  condition: "NM",  image: "https://images.pokemontcg.io/base1/4_hires.png",   description: "The iconic holographic Charizard from the original Base Set." },
+    { id: 2,  name: "Blastoise",      setName: "Base Set",        setCode: "BS",  type: "water",     rarity: "rare-holo",  price: 179.99, stock: 2,  condition: "LP",  image: "https://images.pokemontcg.io/base1/2_hires.png",   description: "Powerful holographic Blastoise card with Hydro Pump." },
+    { id: 3,  name: "Venusaur",       setName: "Base Set",        setCode: "BS",  type: "grass",     rarity: "rare-holo",  price: 149.99, stock: 4,  condition: "NM",  image: "https://images.pokemontcg.io/base1/15_hires.png",  description: "Lush Venusaur holographic card with Solar Beam attack." },
+    { id: 4,  name: "Pikachu",        setName: "Base Set",        setCode: "BS",  type: "electric",  rarity: "common",     price: 24.99,  stock: 12, condition: "NM",  image: "https://images.pokemontcg.io/base1/58_hires.png",  description: "The beloved electric mouse Pokémon — a must-have for any collection." },
+    { id: 5,  name: "Mewtwo",         setName: "Base Set",        setCode: "BS",  type: "psychic",   rarity: "rare-holo",  price: 189.99, stock: 1,  condition: "MP",  image: "https://images.pokemontcg.io/base1/10_hires.png",  description: "Legendary psychic-type Mewtwo holographic card." },
+    { id: 6,  name: "Gyarados",       setName: "Base Set",        setCode: "BS",  type: "water",     rarity: "rare-holo",  price: 129.99, stock: 2,  condition: "LP",  image: "https://images.pokemontcg.io/base1/6_hires.png",   description: "Fearsome Gyarados holographic with devastating attacks." },
+    { id: 7,  name: "Raichu",         setName: "Base Set",        setCode: "BS",  type: "electric",  rarity: "rare-holo",  price: 99.99,  stock: 3,  condition: "NM",  image: "https://images.pokemontcg.io/base1/14_hires.png",  description: "Evolved form of Pikachu — rare holographic edition." },
+    { id: 8,  name: "Alakazam",       setName: "Base Set",        setCode: "BS",  type: "psychic",   rarity: "rare-holo",  price: 119.99, stock: 2,  condition: "HP",  image: "https://images.pokemontcg.io/base1/1_hires.png",   description: "Mystic Alakazam with powerful psychic abilities." },
+    { id: 9,  name: "Charizard GX",   setName: "Burning Shadows",  setCode: "BUS", type: "fire",      rarity: "ultra-rare", price: 449.99, stock: 1,  condition: "NM",  image: "https://images.pokemontcg.io/sm3/150_hires.png",  description: "Rainbow Rare Charizard GX — one of the most sought-after modern cards." },
+    { id: 10, name: "Umbreon VMAX",   setName: "Evolving Skies",  setCode: "EVS", type: "dark",      rarity: "ultra-rare", price: 599.99, stock: 1,  condition: "NM",  image: "https://images.pokemontcg.io/swsh7/215_hires.png", description: "The legendary Moonbreon — alternate art Umbreon VMAX." },
+    { id: 11, name: "Mew",            setName: "Fossil",          setCode: "FO",  type: "psychic",   rarity: "rare-holo",  price: 89.99,  stock: 2,  condition: "LP",  image: "https://images.pokemontcg.io/base3/8_hires.png",   description: "Mysterious Mew from the Fossil expansion set." },
+    { id: 12, name: "Dragonite",      setName: "Fossil",          setCode: "FO",  type: "normal",    rarity: "rare-holo",  price: 109.99, stock: 1,  condition: "MP",  image: "https://images.pokemontcg.io/base3/4_hires.png",   description: "Gentle giant Dragonite holographic from Fossil set." },
+    { id: 13, name: "Ninetales",      setName: "Base Set",        setCode: "BS",  type: "fire",      rarity: "rare-holo",  price: 69.99,  stock: 3,  condition: "NM",  image: "https://images.pokemontcg.io/base1/12_hires.png",  description: "Elegant Ninetales holographic with fiery elegance." },
+    { id: 14, name: "Zapdos",         setName: "Base Set",        setCode: "BS",  type: "electric",  rarity: "rare-holo",  price: 84.99,  stock: 2,  condition: "LP",  image: "https://images.pokemontcg.io/base1/16_hires.png",  description: "Legendary bird Zapdos — the electric powerhouse." },
+    { id: 15, name: "Articuno",       setName: "Fossil",          setCode: "FO",  type: "water",     rarity: "rare-holo",  price: 79.99,  stock: 2,  condition: "NM",  image: "https://images.pokemontcg.io/base3/2_hires.png",   description: "Legendary bird Articuno with ice-cold attacks." },
+    { id: 16, name: "Moltres",        setName: "Fossil",          setCode: "FO",  type: "fire",      rarity: "rare-holo",  price: 74.99,  stock: 3,  condition: "MP",  image: "https://images.pokemontcg.io/base3/12_hires.png",  description: "Legendary bird Moltres ablaze with fire power." },
+    { id: 17, name: "Hitmonchan",     setName: "Base Set",        setCode: "BS",  type: "fighting",  rarity: "rare-holo",  price: 59.99,  stock: 4,  condition: "LP",  image: "https://images.pokemontcg.io/base1/7_hires.png",   description: "Fighting-type Hitmonchan with special punch attacks." },
+    { id: 18, name: "Machamp",        setName: "Base Set",        setCode: "BS",  type: "fighting",  rarity: "rare-holo",  price: 64.99,  stock: 2,  condition: "HP",  image: "https://images.pokemontcg.io/base1/8_hires.png",   description: "First Edition Machamp holographic card." },
+    { id: 19, name: "Poliwrath",      setName: "Base Set",        setCode: "BS",  type: "water",     rarity: "rare-holo",  price: 54.99,  stock: 3,  condition: "NM",  image: "https://images.pokemontcg.io/base1/13_hires.png",  description: "Water-type Poliwrath holographic with Water Gun." },
+    { id: 20, name: "Clefairy",       setName: "Base Set",        setCode: "BS",  type: "normal",    rarity: "rare-holo",  price: 49.99,  stock: 5,  condition: "LP",  image: "https://images.pokemontcg.io/base1/5_hires.png",   description: "Fairy-type Clefairy holographic with Metronome." },
+    { id: 21, name: "Vaporeon",       setName: "Jungle",          setCode: "JU",  type: "water",     rarity: "rare-holo",  price: 44.99,  stock: 3,  condition: "NM",  image: "https://images.pokemontcg.io/base2/12_hires.png",  description: "Eeveelution Vaporeon from the Jungle set." },
+    { id: 22, name: "Jolteon",        setName: "Jungle",          setCode: "JU",  type: "electric",  rarity: "rare-holo",  price: 44.99,  stock: 2,  condition: "MP",  image: "https://images.pokemontcg.io/base2/4_hires.png",   description: "Speedy Jolteon from the Jungle expansion." },
+    { id: 23, name: "Flareon",        setName: "Jungle",          setCode: "JU",  type: "fire",      rarity: "rare-holo",  price: 49.99,  stock: 2,  condition: "DMG", image: "https://images.pokemontcg.io/base2/3_hires.png",   description: "Flame-tailed Flareon from the Jungle set." },
+    { id: 24, name: "Squirtle",       setName: "Base Set",        setCode: "BS",  type: "water",     rarity: "common",     price: 12.99,  stock: 10, condition: "NM",  image: "https://images.pokemontcg.io/base1/63_hires.png",  description: "Classic starter Squirtle — perfect for new collectors." },
+    { id: 25, name: "Bulbasaur",      setName: "Base Set",        setCode: "BS",  type: "grass",     rarity: "common",     price: 14.99,  stock: 8,  condition: "NM",  image: "https://images.pokemontcg.io/base1/44_hires.png",  description: "Grass starter Bulbasaur with Leech Seed." },
+    { id: 26, name: "Charmander",     setName: "Base Set",        setCode: "BS",  type: "fire",      rarity: "common",     price: 16.99,  stock: 6,  condition: "LP",  image: "https://images.pokemontcg.io/base1/46_hires.png",  description: "Fire starter Charmander with Ember attack." },
+    { id: 27, name: "Rayquaza VMAX",  setName: "Evolving Skies",  setCode: "EVS", type: "normal",    rarity: "ultra-rare", price: 249.99, stock: 2,  condition: "NM",  image: "https://images.pokemontcg.io/swsh7/218_hires.png", description: "Alternate art Rayquaza VMAX — a true masterpiece." },
+    { id: 28, name: "Gardevoir ex",   setName: "Scarlet & Violet", setCode: "SV", type: "psychic",   rarity: "ultra-rare", price: 179.99, stock: 1,  condition: "NM",  image: "https://images.pokemontcg.io/sv1/245_hires.png",  description: "Special illustration rare Gardevoir ex." },
 ];
+
+// Condition display helpers
+const CONDITION_LABELS = {
+    'NM':  'Near Mint',
+    'LP':  'Lightly Played',
+    'MP':  'Moderately Played',
+    'HP':  'Heavily Played',
+    'DMG': 'Damaged',
+};
+
+const CONDITION_COLORS = {
+    'NM':  '#22c55e',
+    'LP':  '#4ade80',
+    'MP':  '#facc15',
+    'HP':  '#f97316',
+    'DMG': '#ef4444',
+};
+
+// Load card data from localStorage (admin overrides), fall back to defaults
+function loadCardData() {
+    try {
+        const saved = localStorage.getItem('pokemart-cards');
+        if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return JSON.parse(JSON.stringify(defaultCardData));
+}
+
+let cardData = loadCardData();
+
+// Save card data to localStorage (called from admin, and reconstructed here for storefront)
+function saveCardData() {
+    localStorage.setItem('pokemart-cards', JSON.stringify(cardData));
+}
 
 // ========== Application State ==========
 let cart = loadCart();
@@ -403,25 +156,37 @@ function renderProducts() {
     productGrid.innerHTML = cards.map(card => {
         const typeBadgeClass = `badge-${card.type}`;
         const starCount = card.rarity === 'ultra-rare' ? '⭐⭐⭐' : card.rarity === 'rare-holo' ? '⭐⭐' : '⭐';
+        const condition = card.condition || 'NM';
+        const condColor = CONDITION_COLORS[condition] || '#22c55e';
+        const condLabel = CONDITION_LABELS[condition] || 'Near Mint';
+        const stock = card.stock ?? 0;
+        const outOfStock = stock <= 0;
         
         return `
-            <div class="product-card" data-id="${card.id}">
+            <div class="product-card ${outOfStock ? 'out-of-stock' : ''}" data-id="${card.id}">
                 <div class="card-image-wrapper">
                     <span class="card-type-badge ${typeBadgeClass}">${card.type}</span>
                     <span class="rarity-badge">${starCount}</span>
+                    <span class="condition-badge" style="background:${condColor}">${condition}</span>
                     <img src="${card.image}" 
                          alt="${card.name}" 
                          loading="lazy"
                          onerror="this.src='data:image/svg+xml,${generatePlaceholder(card.id)}'">
+                    ${outOfStock ? '<div class="out-of-stock-overlay"><span>Sold Out</span></div>' : ''}
                     <button class="like-btn" onclick="event.stopPropagation();" title="Add to wishlist">🤍</button>
                 </div>
                 <div class="card-info">
                     <h3>${card.name}</h3>
                     <p class="card-set">${card.setName} (${card.setCode})</p>
+                    <p class="card-condition">
+                        <span class="cond-dot" style="background:${condColor}"></span>
+                        ${condLabel}
+                        ${stock > 0 ? `<span class="card-stock">${stock} in stock</span>` : ''}
+                    </p>
                     <div class="card-bottom">
                         <span class="card-price">$${card.price.toFixed(2)}</span>
-                        <button class="add-to-cart-btn" onclick="addToCart(${card.id}); event.stopPropagation();">
-                            <span>🛒</span> Add
+                        <button class="add-to-cart-btn" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''}>
+                            <span>🛒</span> ${outOfStock ? 'Sold Out' : 'Add'}
                         </button>
                     </div>
                 </div>
@@ -445,7 +210,18 @@ function generatePlaceholder(id) {
 // ========== Cart Logic ==========
 function addToCart(id) {
     const card = cardData.find(c => c.id === id);
+    if (!card || (card.stock ?? 0) <= 0) {
+        showToast('❌ Sorry, this card is out of stock!');
+        return;
+    }
+    
     const existing = cart.find(item => item.id === id);
+    const currentInCart = existing ? existing.quantity : 0;
+    
+    if (currentInCart >= card.stock) {
+        showToast('❌ Cannot add more — stock limit reached!');
+        return;
+    }
     
     if (existing) {
         existing.quantity++;
@@ -454,7 +230,9 @@ function addToCart(id) {
     }
     
     saveCart();
+    saveCardData();
     updateCartUI();
+    renderProducts();
     showToast(`${card.name} added to cart!`);
     
     // Animate button
@@ -464,7 +242,12 @@ function addToCart(id) {
         btn.innerHTML = '<span>✅</span> Added';
         setTimeout(() => {
             btn.classList.remove('added');
-            btn.innerHTML = '<span>🛒</span> Add';
+            if ((card.stock ?? 0) <= 0) {
+                btn.innerHTML = '<span>🛒</span> Sold Out';
+                btn.disabled = true;
+            } else {
+                btn.innerHTML = '<span>🛒</span> Add';
+            }
         }, 1500);
     }
 }
@@ -540,6 +323,15 @@ function updateCartUI() {
 function checkout() {
     if (cart.length === 0) return;
     
+    // Decrement stock
+    cart.forEach(item => {
+        const card = cardData.find(c => c.id === item.id);
+        if (card && card.stock !== undefined) {
+            card.stock = Math.max(0, card.stock - item.quantity);
+        }
+    });
+    saveCardData();
+    
     closeCart();
     
     modalDetails.innerHTML = cart.map(item => `
@@ -556,6 +348,7 @@ function checkout() {
     
     checkoutModal.classList.add('open');
     clearCart();
+    renderProducts();
 }
 
 function closeCheckout() {
