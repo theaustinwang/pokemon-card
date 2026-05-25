@@ -841,6 +841,16 @@ input, select { font-family: inherit; }
 
 .footer-bottom p { color: var(--text-muted); font-size: 0.8rem; }
 
+/* Admin trigger (subtle lock icon in footer) */
+.admin-trigger {
+    cursor: pointer;
+    opacity: 0.25;
+    transition: var(--transition);
+    font-size: 0.7rem;
+    vertical-align: middle;
+}
+.admin-trigger:hover { opacity: 0.8; }
+
 /* ========== Cart Sidebar ========== */
 .cart-overlay {
     position: fixed;

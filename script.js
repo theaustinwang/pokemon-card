@@ -544,6 +544,18 @@ function showComingSoon() {
     showToast('🚧 Coming soon — stay tuned!');
 }
 
+// ========== Admin Login ==========
+function promptAdminLogin() {
+    const password = prompt('Enter admin code:');
+    if (password === 'admin123') {
+        sessionStorage.setItem('pokemart-admin-auth', 'true');
+        showToast('🔓 Access granted! Redirecting...');
+        setTimeout(() => { window.location.href = 'admin.html'; }, 800);
+    } else if (password !== null) {
+        showToast('❌ Incorrect code');
+    }
+}
+
 // ========== Filter Chips ==========
 function updateFilterChips() {
     document.querySelectorAll('.filter-chip').forEach(chip => {
