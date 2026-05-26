@@ -213,6 +213,7 @@ function deleteCard(id) {
 function resetAllCards() {
     if (!confirm('Reset ALL cards to default values? This cannot be undone!')) return;
     cards = JSON.parse(JSON.stringify(defaultCardData));
+    localStorage.removeItem('pokemart-mystery-stock');
     saveCards();
     renderTable();
 }

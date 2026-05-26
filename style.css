@@ -832,8 +832,126 @@ input, select { font-family: inherit; }
 .mystery-add-btn {
     background: linear-gradient(135deg, #7c5cfc, #ec4899) !important;
 }
-.slab-card .mystery-add-btn {
+.slab-add-btn {
     background: linear-gradient(135deg, #f59e0b, #ef4444) !important;
+}
+.pack-add-btn {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6) !important;
+}
+
+/* ========== Mystery Pack (Booster Pack Style) ========== */
+.pack-card {
+    border-color: rgba(6,182,212,0.4) !important;
+}
+.pack-card::before {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6, #06b6d4);
+    background-size: 300% 300%;
+    opacity: 0.4;
+}
+
+.pack-img-wrap {
+    aspect-ratio: 4 / 3 !important;
+    background: linear-gradient(160deg, #0b1e3d 0%, #132b5c 25%, #1a3f7a 50%, #0f2348 75%, #0b1e3d 100%) !important;
+    overflow: hidden;
+}
+
+/* Crimped top & bottom edges */
+.pack-crimp {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 20px;
+    z-index: 5;
+    pointer-events: none;
+}
+.top-crimp {
+    top: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent 0px, transparent 6px,
+        rgba(6,182,212,0.15) 6px, rgba(6,182,212,0.15) 8px
+    );
+    clip-path: polygon(
+        0% 0%, 8px 40%, 16px 0%, 24px 40%, 32px 0%,
+        40px 40%, 48px 0%, 56px 40%, 64px 0%,
+        72px 40%, 80px 0%, 88px 40%, 96px 0%,
+        100% 40%, 100% 0%
+    );
+}
+.bottom-crimp {
+    bottom: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent 0px, transparent 6px,
+        rgba(6,182,212,0.15) 6px, rgba(6,182,212,0.15) 8px
+    );
+    clip-path: polygon(
+        0% 60%, 8px 100%, 16px 60%, 24px 100%, 32px 60%,
+        40px 100%, 48px 60%, 56px 100%, 64px 60%,
+        72px 100%, 80px 60%, 88px 100%, 96px 60%,
+        100% 100%, 100% 60%
+    );
+}
+
+/* Foil wrapper */
+.pack-foil {
+    position: absolute;
+    inset: 4px;
+    border-radius: 4px;
+    background: 
+        linear-gradient(160deg, 
+            rgba(6,182,212,0.08) 0%, 
+            rgba(59,130,246,0.06) 30%, 
+            rgba(139,92,246,0.05) 50%, 
+            rgba(59,130,246,0.06) 70%, 
+            rgba(6,182,212,0.08) 100%);
+    z-index: 1;
+    box-shadow: inset 0 0 60px rgba(6,182,212,0.06);
+}
+
+/* Tear strip across center */
+.pack-tear-strip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 6px;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(255,204,2,0.25) 0px, rgba(255,204,2,0.25) 10px,
+        transparent 10px, transparent 14px
+    );
+    z-index: 3;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* "3 CARDS" count label */
+.pack-card-count {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(6,182,212,0.5);
+    color: #38bdf8;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    backdrop-filter: blur(4px);
+}
+
+/* Pack question mark override */
+.pack-card .mystery-question {
+    background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-size: 4.5rem;
+    z-index: 2;
 }
 
 .mystery-cart-icon {
@@ -842,6 +960,27 @@ input, select { font-family: inherit; }
     justify-content: center;
     background: linear-gradient(135deg, rgba(124,92,252,0.2), rgba(236,72,153,0.2));
     border-radius: 8px;
+}
+.slab-cart-icon {
+    background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(239,68,68,0.2));
+    border: 1px solid rgba(245,158,11,0.3);
+}
+.pack-cart-icon {
+    background: linear-gradient(160deg, rgba(6,182,212,0.2), rgba(59,130,246,0.15), rgba(139,92,246,0.2));
+    border: 1px solid rgba(6,182,212,0.25);
+    border-radius: 4px;
+}
+.pack-cart-icon span {
+    background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.slab-cart-icon span {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 .mystery-cart-icon span {
     font-size: 1.4rem;

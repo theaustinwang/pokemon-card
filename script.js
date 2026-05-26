@@ -48,7 +48,7 @@ const CONDITION_COLORS = {
 };
 
 // ========== Mystery Products ==========
-const MYSTERY_PRODUCTS = [
+const defaultMysteryData = [
     {
         id: 'mystery-pack',
         name: 'Mystery Pack',
@@ -57,7 +57,7 @@ const MYSTERY_PRODUCTS = [
         type: 'mystery',
         rarity: 'mystery',
         price: 24.99,
-        stock: 999,
+        stock: 10,
         condition: 'NM',
         image: '',
         description: '3 random cards from our inventory — could be a chase card!',
@@ -73,7 +73,7 @@ const MYSTERY_PRODUCTS = [
         type: 'mystery',
         rarity: 'ultra-rare',
         price: 99.99,
-        stock: 999,
+        stock: 5,
         condition: 'NM',
         image: '',
         description: '1 PSA-graded card — guaranteed rare holo or better!',
@@ -82,6 +82,26 @@ const MYSTERY_PRODUCTS = [
         cardCount: 1,
     },
 ];
+
+function loadMysteryStock() {
+    try {
+        const saved = localStorage.getItem('pokemart-mystery-stock');
+        if (saved) {
+            const stocks = JSON.parse(saved);
+            defaultMysteryData.forEach(m => {
+                if (stocks[m.id] !== undefined) m.stock = stocks[m.id];
+            });
+        }
+    } catch { /* ignore */ }
+}
+
+function saveMysteryStock() {
+    const stocks = {};
+    defaultMysteryData.forEach(m => { stocks[m.id] = m.stock; });
+    localStorage.setItem('pokemart-mystery-stock', JSON.stringify(stocks));
+}
+
+loadMysteryStock();
 
 function drawMysteryCards(mysteryType) {
     const available = cardData.filter(c => (c.stock || 0) > 0);
@@ -302,24 +322,35 @@ function renderProducts() {
     // Mystery products — always shown at top when no filter/search active
     let mysteryHTML = '';
     if (activeFilter === 'all' && !searchTerm) {
-        mysteryHTML = MYSTERY_PRODUCTS.map(m => {
+        mysteryHTML = defaultMysteryData.map(m => {
             const isSlab = m.mysteryType === 'slab';
+            const isPack = !isSlab;
+            const stock = m.stock ?? 0;
+            const outOfStock = stock <= 0;
             return `
-            <div class="product-card mystery-card ${isSlab ? 'slab-card' : ''}" data-id="${m.id}">
-                <div class="card-image-wrapper mystery-img-wrap">
-                    <div class="mystery-glow"></div>
+            <div class="product-card mystery-card ${isSlab ? 'slab-card' : 'pack-card'} ${outOfStock ? 'out-of-stock' : ''}" data-id="${m.id}">
+                <div class="card-image-wrapper mystery-img-wrap ${isPack ? 'pack-img-wrap' : ''}">
+                    ${isPack ? '<div class="pack-crimp top-crimp"></div><div class="pack-crimp bottom-crimp"></div>' : ''}
+                    ${isPack ? '<div class="pack-foil"></div>' : '<div class="mystery-glow"></div>'}
+                    ${isPack ? '<div class="pack-tear-strip"></div>' : ''}
                     <div class="mystery-question">?</div>
-                    <span class="mystery-tag">${isSlab ? 'PSA SLAB' : 'MYSTERY PACK'}</span>
+                    ${isPack 
+                        ? '<div class="pack-card-count">3 CARDS</div>' 
+                        : `<span class="mystery-tag">PSA SLAB</span>`}
                     ${isSlab ? '<span class="psa-tag">PSA 7–10</span>' : ''}
+                    ${outOfStock ? '<div class="out-of-stock-overlay"><span>Sold Out</span></div>' : ''}
                 </div>
                 <div class="card-info">
                     <h3>${m.name}</h3>
                     <p class="card-set">${isSlab ? '1 Graded Card' : '3 Random Cards'}</p>
-                    <p class="card-condition" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">${m.description}</p>
+                    <p class="card-condition" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
+                        <span class="card-stock" style="margin-left:0;">${stock} in stock</span>
+                        <br>${m.description}
+                    </p>
                     <div class="card-bottom">
                         <span class="card-price">$${m.price.toFixed(2)}</span>
-                        <button class="add-to-cart-btn mystery-add-btn" onclick="addToCart('${m.id}'); event.stopPropagation();">
-                            <span>🎲</span> Add
+                        <button class="add-to-cart-btn ${isPack ? 'pack-add-btn' : 'mystery-add-btn slab-add-btn'}" onclick="addToCart('${m.id}'); event.stopPropagation();" ${outOfStock ? 'disabled' : ''}>
+                            <span>🎲</span> ${outOfStock ? 'Sold Out' : 'Add'}
                         </button>
                     </div>
                 </div>
@@ -404,9 +435,18 @@ function generatePlaceholder(id) {
 function addToCart(id) {
     // Handle mystery products
     if (typeof id === 'string' && id.startsWith('mystery-')) {
-        const mystery = MYSTERY_PRODUCTS.find(m => m.id === id);
+        const mystery = defaultMysteryData.find(m => m.id === id);
         if (!mystery) return;
+        if ((mystery.stock ?? 0) <= 0) {
+            showToast('❌ Sorry, this item is out of stock!');
+            return;
+        }
         const existing = cart.find(item => item.id === id);
+        const currentInCart = existing ? existing.quantity : 0;
+        if (currentInCart >= mystery.stock) {
+            showToast('❌ Cannot add more — stock limit reached!');
+            return;
+        }
         if (existing) {
             existing.quantity++;
         } else {
@@ -415,7 +455,7 @@ function addToCart(id) {
         saveCart();
         updateCartUI();
         showToast(`${mystery.name} added to cart!`);
-        animateAddBtn(id, true);
+        animateAddBtn(id, true, mystery);
         return;
     }
     
@@ -457,8 +497,9 @@ function animateAddBtn(id, isMystery, card) {
     btn.innerHTML = `${icon} Added`;
     setTimeout(() => {
         btn.classList.remove('added');
-        if (!isMystery && (card.stock ?? 0) <= 0) {
-            btn.innerHTML = '<span>🛒</span> Sold Out';
+        if ((card.stock ?? 0) <= 0) {
+            const soldIcon = isMystery ? '🎲' : '🛒';
+            btn.innerHTML = `<span>${soldIcon}</span> Sold Out`;
             btn.disabled = true;
         } else {
             const resetIcon = isMystery ? '🎲' : '🛒';
@@ -511,9 +552,11 @@ function updateCartUI() {
     } else {
         cartItems.innerHTML = cart.map(item => {
             const isMystery = item.isMystery;
+            const isSlab = item.mysteryType === 'slab';
             const idRef = isMystery ? `'${item.id}'` : item.id;
+            const cartIconClass = isMystery ? (isSlab ? 'mystery-cart-icon slab-cart-icon' : 'mystery-cart-icon pack-cart-icon') : '';
             const imgHTML = isMystery
-                ? `<div class="cart-item-image mystery-cart-icon"><span>?</span></div>`
+                ? `<div class="cart-item-image ${cartIconClass}"><span>?</span></div>`
                 : `<img src="${item.image}" alt="${item.name}" class="cart-item-image"
                      onerror="this.src='data:image/svg+xml,${generatePlaceholder(item.id)}'">`;
             return `
@@ -549,6 +592,11 @@ function checkout() {
     
     cart.forEach(item => {
         if (item.isMystery) {
+            // Decrement mystery product stock
+            const mystery = defaultMysteryData.find(m => m.id === item.id);
+            if (mystery && mystery.stock !== undefined) mystery.stock = Math.max(0, mystery.stock - item.quantity);
+            saveMysteryStock();
+            
             for (let q = 0; q < item.quantity; q++) {
                 const drawn = drawMysteryCards(item.mysteryType);
                 mysteryResults.push({ mysteryName: item.name, cards: drawn });
