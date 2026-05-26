@@ -511,6 +511,7 @@ function updateCartUI() {
     } else {
         cartItems.innerHTML = cart.map(item => {
             const isMystery = item.isMystery;
+            const idRef = isMystery ? `'${item.id}'` : item.id;
             const imgHTML = isMystery
                 ? `<div class="cart-item-image mystery-cart-icon"><span>?</span></div>`
                 : `<img src="${item.image}" alt="${item.name}" class="cart-item-image"
@@ -523,9 +524,9 @@ function updateCartUI() {
                     <p class="set">${isMystery ? (item.mysteryType === 'slab' ? '1 Graded Card' : '3 Random Cards') : item.setName}</p>
                     <div class="cart-item-actions">
                         <div class="qty-control">
-                            <button onclick="updateQuantity(${item.id}, -1)">−</button>
+                            <button onclick="updateQuantity(${idRef}, -1)">−</button>
                             <span>${item.quantity}</span>
-                            <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                            <button onclick="updateQuantity(${idRef}, 1)">+</button>
                         </div>
                         <span class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
