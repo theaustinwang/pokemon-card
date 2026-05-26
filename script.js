@@ -47,6 +47,81 @@ const CONDITION_COLORS = {
     'DMG': '#ef4444',
 };
 
+// ========== Mystery Products ==========
+const MYSTERY_PRODUCTS = [
+    {
+        id: 'mystery-pack',
+        name: 'Mystery Pack',
+        setName: '??? Surprise ???',
+        setCode: 'MYST',
+        type: 'mystery',
+        rarity: 'mystery',
+        price: 24.99,
+        stock: 999,
+        condition: 'NM',
+        image: '',
+        description: '3 random cards from our inventory — could be a chase card!',
+        isMystery: true,
+        mysteryType: 'pack',
+        cardCount: 3,
+    },
+    {
+        id: 'mystery-slab',
+        name: 'Mystery PSA Slab',
+        setName: '??? Graded ???',
+        setCode: 'SLAB',
+        type: 'mystery',
+        rarity: 'ultra-rare',
+        price: 99.99,
+        stock: 999,
+        condition: 'NM',
+        image: '',
+        description: '1 PSA-graded card — guaranteed rare holo or better!',
+        isMystery: true,
+        mysteryType: 'slab',
+        cardCount: 1,
+    },
+];
+
+function drawMysteryCards(mysteryType) {
+    const available = cardData.filter(c => (c.stock || 0) > 0);
+    if (available.length === 0) return [];
+    
+    if (mysteryType === 'slab') {
+        const rares = available.filter(c => c.rarity === 'rare-holo' || c.rarity === 'ultra-rare');
+        const pool = rares.length > 0 ? rares : available;
+        const idx = Math.floor(Math.random() * pool.length);
+        const card = JSON.parse(JSON.stringify(pool[idx]));
+        card.psaGrade = Math.floor(Math.random() * 4) + 7;
+        return [card];
+    }
+    
+    // Mystery Pack: 3 random cards, weighted toward commons but with a rare chance
+    const drawn = [];
+    const pool = available.map(c => JSON.parse(JSON.stringify(c)));
+    const weights = pool.map(c => {
+        if (c.rarity === 'common') return 6;
+        if (c.rarity === 'rare-holo') return 3;
+        if (c.rarity === 'ultra-rare') return 1;
+        return 4;
+    });
+    
+    for (let i = 0; i < 3; i++) {
+        if (pool.length === 0) break;
+        const totalWeight = weights.reduce((s, w) => s + w, 0);
+        let rand = Math.random() * totalWeight;
+        let idx = 0;
+        for (let j = 0; j < pool.length; j++) {
+            rand -= weights[j];
+            if (rand <= 0) { idx = j; break; }
+        }
+        drawn.push(pool[idx]);
+        pool.splice(idx, 1);
+        weights.splice(idx, 1);
+    }
+    return drawn;
+}
+
 // Load card data from localStorage (admin overrides), fall back to defaults
 function loadCardData() {
     try {
@@ -224,7 +299,35 @@ function getFilteredCards() {
 function renderProducts() {
     const cards = getFilteredCards();
     
-    if (cards.length === 0) {
+    // Mystery products — always shown at top when no filter/search active
+    let mysteryHTML = '';
+    if (activeFilter === 'all' && !searchTerm) {
+        mysteryHTML = MYSTERY_PRODUCTS.map(m => {
+            const isSlab = m.mysteryType === 'slab';
+            return `
+            <div class="product-card mystery-card ${isSlab ? 'slab-card' : ''}" data-id="${m.id}">
+                <div class="card-image-wrapper mystery-img-wrap">
+                    <div class="mystery-glow"></div>
+                    <div class="mystery-question">?</div>
+                    <span class="mystery-tag">${isSlab ? 'PSA SLAB' : 'MYSTERY PACK'}</span>
+                    ${isSlab ? '<span class="psa-tag">PSA 7–10</span>' : ''}
+                </div>
+                <div class="card-info">
+                    <h3>${m.name}</h3>
+                    <p class="card-set">${isSlab ? '1 Graded Card' : '3 Random Cards'}</p>
+                    <p class="card-condition" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">${m.description}</p>
+                    <div class="card-bottom">
+                        <span class="card-price">$${m.price.toFixed(2)}</span>
+                        <button class="add-to-cart-btn mystery-add-btn" onclick="addToCart('${m.id}'); event.stopPropagation();">
+                            <span>🎲</span> Add
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+    
+    if (cards.length === 0 && !mysteryHTML) {
         productGrid.innerHTML = '';
         noResults.style.display = 'block';
         return;
@@ -235,7 +338,7 @@ function renderProducts() {
     const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const bestSellerCounts = getBestSellerCounts();
     
-    productGrid.innerHTML = cards.map((card, index) => {
+    productGrid.innerHTML = mysteryHTML + cards.map((card, index) => {
         const typeBadgeClass = `badge-${card.type}`;
         const starCount = card.rarity === 'ultra-rare' ? '⭐⭐⭐' : card.rarity === 'rare-holo' ? '⭐⭐' : '⭐';
         const condition = card.condition || 'NM';
@@ -299,6 +402,23 @@ function generatePlaceholder(id) {
 
 // ========== Cart Logic ==========
 function addToCart(id) {
+    // Handle mystery products
+    if (typeof id === 'string' && id.startsWith('mystery-')) {
+        const mystery = MYSTERY_PRODUCTS.find(m => m.id === id);
+        if (!mystery) return;
+        const existing = cart.find(item => item.id === id);
+        if (existing) {
+            existing.quantity++;
+        } else {
+            cart.push({ ...mystery, quantity: 1 });
+        }
+        saveCart();
+        updateCartUI();
+        showToast(`${mystery.name} added to cart!`);
+        animateAddBtn(id, true);
+        return;
+    }
+    
     const card = cardData.find(c => c.id === id);
     if (!card || (card.stock ?? 0) <= 0) {
         showToast('❌ Sorry, this card is out of stock!');
@@ -326,20 +446,25 @@ function addToCart(id) {
     showToast(`${card.name} added to cart!`);
     
     // Animate button
+    animateAddBtn(id, false, card);
+}
+
+function animateAddBtn(id, isMystery, card) {
     const btn = document.querySelector(`.product-card[data-id="${id}"] .add-to-cart-btn`);
-    if (btn) {
-        btn.classList.add('added');
-        btn.innerHTML = '<span>✅</span> Added';
-        setTimeout(() => {
-            btn.classList.remove('added');
-            if ((card.stock ?? 0) <= 0) {
-                btn.innerHTML = '<span>🛒</span> Sold Out';
-                btn.disabled = true;
-            } else {
-                btn.innerHTML = '<span>🛒</span> Add';
-            }
-        }, 1500);
-    }
+    if (!btn) return;
+    btn.classList.add('added');
+    const icon = isMystery ? '<span>🎲</span>' : '<span>✅</span>';
+    btn.innerHTML = `${icon} Added`;
+    setTimeout(() => {
+        btn.classList.remove('added');
+        if (!isMystery && (card.stock ?? 0) <= 0) {
+            btn.innerHTML = '<span>🛒</span> Sold Out';
+            btn.disabled = true;
+        } else {
+            const resetIcon = isMystery ? '🎲' : '🛒';
+            btn.innerHTML = `<span>${resetIcon}</span> Add`;
+        }
+    }, 1500);
 }
 
 function removeFromCart(id) {
@@ -384,13 +509,18 @@ function updateCartUI() {
         cartItems.innerHTML = '<p class="cart-empty">Your cart is empty</p>';
         cartFooter.style.display = 'none';
     } else {
-        cartItems.innerHTML = cart.map(item => `
+        cartItems.innerHTML = cart.map(item => {
+            const isMystery = item.isMystery;
+            const imgHTML = isMystery
+                ? `<div class="cart-item-image mystery-cart-icon"><span>?</span></div>`
+                : `<img src="${item.image}" alt="${item.name}" class="cart-item-image"
+                     onerror="this.src='data:image/svg+xml,${generatePlaceholder(item.id)}'">`;
+            return `
             <div class="cart-item">
-                <img src="${item.image}" alt="${item.name}" class="cart-item-image" 
-                     onerror="this.src='data:image/svg+xml,${generatePlaceholder(item.id)}'">
+                ${imgHTML}
                 <div class="cart-item-info">
                     <h4>${item.name}</h4>
-                    <p class="set">${item.setName}</p>
+                    <p class="set">${isMystery ? (item.mysteryType === 'slab' ? '1 Graded Card' : '3 Random Cards') : item.setName}</p>
                     <div class="cart-item-actions">
                         <div class="qty-control">
                             <button onclick="updateQuantity(${item.id}, -1)">−</button>
@@ -400,9 +530,9 @@ function updateCartUI() {
                         <span class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                 </div>
-                <button class="cart-item-remove" onclick="removeFromCart(${item.id})">Remove</button>
-            </div>
-        `).join('');
+                <button class="cart-item-remove" onclick="removeFromCart('${item.id}')">Remove</button>
+            </div>`;
+        }).join('');
         
         cartFooter.style.display = 'flex';
         cartTotal.textContent = `$${getCartTotal().toFixed(2)}`;
@@ -413,33 +543,80 @@ function updateCartUI() {
 function checkout() {
     if (cart.length === 0) return;
     
-    // Decrement stock
+    const mysteryResults = [];
+    const normalItems = [];
+    
     cart.forEach(item => {
-        const card = cardData.find(c => c.id === item.id);
-        if (card && card.stock !== undefined) {
-            card.stock = Math.max(0, card.stock - item.quantity);
+        if (item.isMystery) {
+            for (let q = 0; q < item.quantity; q++) {
+                const drawn = drawMysteryCards(item.mysteryType);
+                mysteryResults.push({ mysteryName: item.name, cards: drawn });
+                drawn.forEach(dc => {
+                    const card = cardData.find(c => c.id === dc.id);
+                    if (card && card.stock !== undefined) card.stock = Math.max(0, card.stock - 1);
+                });
+                drawn.forEach(dc => logPurchase(dc.id, 1));
+            }
+        } else {
+            const card = cardData.find(c => c.id === item.id);
+            if (card && card.stock !== undefined) card.stock = Math.max(0, card.stock - item.quantity);
+            for (let q = 0; q < item.quantity; q++) logPurchase(item.id, 1);
+            normalItems.push(item);
         }
     });
+    
     saveCardData();
-    
-    // Log purchases for best-seller tracking
-    cart.forEach(item => {
-        logPurchase(item.id, item.quantity);
-    });
-    
     closeCart();
     
-    modalDetails.innerHTML = cart.map(item => `
-        <div class="order-card">
-            <span>${item.quantity}× ${item.name}</span>
-            <span style="margin-left:auto;font-weight:600;">$${(item.price * item.quantity).toFixed(2)}</span>
-        </div>
-    `).join('') + `
+    // Build modal content
+    let detailsHTML = '';
+    
+    if (mysteryResults.length > 0) {
+        detailsHTML += '<div class="mystery-reveal-section">';
+        detailsHTML += '<h3 style="font-size:1.1rem;margin-bottom:16px;">🎉 Your Pulls</h3>';
+        mysteryResults.forEach((result, ri) => {
+            detailsHTML += `<div class="reveal-group"><h4 style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px;">🎁 ${result.mysteryName}</h4><div class="reveal-cards">`;
+            result.cards.forEach(card => {
+                const psa = card.psaGrade ? `<span class="psa-grade-tag">PSA ${card.psaGrade}</span>` : '';
+                detailsHTML += `
+                    <div class="reveal-card">
+                        <img src="${card.image}" alt="${card.name}" onerror="this.style.display='none'">
+                        <div class="reveal-card-info">
+                            <span class="reveal-card-name">${card.name}</span>
+                            <span class="reveal-card-set">${card.setName} ${psa}</span>
+                        </div>
+                    </div>`;
+            });
+            detailsHTML += '</div></div>';
+        });
+        detailsHTML += '</div>';
+    }
+    
+    if (normalItems.length > 0) {
+        detailsHTML += normalItems.map(item => `
+            <div class="order-card">
+                <span>${item.quantity}× ${item.name}</span>
+                <span style="margin-left:auto;font-weight:600;">$${(item.price * item.quantity).toFixed(2)}</span>
+            </div>
+        `).join('');
+    }
+    
+    modalDetails.innerHTML = detailsHTML + `
         <div class="cart-total" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
             <span>Total Paid</span>
             <span>$${getCartTotal().toFixed(2)}</span>
         </div>
     `;
+    
+    const title = document.getElementById('checkoutTitle');
+    const msg = document.getElementById('checkoutMsg');
+    if (mysteryResults.length > 0) {
+        if (title) title.innerHTML = '🎲 Mystery Reveal!';
+        if (msg) msg.textContent = 'Here\'s what you pulled — lucky you!';
+    } else {
+        if (title) title.innerHTML = '🎉 Order Confirmed!';
+        if (msg) msg.textContent = 'Your Pokémon cards are on the way!';
+    }
     
     checkoutModal.classList.add('open');
     clearCart();
