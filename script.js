@@ -60,10 +60,10 @@ const defaultMysteryData = [
         stock: 10,
         condition: 'NM',
         image: '',
-        description: '3 random cards from our inventory — could be a chase card!',
+        description: '1 sealed booster pack — what treasures await inside?',
         isMystery: true,
         mysteryType: 'pack',
-        cardCount: 3,
+        cardCount: 1,
     },
     {
         id: 'mystery-slab',
@@ -114,42 +114,18 @@ function saveMysteryStock() {
 loadMysteryStock();
 
 function drawMysteryCards(mysteryType) {
+    if (mysteryType !== 'slab') return []; // Pack is a normal product, no random cards
+    
     const available = cardData.filter(c => (c.stock || 0) > 0);
     if (available.length === 0) return [];
     
-    if (mysteryType === 'slab') {
-        const rares = available.filter(c => c.rarity === 'rare-holo' || c.rarity === 'ultra-rare');
-        const pool = rares.length > 0 ? rares : available;
-        const idx = Math.floor(Math.random() * pool.length);
-        const card = JSON.parse(JSON.stringify(pool[idx]));
-        card.psaGrade = Math.floor(Math.random() * 4) + 7;
-        return [card];
-    }
-    
-    // Mystery Pack: 3 random cards, weighted toward commons but with a rare chance
-    const drawn = [];
-    const pool = available.map(c => JSON.parse(JSON.stringify(c)));
-    const weights = pool.map(c => {
-        if (c.rarity === 'common') return 6;
-        if (c.rarity === 'rare-holo') return 3;
-        if (c.rarity === 'ultra-rare') return 1;
-        return 4;
-    });
-    
-    for (let i = 0; i < 3; i++) {
-        if (pool.length === 0) break;
-        const totalWeight = weights.reduce((s, w) => s + w, 0);
-        let rand = Math.random() * totalWeight;
-        let idx = 0;
-        for (let j = 0; j < pool.length; j++) {
-            rand -= weights[j];
-            if (rand <= 0) { idx = j; break; }
-        }
-        drawn.push(pool[idx]);
-        pool.splice(idx, 1);
-        weights.splice(idx, 1);
-    }
-    return drawn;
+    // Slab: 1 PSA-graded card, guaranteed rare holo or better
+    const rares = available.filter(c => c.rarity === 'rare-holo' || c.rarity === 'ultra-rare');
+    const pool = rares.length > 0 ? rares : available;
+    const idx = Math.floor(Math.random() * pool.length);
+    const card = JSON.parse(JSON.stringify(pool[idx]));
+    card.psaGrade = Math.floor(Math.random() * 4) + 7;
+    return [card];
 }
 
 // Load card data from localStorage (admin overrides), fall back to defaults
@@ -345,14 +321,14 @@ function renderProducts() {
                     ${isPack ? '<div class="pack-tear-strip"></div>' : ''}
                     <div class="mystery-question">?</div>
                     ${isPack 
-                        ? '<div class="pack-card-count">3 CARDS</div>' 
+                        ? '<div class="pack-card-count">1 PACK</div>' 
                         : `<span class="mystery-tag">PSA SLAB</span>`}
                     ${isSlab ? '<span class="psa-tag">PSA 7–10</span>' : ''}
                     ${outOfStock ? '<div class="out-of-stock-overlay"><span>Sold Out</span></div>' : ''}
                 </div>
                 <div class="card-info">
                     <h3>${m.name}</h3>
-                    <p class="card-set">${isSlab ? '1 Graded Card' : '3 Random Cards'}</p>
+                    <p class="card-set">${isSlab ? '1 Graded Card' : '1 Booster Pack'}</p>
                     <p class="card-condition" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
                         <span class="card-stock" style="margin-left:0;">${stock} in stock</span>
                         <br>${m.description}
@@ -574,7 +550,7 @@ function updateCartUI() {
                 ${imgHTML}
                 <div class="cart-item-info">
                     <h4>${item.name}</h4>
-                    <p class="set">${isMystery ? (item.mysteryType === 'slab' ? '1 Graded Card' : '3 Random Cards') : item.setName}</p>
+                    <p class="set">${isMystery ? (item.mysteryType === 'slab' ? '1 Graded Card' : '1 Booster Pack') : item.setName}</p>
                     <div class="cart-item-actions">
                         <div class="qty-control">
                             <button onclick="updateQuantity(${idRef}, -1)">−</button>
@@ -607,14 +583,20 @@ function checkout() {
             if (mystery && mystery.stock !== undefined) mystery.stock = Math.max(0, mystery.stock - item.quantity);
             saveMysteryStock();
             
-            for (let q = 0; q < item.quantity; q++) {
-                const drawn = drawMysteryCards(item.mysteryType);
-                mysteryResults.push({ mysteryName: item.name, cards: drawn });
-                drawn.forEach(dc => {
-                    const card = cardData.find(c => c.id === dc.id);
-                    if (card && card.stock !== undefined) card.stock = Math.max(0, card.stock - 1);
-                });
-                drawn.forEach(dc => logPurchase(dc.id, 1));
+            // Only the slab draws random cards; the pack is just a normal product
+            if (item.mysteryType === 'slab') {
+                for (let q = 0; q < item.quantity; q++) {
+                    const drawn = drawMysteryCards(item.mysteryType);
+                    mysteryResults.push({ mysteryName: item.name, cards: drawn });
+                    drawn.forEach(dc => {
+                        const card = cardData.find(c => c.id === dc.id);
+                        if (card && card.stock !== undefined) card.stock = Math.max(0, card.stock - 1);
+                    });
+                    drawn.forEach(dc => logPurchase(dc.id, 1));
+                }
+            } else {
+                // Pack: just log as normal item
+                normalItems.push(item);
             }
         } else {
             const card = cardData.find(c => c.id === item.id);

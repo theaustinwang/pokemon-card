@@ -295,10 +295,10 @@ const defaultMysteryData = [
         stock: 10,
         condition: 'NM',
         image: '',
-        description: '3 random cards from our inventory — could be a chase card!',
+        description: '1 sealed booster pack — what treasures await inside?',
         isMystery: true,
         mysteryType: 'pack',
-        cardCount: 3,
+        cardCount: 1,
     },
     {
         id: 'mystery-slab',
