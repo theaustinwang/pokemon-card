@@ -39,6 +39,9 @@ const CONDITION_COLORS = {
 const TYPE_EMOJI = {
     'fire': '🔥', 'water': '💧', 'grass': '🌿', 'electric': '⚡',
     'psychic': '🔮', 'normal': '◻️', 'fighting': '👊', 'dark': '🌑',
+    'dragon': '🐉', 'fairy': '🧚', 'steel': '⚙️', 'ice': '❄️',
+    'poison': '☠️', 'ground': '⛰️', 'flying': '🕊️', 'bug': '🐛',
+    'rock': '🪨', 'ghost': '👻',
 };
 
 // ========== Data ==========
@@ -211,11 +214,15 @@ function deleteCard(id) {
 }
 
 function resetAllCards() {
-    if (!confirm('Reset ALL cards to default values? This cannot be undone!')) return;
+    if (!confirm('Reset ALL cards and mystery products to default values? This cannot be undone!')) return;
     cards = JSON.parse(JSON.stringify(defaultCardData));
     localStorage.removeItem('pokemart-mystery-stock');
+    localStorage.removeItem('pokemart-mystery-prices');
     saveCards();
     renderTable();
+    mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
+    saveMysteryProducts();
+    renderMysteryTable();
 }
 
 // ========== Add Modal ==========
@@ -275,6 +282,123 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
 });
 
+// ========== Mystery Product Management ==========
+const defaultMysteryData = [
+    {
+        id: 'mystery-pack',
+        name: 'Mystery Pack',
+        setName: '??? Surprise ???',
+        setCode: 'MYST',
+        type: 'mystery',
+        rarity: 'mystery',
+        price: 24.99,
+        stock: 10,
+        condition: 'NM',
+        image: '',
+        description: '3 random cards from our inventory — could be a chase card!',
+        isMystery: true,
+        mysteryType: 'pack',
+        cardCount: 3,
+    },
+    {
+        id: 'mystery-slab',
+        name: 'Mystery PSA Slab',
+        setName: '??? Graded ???',
+        setCode: 'SLAB',
+        type: 'mystery',
+        rarity: 'ultra-rare',
+        price: 99.99,
+        stock: 5,
+        condition: 'NM',
+        image: '',
+        description: '1 PSA-graded card — guaranteed rare holo or better!',
+        isMystery: true,
+        mysteryType: 'slab',
+        cardCount: 1,
+    },
+];
+
+let mysteryProducts = [];
+
+function loadMysteryProducts() {
+    try {
+        const saved = localStorage.getItem('pokemart-mystery-stock');
+        if (saved) {
+            const stocks = JSON.parse(saved);
+            mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
+            mysteryProducts.forEach(m => {
+                if (stocks[m.id] !== undefined) m.stock = stocks[m.id];
+            });
+            return;
+        }
+    } catch { /* ignore */ }
+    mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
+}
+
+function saveMysteryProducts() {
+    const stocks = {};
+    const prices = {};
+    mysteryProducts.forEach(m => { 
+        stocks[m.id] = m.stock;
+        prices[m.id] = m.price;
+    });
+    localStorage.setItem('pokemart-mystery-stock', JSON.stringify(stocks));
+    localStorage.setItem('pokemart-mystery-prices', JSON.stringify(prices));
+    const el = document.getElementById('mysterySaveIndicator');
+    if (el) {
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2000);
+    }
+}
+
+function updateMysteryField(id, field, value) {
+    const m = mysteryProducts.find(p => p.id === id);
+    if (!m) return;
+    if (field === 'price') {
+        m.price = Math.max(0, parseFloat(value) || 0);
+    } else if (field === 'stock') {
+        m.stock = Math.max(0, parseInt(value) || 0);
+    }
+    saveMysteryProducts();
+    renderMysteryTable();
+}
+
+function renderMysteryTable() {
+    const tbody = document.getElementById('mysteryTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = mysteryProducts.map(m => {
+        const isPack = m.mysteryType === 'pack';
+        const iconClass = isPack ? 'pack-icon' : 'slab-icon';
+        const typeLabel = isPack ? 'Booster Pack' : 'PSA Slab';
+        return `
+            <tr>
+                <td>
+                    <div class="mystery-row-icon ${iconClass}"><span>?</span></div>
+                </td>
+                <td>
+                    <div class="row-name">${m.name}</div>
+                    <div class="row-set">${typeLabel} · ${m.cardCount} card${m.cardCount > 1 ? 's' : ''}</div>
+                </td>
+                <td>
+                    <div class="field-price">
+                        <span>$</span>
+                        <input type="number" step="0.01" min="0" value="${m.price}" 
+                               onchange="updateMysteryField('${m.id}', 'price', this.value)">
+                    </div>
+                </td>
+                <td>
+                    <div class="field-stock">
+                        <input type="number" min="0" value="${m.stock || 0}" 
+                               onchange="updateMysteryField('${m.id}', 'stock', this.value)">
+                    </div>
+                </td>
+                <td>${typeLabel}</td>
+                <td>${m.cardCount}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
 // ========== Init ==========
 if (!checkAuth()) {
     document.querySelector('.header').style.display = 'none';
@@ -282,6 +406,8 @@ if (!checkAuth()) {
 } else {
     document.getElementById('loginOverlay').classList.add('hidden');
     loadCards();
+    loadMysteryProducts();
     renderStats();
     renderTable();
+    renderMysteryTable();
 }

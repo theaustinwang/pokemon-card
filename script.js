@@ -92,6 +92,13 @@ function loadMysteryStock() {
                 if (stocks[m.id] !== undefined) m.stock = stocks[m.id];
             });
         }
+        const savedPrices = localStorage.getItem('pokemart-mystery-prices');
+        if (savedPrices) {
+            const prices = JSON.parse(savedPrices);
+            defaultMysteryData.forEach(m => {
+                if (prices[m.id] !== undefined) m.price = prices[m.id];
+            });
+        }
     } catch { /* ignore */ }
 }
 
@@ -99,6 +106,9 @@ function saveMysteryStock() {
     const stocks = {};
     defaultMysteryData.forEach(m => { stocks[m.id] = m.stock; });
     localStorage.setItem('pokemart-mystery-stock', JSON.stringify(stocks));
+    const prices = {};
+    defaultMysteryData.forEach(m => { prices[m.id] = m.price; });
+    localStorage.setItem('pokemart-mystery-prices', JSON.stringify(prices));
 }
 
 loadMysteryStock();

@@ -82,6 +82,7 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             overflow: hidden;
+            margin-bottom: 32px;
         }
 
         .admin-table-header {
@@ -125,6 +126,37 @@
             border-radius: 6px;
             object-fit: contain;
             background: linear-gradient(135deg, rgba(124,92,252,0.15), rgba(255,107,53,0.15));
+        }
+
+        .mystery-row-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+        .mystery-row-icon.pack-icon {
+            background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(59,130,246,0.2));
+            border: 1px solid rgba(6,182,212,0.3);
+        }
+        .mystery-row-icon.pack-icon span {
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .mystery-row-icon.slab-icon {
+            background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(239,68,68,0.2));
+            border: 1px solid rgba(245,158,11,0.3);
+        }
+        .mystery-row-icon.slab-icon span {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .row-name { font-weight: 600; }
@@ -399,6 +431,29 @@
                 </div>
             </div>
 
+            <!-- Mystery Products Section -->
+            <div class="admin-table-wrap">
+                <div class="admin-table-header">
+                    <h3>🎲 Mystery Products</h3>
+                    <span class="saved-indicator" id="mysterySaveIndicator">✅ Auto-saved</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Type</th>
+                                <th>Cards</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mysteryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -433,6 +488,16 @@
                         <option value="normal">◻️ Normal</option>
                         <option value="fighting">👊 Fighting</option>
                         <option value="dark">🌑 Dark</option>
+                        <option value="dragon">🐉 Dragon</option>
+                        <option value="fairy">🧚 Fairy</option>
+                        <option value="steel">⚙️ Steel</option>
+                        <option value="ice">❄️ Ice</option>
+                        <option value="poison">☠️ Poison</option>
+                        <option value="ground">⛰️ Ground</option>
+                        <option value="flying">🕊️ Flying</option>
+                        <option value="bug">🐛 Bug</option>
+                        <option value="rock">🪨 Rock</option>
+                        <option value="ghost">👻 Ghost</option>
                     </select>
                 </div>
                 <div class="form-group">
