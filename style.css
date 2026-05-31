@@ -1435,10 +1435,15 @@ input, select { font-family: inherit; }
 
     .search-box input { width: 150px; }
     .search-box input:focus { width: 200px; }
+
+    .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .mystery-question { font-size: 4rem; }
+    .pack-card-count { font-size: 0.75rem; padding: 4px 10px; }
 }
 
 @media (max-width: 768px) {
-    .header .container { height: 64px; }
+    .header .container { height: 64px; padding: 0 16px; }
+    .logo-text { font-size: 1.3rem; }
     .nav { display: none; }
     .mobile-menu-btn { display: flex; }
     .mobile-menu {
@@ -1469,28 +1474,130 @@ input, select { font-family: inherit; }
     .hero-content h1 { font-size: 2rem; }
     .hero-visual { height: 250px; }
     .hero-card { width: 90px; }
-    .product-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+
+    /* Filter bar: stack vertically, make chips scrollable */
+    .filter-bar .container { flex-direction: column; gap: 12px; align-items: stretch; }
+    .filter-scroll { overflow-x: auto; flex-wrap: nowrap; gap: 8px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+    .filter-chip { padding: 8px 16px; font-size: 0.8rem; white-space: nowrap; flex-shrink: 0; }
+    .sort-select select { width: 100%; }
+
+    /* Product cards */
+    .card-image-wrapper { height: 220px; }
+    .card-info { padding: 14px; }
+    .card-info h3 { font-size: 0.9rem; }
+    .card-set { font-size: 0.72rem; }
+    .card-price { font-size: 1.1rem; }
+    .card-bottom { flex-direction: row; gap: 8px; }
+    .add-to-cart-btn { padding: 8px 14px; font-size: 0.8rem; }
+
+    /* Mystery cards */
+    .mystery-img-wrap { height: 220px; }
+    .mystery-question { font-size: 3.5rem; }
+    .pack-crimp { height: 8px; }
+    .pack-card-count { font-size: 0.7rem; padding: 3px 8px; top: 8px; }
 
     .newsletter-card { flex-direction: column; padding: 32px; text-align: center; }
     .newsletter-form { flex-direction: column; }
     .newsletter-decor { font-size: 4rem; }
 
     .cart-sidebar { width: 100%; }
+
+    /* Section spacing */
+    .section-header { margin-bottom: 24px; }
+    .section-header h2 { font-size: 1.6rem; }
+    .products { padding: 40px 0; }
+    .container { padding: 0 16px; }
+
+    /* Checkout modal */
+    .modal { padding: 32px 24px; }
+    .modal h2 { font-size: 1.5rem; }
+    .reveal-cards { gap: 10px; }
+    .reveal-card { width: 80px; }
+
+    /* Admin table responsive */
+    .admin-table { font-size: 0.78rem; }
+    .admin-table th,
+    .admin-table td { padding: 10px 8px; }
+    .row-img { width: 36px; height: 50px; }
+    .field-price input { width: 60px; }
+    .field-stock input { width: 48px; }
+    .admin-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .admin-header h1 { font-size: 1.4rem; }
+
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+    .footer { padding: 40px 0 20px; }
 }
 
 @media (max-width: 480px) {
+    .hero { padding: 100px 0 40px; }
     .hero-content h1 { font-size: 1.6rem; }
+    .hero-content p { font-size: 0.85rem; }
     .hero-buttons { flex-direction: column; width: 100%; }
-    .hero-stats { gap: 20px; }
+    .hero-buttons .btn { width: 100%; justify-content: center; }
+    .hero-stats { gap: 20px; flex-wrap: wrap; }
     .hero-visual { height: 200px; }
     .hero-card { width: 70px; }
     .stat-number { font-size: 1.4rem; }
-    .product-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .card-info { padding: 12px; }
-    .card-info h3 { font-size: 0.85rem; }
+    .stat-label { font-size: 0.7rem; }
+
+    .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card-image-wrapper { height: 170px; }
+    .card-info { padding: 10px; }
+    .card-info h3 { font-size: 0.8rem; }
+    .card-set { font-size: 0.68rem; }
     .card-price { font-size: 1rem; }
-    .add-to-cart-btn { padding: 8px 12px; font-size: 0.75rem; }
-    .section-header h2 { font-size: 1.8rem; }
-    .filter-bar .container { flex-direction: column; align-items: stretch; }
+    .card-condition { font-size: 0.7rem; }
+    .card-stock { font-size: 0.7rem; }
+    .add-to-cart-btn { padding: 6px 10px; font-size: 0.72rem; }
+    .card-bottom { flex-direction: column; gap: 6px; align-items: stretch; }
+    .card-bottom .card-price { text-align: center; }
+    .add-to-cart-btn { justify-content: center; }
+
+    /* Mystery cards */
+    .mystery-img-wrap { height: 170px; }
+    .mystery-question { font-size: 2.8rem; }
+    .pack-card-count { font-size: 0.65rem; padding: 2px 6px; top: 6px; right: 6px; }
+    .pack-crimp { height: 6px; }
+
+    .section-header h2 { font-size: 1.5rem; }
+    .filter-chip { padding: 6px 12px; font-size: 0.75rem; }
+
     .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+    .footer-col p { max-width: 100%; }
+
+    /* Cart */
+    .cart-item { gap: 10px; }
+    .cart-item-image { width: 55px; height: 75px; }
+    .cart-item-info h4 { font-size: 0.85rem; }
+    .cart-item-actions { flex-direction: column; gap: 6px; align-items: flex-start; }
+    .cart-item-price { font-size: 0.9rem; }
+    .qty-control button { width: 28px; height: 28px; font-size: 0.9rem; }
+
+    /* Checkout */
+    .modal { padding: 24px 16px; }
+    .modal h2 { font-size: 1.3rem; }
+    .reveal-cards { flex-direction: column; align-items: center; }
+    .reveal-card { width: 100px; }
+
+    /* Admin */
+    .admin-table { font-size: 0.72rem; }
+    .admin-table th,
+    .admin-table td { padding: 8px 6px; }
+    .row-img { width: 28px; height: 38px; }
+    .field-price input { width: 50px; font-size: 0.72rem; }
+    .field-stock input { width: 40px; font-size: 0.72rem; }
+    .admin-header { gap: 8px; }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+    .product-grid { grid-template-columns: 1fr; gap: 12px; }
+    .card-image-wrapper { height: 200px; }
+    .mystery-img-wrap { height: 200px; }
+    .mystery-question { font-size: 3.5rem; }
+    .hero-content h1 { font-size: 1.4rem; }
+    .hero-visual { height: 160px; }
+    .hero-card { width: 60px; }
 }
