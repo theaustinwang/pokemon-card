@@ -1192,6 +1192,9 @@ input, select { font-family: inherit; }
     transition: opacity 0.15s ease;
     font-size: 0.5rem;
     vertical-align: middle;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
 }
 .footer-bottom:hover .admin-trigger,
 .admin-trigger:hover {
