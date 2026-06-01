@@ -12,17 +12,12 @@ const defaultCardData = [
     { id: 9,  name: "Flareon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "fire",      rarity: "ultra-rare", price: 299.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/146_hires.png", description: "Special Illustration Rare — Flareon blazing through volcanic terrain." },
     { id: 10, name: "Raging Bolt ex",    setName: "Prismatic Evolutions", setCode: "PRE", type: "dragon",    rarity: "ultra-rare", price: 179.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/166_hires.png", description: "Special Illustration Rare — Raging Bolt crackling with ancient fury." },
 
-    // --- Rare Holos (ex Cards) ---
-    { id: 11, name: "Eevee ex",          setName: "Prismatic Evolutions", setCode: "PRE", type: "normal",    rarity: "rare-holo",  price: 14.99,  stock: 6,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/75_hires.png", description: "Double Rare ex — Eevee ready to evolve into any form!" },
-    { id: 12, name: "Espeon ex",         setName: "Prismatic Evolutions", setCode: "PRE", type: "psychic",   rarity: "rare-holo",  price: 12.99,  stock: 5,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/34_hires.png", description: "Double Rare ex — Espeon with dazzling psychic powers." },
-    { id: 13, name: "Umbreon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "dark",      rarity: "rare-holo",  price: 29.99,  stock: 3,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/60_hires.png", description: "Double Rare ex — Umbreon stalking under the moonlight." },
-    { id: 14, name: "Sylveon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "fairy",     rarity: "rare-holo",  price: 15.99,  stock: 4,  condition: "LP", image: "https://images.pokemontcg.io/sv8pt5/41_hires.png", description: "Double Rare ex — Sylveon weaving ribbons of charm." },
-    { id: 15, name: "Leafeon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",     rarity: "rare-holo",  price: 11.99,  stock: 5,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/6_hires.png", description: "Double Rare ex — Leafeon harnessing nature's power." },
-    { id: 16, name: "Glaceon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "ice",       rarity: "rare-holo",  price: 13.99,  stock: 4,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/26_hires.png", description: "Double Rare ex — Glaceon freezing the battlefield solid." },
-    { id: 17, name: "Vaporeon ex",       setName: "Prismatic Evolutions", setCode: "PRE", type: "water",     rarity: "rare-holo",  price: 12.99,  stock: 5,  condition: "MP", image: "https://images.pokemontcg.io/sv8pt5/23_hires.png", description: "Double Rare ex — Vaporeon surging through tidal waves." },
-    { id: 18, name: "Jolteon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "electric",  rarity: "rare-holo",  price: 13.99,  stock: 4,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/30_hires.png", description: "Double Rare ex — Jolteon striking with lightning speed." },
-    { id: 19, name: "Flareon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "fire",      rarity: "rare-holo",  price: 14.99,  stock: 4,  condition: "LP", image: "https://images.pokemontcg.io/sv8pt5/14_hires.png", description: "Double Rare ex — Flareon burning bright with fiery passion." },
-    { id: 20, name: "Tyranitar ex",      setName: "Prismatic Evolutions", setCode: "PRE", type: "dark",      rarity: "rare-holo",  price: 16.99,  stock: 3,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/64_hires.png", description: "Double Rare ex — Tyranitar unleashing mountain-crushing power." },
+    // --- Hyper Rares (Gold Cards) ---
+    { id: 11, name: "Pikachu ex",         setName: "Prismatic Evolutions", setCode: "PRE", type: "electric",  rarity: "hyper-rare",  price: 349.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/179_hires.png", description: "Hyper Rare Gold — Pikachu ex gleaming in solid gold!" },
+    { id: 12, name: "Iron Leaves ex",     setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",     rarity: "hyper-rare",  price: 179.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/176_hires.png", description: "Hyper Rare Gold — Iron Leaves ex radiating verdant brilliance." },
+    { id: 13, name: "Walking Wake ex",    setName: "Prismatic Evolutions", setCode: "PRE", type: "water",     rarity: "hyper-rare",  price: 199.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/178_hires.png", description: "Hyper Rare Gold — Walking Wake ex surging with ancient power." },
+    { id: 14, name: "Teal Mask Ogerpon ex", setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",  rarity: "hyper-rare",  price: 149.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/177_hires.png", description: "Hyper Rare Gold — Teal Mask Ogerpon ex cloaked in golden leaves." },
+    { id: 15, name: "Terapagos ex",       setName: "Prismatic Evolutions", setCode: "PRE", type: "normal",    rarity: "hyper-rare",  price: 229.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/180_hires.png", description: "Hyper Rare Gold — Terapagos ex shining with stellar golden light." },
 
     { id: 29, name: "Iron Valiant ex",   setName: "Prismatic Evolutions", setCode: "PRE", type: "psychic",   rarity: "ultra-rare", price: 179.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/157_hires.png", description: "Special Illustration Rare — Iron Valiant, the futuristic warrior." },
 ];
@@ -354,7 +349,7 @@ function renderProducts() {
     
     productGrid.innerHTML = mysteryHTML + cards.map((card, index) => {
         const typeBadgeClass = `badge-${card.type}`;
-        const starCount = card.rarity === 'ultra-rare' ? '⭐⭐⭐' : card.rarity === 'rare-holo' ? '⭐⭐' : '⭐';
+        const starCount = card.rarity === 'hyper-rare' ? '👑⭐⭐⭐' : card.rarity === 'ultra-rare' ? '⭐⭐⭐' : card.rarity === 'rare-holo' ? '⭐⭐' : '⭐';
         const condition = card.condition || 'NM';
         const condColor = CONDITION_COLORS[condition] || '#22c55e';
         const condLabel = CONDITION_LABELS[condition] || 'Near Mint';
