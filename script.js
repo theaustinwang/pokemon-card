@@ -193,56 +193,69 @@ function toggleWishlist(id) {
 }
 
 function renderWishlist() {
-    const wishlistBar = document.getElementById('wishlistBar');
-    const wishlistScroll = document.getElementById('wishlistScroll');
-    const wishlistCount = document.getElementById('wishlistCount');
+    const wishlistBtnCount = document.getElementById('wishlistBtnCount');
+    const wishlistDropdownItems = document.getElementById('wishlistDropdownItems');
 
-    if (!wishlistBar || !wishlistScroll || !wishlistCount) return;
+    if (!wishlistBtnCount || !wishlistDropdownItems) return;
 
-    wishlistCount.textContent = wishlist.length;
-
-    if (wishlist.length === 0) {
-        wishlistBar.style.display = 'none';
-        return;
+    // Update badge count
+    if (wishlist.length > 0) {
+        wishlistBtnCount.style.display = 'flex';
+        wishlistBtnCount.textContent = wishlist.length;
+    } else {
+        wishlistBtnCount.style.display = 'none';
     }
-
-    wishlistBar.style.display = 'block';
 
     const wishlistedCards = cardData.filter(c => wishlist.includes(c.id));
 
-    wishlistScroll.innerHTML = wishlistedCards.map(card => {
+    if (wishlistedCards.length === 0) {
+        wishlistDropdownItems.innerHTML = '<p class="wishlist-dropdown-empty">No wishlisted cards yet</p>';
+        return;
+    }
+
+    wishlistDropdownItems.innerHTML = wishlistedCards.map(card => {
         const stock = card.stock ?? 0;
         const outOfStock = stock <= 0;
-        const typeBadgeClass = `badge-${card.type}`;
 
         return `
-        <div class="wishlist-item" data-id="${card.id}">
-            <button class="wishlist-remove-btn" onclick="toggleWishlist(${card.id}); event.stopPropagation();" title="Remove from wishlist">✕</button>
-            <div class="wishlist-item-img">
-                <img src="${card.image}" alt="${card.name}" loading="lazy"
-                     onerror="this.src='data:image/svg+xml,${generatePlaceholder(card.id)}'">
+        <div class="wishlist-dropdown-item">
+            <img class="wishlist-dropdown-item-img" src="${card.image}" alt="${card.name}" loading="lazy"
+                 onerror="this.src='data:image/svg+xml,${generatePlaceholder(card.id)}'">
+            <div class="wishlist-dropdown-item-info">
+                <h5>${card.name}</h5>
+                <p class="set">${card.setName}</p>
+                <span class="price">$${card.price.toFixed(2)}</span>
             </div>
-            <div class="wishlist-item-info">
-                <h4>${card.name}</h4>
-                <p class="wishlist-item-set">${card.setName}</p>
-                <span class="wishlist-item-price">$${card.price.toFixed(2)}</span>
-            </div>
-            <button class="wishlist-add-cart-btn" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''} title="${outOfStock ? 'Sold Out' : 'Add to cart'}">
-                🛒
-            </button>
+            <button class="wishlist-dropdown-remove" onclick="toggleWishlist(${card.id}); event.stopPropagation();" title="Remove">✕</button>
+            <button class="wishlist-dropdown-add" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''} title="${outOfStock ? 'Sold Out' : 'Add to cart'}">🛒</button>
         </div>`;
     }).join('');
 }
 
-function toggleWishlistBar() {
-    const wishlistScroll = document.getElementById('wishlistScroll');
-    if (!wishlistScroll) return;
-    if (wishlistScroll.style.display === 'none') {
-        wishlistScroll.style.display = 'flex';
-    } else {
-        wishlistScroll.style.display = 'none';
-    }
+// Toggle wishlist dropdown
+function toggleWishlistDropdown(e) {
+    e.stopPropagation();
+    const wrapper = document.getElementById('wishlistDropdownWrapper');
+    if (!wrapper) return;
+    wrapper.classList.toggle('open');
 }
+
+// Close wishlist dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('wishlistDropdownWrapper');
+    if (!wrapper) return;
+    if (!wrapper.contains(e.target)) {
+        wrapper.classList.remove('open');
+    }
+});
+
+// Close wishlist dropdown on Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const wrapper = document.getElementById('wishlistDropdownWrapper');
+        if (wrapper) wrapper.classList.remove('open');
+    }
+});
 
 // ========== Purchase Tracking (for Best Sellers) ==========
 let purchaseLog = loadPurchases();
