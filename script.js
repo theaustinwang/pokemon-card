@@ -189,6 +189,59 @@ function toggleWishlist(id) {
     }
     saveWishlist();
     renderProducts();
+    renderWishlist();
+}
+
+function renderWishlist() {
+    const wishlistBar = document.getElementById('wishlistBar');
+    const wishlistScroll = document.getElementById('wishlistScroll');
+    const wishlistCount = document.getElementById('wishlistCount');
+
+    if (!wishlistBar || !wishlistScroll || !wishlistCount) return;
+
+    wishlistCount.textContent = wishlist.length;
+
+    if (wishlist.length === 0) {
+        wishlistBar.style.display = 'none';
+        return;
+    }
+
+    wishlistBar.style.display = 'block';
+
+    const wishlistedCards = cardData.filter(c => wishlist.includes(c.id));
+
+    wishlistScroll.innerHTML = wishlistedCards.map(card => {
+        const stock = card.stock ?? 0;
+        const outOfStock = stock <= 0;
+        const typeBadgeClass = `badge-${card.type}`;
+
+        return `
+        <div class="wishlist-item" data-id="${card.id}">
+            <button class="wishlist-remove-btn" onclick="toggleWishlist(${card.id}); event.stopPropagation();" title="Remove from wishlist">✕</button>
+            <div class="wishlist-item-img">
+                <img src="${card.image}" alt="${card.name}" loading="lazy"
+                     onerror="this.src='data:image/svg+xml,${generatePlaceholder(card.id)}'">
+            </div>
+            <div class="wishlist-item-info">
+                <h4>${card.name}</h4>
+                <p class="wishlist-item-set">${card.setName}</p>
+                <span class="wishlist-item-price">$${card.price.toFixed(2)}</span>
+            </div>
+            <button class="wishlist-add-cart-btn" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''} title="${outOfStock ? 'Sold Out' : 'Add to cart'}">
+                🛒
+            </button>
+        </div>`;
+    }).join('');
+}
+
+function toggleWishlistBar() {
+    const wishlistScroll = document.getElementById('wishlistScroll');
+    if (!wishlistScroll) return;
+    if (wishlistScroll.style.display === 'none') {
+        wishlistScroll.style.display = 'flex';
+    } else {
+        wishlistScroll.style.display = 'none';
+    }
 }
 
 // ========== Purchase Tracking (for Best Sellers) ==========
@@ -845,6 +898,7 @@ checkoutModal.addEventListener('click', function(e) {
 
 // ========== Initialize ==========
 renderProducts();
+renderWishlist();
 updateCartUI();
 
 console.log('⚡ PokéMart ready! Browse our collection of premium Pokémon cards.');
