@@ -430,6 +430,29 @@ function renderMysteryTable() {
     }).join('');
 }
 
+// ========== Exchange Rate ==========
+function updateExchangeRate(value) {
+    const rate = Math.max(0.01, parseFloat(value) || 0.79);
+    localStorage.setItem('pokemart-exchange-rate', rate.toString());
+    const el = document.getElementById('exchangeRateSaved');
+    if (el) {
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2000);
+    }
+}
+
+function loadExchangeRateUI() {
+    const input = document.getElementById('exchangeRateInput');
+    if (!input) return;
+    try {
+        const saved = localStorage.getItem('pokemart-exchange-rate');
+        if (saved) input.value = saved;
+    } catch { /* ignore */ }
+}
+
+// Expose to global scope
+window.updateExchangeRate = updateExchangeRate;
+
 // ========== Init ==========
 if (!checkAuth()) {
     document.querySelector('.header').style.display = 'none';
@@ -438,6 +461,7 @@ if (!checkAuth()) {
     document.getElementById('loginOverlay').classList.add('hidden');
     loadCards();
     loadMysteryProducts();
+    loadExchangeRateUI();
     renderStats();
     renderTable();
     renderMysteryTable();

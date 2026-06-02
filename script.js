@@ -198,6 +198,35 @@ let cart = loadCart();
 let activeFilter = 'all';
 let currentSort = 'default';
 let searchTerm = '';
+let currency = loadCurrency();
+let exchangeRate = loadExchangeRate();
+
+function loadCurrency() {
+    try {
+        return localStorage.getItem('pokemart-currency') || 'USD';
+    } catch { return 'USD'; }
+}
+
+function saveCurrency() {
+    localStorage.setItem('pokemart-currency', currency);
+}
+
+function loadExchangeRate() {
+    try {
+        return parseFloat(localStorage.getItem('pokemart-exchange-rate')) || 0.79;
+    } catch { return 0.79; }
+}
+
+function formatPrice(price) {
+    if (currency === 'GBP') {
+        return '£' + (price * exchangeRate).toFixed(2);
+    }
+    return '$' + price.toFixed(2);
+}
+
+function getCurrencySymbol() {
+    return currency === 'GBP' ? '£' : '$';
+}
 
 // ========== Cart Persistence ==========
 function loadCart() {
@@ -275,7 +304,7 @@ function renderWishlist() {
                 <h5>${card.name}</h5>
                 <p class="set">${card.setName}</p>
                 <p class="wishlist-stock-summary">${stockSummary}</p>
-                <span class="price">$${card.price.toFixed(2)}</span>
+                <span class="price">${formatPrice(card.price)}</span>
             </div>
             <button class="wishlist-dropdown-remove" onclick="toggleWishlist(${card.id}); event.stopPropagation();" title="Remove">✕</button>
             <button class="wishlist-dropdown-add" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''} title="${outOfStock ? 'Sold Out' : 'Add to cart'}">🛒</button>
@@ -443,7 +472,7 @@ function renderProducts() {
                         <br>${m.description}
                     </p>
                     <div class="card-bottom">
-                        <span class="card-price">$${m.price.toFixed(2)}</span>
+                        <span class="card-price">${formatPrice(m.price)}</span>
                         <button class="add-to-cart-btn ${isPack ? 'pack-add-btn' : 'mystery-add-btn slab-add-btn'}" onclick="addToCart('${m.id}'); event.stopPropagation();" ${outOfStock ? 'disabled' : ''}>
                             <span>🎲</span> ${outOfStock ? 'Sold Out' : 'Add'}
                         </button>
@@ -509,7 +538,7 @@ function renderProducts() {
                         ${condPills ? `<span class="card-stock">${condPills}</span>` : ''}
                     </p>
                     <div class="card-bottom">
-                        <span class="card-price">$${card.price.toFixed(2)}</span>
+                        <span class="card-price">${formatPrice(card.price)}</span>
                         <button class="add-to-cart-btn" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''}>
                             <span>🛒</span> ${outOfStock ? 'Sold Out' : 'Add'}
                         </button>
@@ -655,6 +684,17 @@ function clearCart() {
     updateCartUI();
 }
 
+function setCurrency(newCurrency) {
+    currency = newCurrency;
+    saveCurrency();
+    // Reload exchange rate from admin in case it changed
+    exchangeRate = loadExchangeRate();
+    updateCartUI();
+    renderProducts();
+    renderWishlist();
+    showToast(`Currency set to ${currency === 'GBP' ? '£ Pounds' : '$ Dollars'}`);
+}
+
 function getCartTotal() {
     return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
@@ -667,6 +707,10 @@ function updateCartUI() {
         cartCount.classList.add('bump');
         setTimeout(() => cartCount.classList.remove('bump'), 400);
     }
+    
+    // Sync currency selector
+    const cartCurrency = document.getElementById('cartCurrency');
+    if (cartCurrency) cartCurrency.value = currency;
     
     if (cart.length === 0) {
         cartItems.innerHTML = '<p class="cart-empty">Your cart is empty</p>';
@@ -696,7 +740,7 @@ function updateCartUI() {
                             <span>${item.quantity}</span>
                             <button onclick="updateQuantity('${item.cartKey || item.id}', 1)">+</button>
                         </div>
-                        <span class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</span>
+                        <span class="cart-item-price">${formatPrice(item.price * item.quantity)}</span>
                     </div>
                 </div>
                 <button class="cart-item-remove" onclick="removeFromCart('${item.cartKey || item.id}')">Remove</button>
@@ -704,7 +748,7 @@ function updateCartUI() {
         }).join('');
         
         cartFooter.style.display = 'flex';
-        cartTotal.textContent = `$${getCartTotal().toFixed(2)}`;
+        cartTotal.textContent = formatPrice(getCartTotal());
     }
 }
 
@@ -786,7 +830,7 @@ function checkout() {
         detailsHTML += normalItems.map(item => `
             <div class="order-card">
                 <span>${item.quantity}× ${item.name}</span>
-                <span style="margin-left:auto;font-weight:600;">$${(item.price * item.quantity).toFixed(2)}</span>
+                <span style="margin-left:auto;font-weight:600;">${formatPrice(item.price * item.quantity)}</span>
             </div>
         `).join('');
     }
@@ -794,7 +838,7 @@ function checkout() {
     modalDetails.innerHTML = detailsHTML + `
         <div class="cart-total" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
             <span>Total Paid</span>
-            <span>$${getCartTotal().toFixed(2)}</span>
+            <span>${formatPrice(getCartTotal())}</span>
         </div>
     `;
     

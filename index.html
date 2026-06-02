@@ -235,6 +235,13 @@
                 <span>Total</span>
                 <span id="cartTotal">$0.00</span>
             </div>
+            <div class="cart-currency">
+                <label for="cartCurrency">Pay with:</label>
+                <select id="cartCurrency" onchange="setCurrency(this.value)">
+                    <option value="USD">$ US Dollars</option>
+                    <option value="GBP">£ Pounds</option>
+                </select>
+            </div>
             <button class="btn btn-primary btn-block" onclick="checkout()">
                 Proceed to Checkout
             </button>
