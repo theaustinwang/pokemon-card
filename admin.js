@@ -47,28 +47,47 @@ const TYPE_EMOJI = {
 // ========== Data ==========
 const defaultCardData = [
     // --- Ultra Rares (Special Illustration Rares & Gold Cards) ---
-    { id: 1,  name: "Eevee ex",          setName: "Prismatic Evolutions", setCode: "PRE", type: "normal",    rarity: "ultra-rare", price: 249.99, stock: 1,  condition: "NM",  image: "https://images.pokemontcg.io/sv8pt5/167_hires.png", description: "Special Illustration Rare — the star of Prismatic Evolutions!" },
-    { id: 2,  name: "Umbreon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "dark",      rarity: "ultra-rare", price: 1299.99, stock: 1, condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/161_hires.png", description: "The ultimate chase card — Moonbreon returns in stunning SIR art." },
-    { id: 3,  name: "Espeon ex",         setName: "Prismatic Evolutions", setCode: "PRE", type: "psychic",   rarity: "ultra-rare", price: 399.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/155_hires.png", description: "Special Illustration Rare — radiant Espeon bathed in sunlight." },
-    { id: 4,  name: "Sylveon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "fairy",     rarity: "ultra-rare", price: 499.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/156_hires.png", description: "Special Illustration Rare — enchanting Sylveon in a floral paradise." },
-    { id: 5,  name: "Leafeon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",     rarity: "ultra-rare", price: 349.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/144_hires.png", description: "Special Illustration Rare — Leafeon basking in a sunlit meadow." },
-    { id: 6,  name: "Glaceon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "ice",       rarity: "ultra-rare", price: 329.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/150_hires.png", description: "Special Illustration Rare — Glaceon shimmering in icy wonderland." },
-    { id: 7,  name: "Vaporeon ex",       setName: "Prismatic Evolutions", setCode: "PRE", type: "water",     rarity: "ultra-rare", price: 379.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/149_hires.png", description: "Special Illustration Rare — Vaporeon swimming through crystal waters." },
-    { id: 8,  name: "Jolteon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "electric",  rarity: "ultra-rare", price: 289.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/153_hires.png", description: "Special Illustration Rare — Jolteon crackling with electric energy." },
-    { id: 9,  name: "Flareon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "fire",      rarity: "ultra-rare", price: 299.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/146_hires.png", description: "Special Illustration Rare — Flareon blazing through volcanic terrain." },
-    { id: 10, name: "Raging Bolt ex",    setName: "Prismatic Evolutions", setCode: "PRE", type: "dragon",    rarity: "ultra-rare", price: 179.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/166_hires.png", description: "Special Illustration Rare — Raging Bolt crackling with ancient fury." },
+    { id: 1,  name: "Eevee ex",          setName: "Prismatic Evolutions", setCode: "PRE", type: "normal",    rarity: "ultra-rare", price: 249.99, stocks: { NM: 1 },  image: "https://images.pokemontcg.io/sv8pt5/167_hires.png", description: "Special Illustration Rare — the star of Prismatic Evolutions!" },
+    { id: 2,  name: "Umbreon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "dark",      rarity: "ultra-rare", price: 1299.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/161_hires.png", description: "The ultimate chase card — Moonbreon returns in stunning SIR art." },
+    { id: 3,  name: "Espeon ex",         setName: "Prismatic Evolutions", setCode: "PRE", type: "psychic",   rarity: "ultra-rare", price: 399.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/155_hires.png", description: "Special Illustration Rare — radiant Espeon bathed in sunlight." },
+    { id: 4,  name: "Sylveon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "fairy",     rarity: "ultra-rare", price: 499.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/156_hires.png", description: "Special Illustration Rare — enchanting Sylveon in a floral paradise." },
+    { id: 5,  name: "Leafeon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",     rarity: "ultra-rare", price: 349.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/144_hires.png", description: "Special Illustration Rare — Leafeon basking in a sunlit meadow." },
+    { id: 6,  name: "Glaceon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "ice",       rarity: "ultra-rare", price: 329.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/150_hires.png", description: "Special Illustration Rare — Glaceon shimmering in icy wonderland." },
+    { id: 7,  name: "Vaporeon ex",       setName: "Prismatic Evolutions", setCode: "PRE", type: "water",     rarity: "ultra-rare", price: 379.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/149_hires.png", description: "Special Illustration Rare — Vaporeon swimming through crystal waters." },
+    { id: 8,  name: "Jolteon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "electric",  rarity: "ultra-rare", price: 289.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/153_hires.png", description: "Special Illustration Rare — Jolteon crackling with electric energy." },
+    { id: 9,  name: "Flareon ex",        setName: "Prismatic Evolutions", setCode: "PRE", type: "fire",      rarity: "ultra-rare", price: 299.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/146_hires.png", description: "Special Illustration Rare — Flareon blazing through volcanic terrain." },
+    { id: 10, name: "Raging Bolt ex",    setName: "Prismatic Evolutions", setCode: "PRE", type: "dragon",    rarity: "ultra-rare", price: 179.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/166_hires.png", description: "Special Illustration Rare — Raging Bolt crackling with ancient fury." },
 
     // --- Hyper Rares (Gold Cards) ---
-    { id: 11, name: "Pikachu ex",         setName: "Prismatic Evolutions", setCode: "PRE", type: "electric",  rarity: "hyper-rare",  price: 349.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/179_hires.png", description: "Hyper Rare Gold — Pikachu ex gleaming in solid gold!" },
-    { id: 12, name: "Iron Leaves ex",     setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",     rarity: "hyper-rare",  price: 179.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/176_hires.png", description: "Hyper Rare Gold — Iron Leaves ex radiating verdant brilliance." },
-    { id: 13, name: "Walking Wake ex",    setName: "Prismatic Evolutions", setCode: "PRE", type: "water",     rarity: "hyper-rare",  price: 199.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/178_hires.png", description: "Hyper Rare Gold — Walking Wake ex surging with ancient power." },
-    { id: 14, name: "Teal Mask Ogerpon ex", setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",  rarity: "hyper-rare",  price: 149.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/177_hires.png", description: "Hyper Rare Gold — Teal Mask Ogerpon ex cloaked in golden leaves." },
-    { id: 15, name: "Terapagos ex",       setName: "Prismatic Evolutions", setCode: "PRE", type: "normal",    rarity: "hyper-rare",  price: 229.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/180_hires.png", description: "Hyper Rare Gold — Terapagos ex shining with stellar golden light." },
+    { id: 11, name: "Pikachu ex",         setName: "Prismatic Evolutions", setCode: "PRE", type: "electric",  rarity: "hyper-rare",  price: 349.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/179_hires.png", description: "Hyper Rare Gold — Pikachu ex gleaming in solid gold!" },
+    { id: 12, name: "Iron Leaves ex",     setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",     rarity: "hyper-rare",  price: 179.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/176_hires.png", description: "Hyper Rare Gold — Iron Leaves ex radiating verdant brilliance." },
+    { id: 13, name: "Walking Wake ex",    setName: "Prismatic Evolutions", setCode: "PRE", type: "water",     rarity: "hyper-rare",  price: 199.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/178_hires.png", description: "Hyper Rare Gold — Walking Wake ex surging with ancient power." },
+    { id: 14, name: "Teal Mask Ogerpon ex", setName: "Prismatic Evolutions", setCode: "PRE", type: "grass",  rarity: "hyper-rare",  price: 149.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/177_hires.png", description: "Hyper Rare Gold — Teal Mask Ogerpon ex cloaked in golden leaves." },
+    { id: 15, name: "Terapagos ex",       setName: "Prismatic Evolutions", setCode: "PRE", type: "normal",    rarity: "hyper-rare",  price: 229.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/180_hires.png", description: "Hyper Rare Gold — Terapagos ex shining with stellar golden light." },
 
-    { id: 29, name: "Iron Valiant ex",   setName: "Prismatic Evolutions", setCode: "PRE", type: "psychic",   rarity: "ultra-rare", price: 179.99,  stock: 1,  condition: "NM", image: "https://images.pokemontcg.io/sv8pt5/157_hires.png", description: "Special Illustration Rare — Iron Valiant, the futuristic warrior." },
+    { id: 29, name: "Iron Valiant ex",   setName: "Prismatic Evolutions", setCode: "PRE", type: "psychic",   rarity: "ultra-rare", price: 179.99,  stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sv8pt5/157_hires.png", description: "Special Illustration Rare — Iron Valiant, the futuristic warrior." },
 ];
 
 let cards = [];
+
+const CONDITION_ORDER = ['NM', 'LP', 'MP', 'HP', 'DMG'];
+
+function getTotalStock(card) {
+    if (!card.stocks || typeof card.stocks !== 'object') return 0;
+    return Object.values(card.stocks).reduce((s, v) => s + (v || 0), 0);
+}
+
+function migrateCardData(card) {
+    if (card.stocks && typeof card.stocks === 'object') return;
+    const oldStock = card.stock ?? 0;
+    const oldCondition = card.condition || 'NM';
+    card.stocks = {};
+    if (oldStock > 0) {
+        card.stocks[oldCondition] = oldStock;
+    }
+    delete card.stock;
+    delete card.condition;
+}
 
 function loadCards() {
     try {
@@ -76,7 +95,11 @@ function loadCards() {
         if (saved) {
             cards = JSON.parse(saved);
             const now = Date.now();
-            cards.forEach(c => { if (!c.lastRestocked) c.lastRestocked = now; });
+            cards.forEach(c => { 
+                if (!c.lastRestocked) c.lastRestocked = now;
+                migrateCardData(c);
+            });
+            localStorage.setItem('pokemart-cards', JSON.stringify(cards));
             return;
         }
     } catch { /* ignore */ }
@@ -101,11 +124,19 @@ function showSaved() {
 // ========== Render ==========
 function renderStats() {
     const totalCards = cards.length;
-    const totalStock = cards.reduce((s, c) => s + (c.stock || 0), 0);
-    const totalValue = cards.reduce((s, c) => s + (c.price || 0) * (c.stock || 0), 0);
-    const outOfStock = cards.filter(c => (c.stock || 0) === 0).length;
+    const totalStock = cards.reduce((s, c) => s + getTotalStock(c), 0);
+    const totalValue = cards.reduce((s, c) => s + (c.price || 0) * getTotalStock(c), 0);
+    const outOfStock = cards.filter(c => getTotalStock(c) === 0).length;
     const condCounts = {};
-    cards.forEach(c => { const cond = c.condition || 'NM'; condCounts[cond] = (condCounts[cond] || 0) + 1; });
+    cards.forEach(c => { 
+        if (c.stocks) {
+            for (const cond of CONDITION_ORDER) {
+                if (c.stocks[cond] && c.stocks[cond] > 0) {
+                    condCounts[cond] = (condCounts[cond] || 0) + 1;
+                }
+            }
+        }
+    });
     const topCond = Object.entries(condCounts).sort((a, b) => b[1] - a[1])[0] || ['NM', 0];
 
     document.getElementById('statsRow').innerHTML = `
@@ -135,9 +166,21 @@ function renderStats() {
 function renderTable() {
     const tbody = document.getElementById('adminTableBody');
     tbody.innerHTML = cards.map(c => {
-        const condColor = CONDITION_COLORS[c.condition] || '#22c55e';
-        const condLabel = CONDITION_LABELS[c.condition] || 'Near Mint';
         const imgSrc = c.image || '';
+        const totalStock = getTotalStock(c);
+        
+        // Build condition stock inputs
+        const stockInputs = CONDITION_ORDER.map(cond => {
+            const val = (c.stocks && c.stocks[cond]) ? c.stocks[cond] : 0;
+            const condColor = CONDITION_COLORS[cond] || '#22c55e';
+            return `
+                <div class="cond-stock-row">
+                    <span class="cond-stock-label" style="color:${condColor}">${cond}</span>
+                    <input type="number" min="0" value="${val}" 
+                           onchange="updateField(${c.id}, 'stock_${cond}', this.value)">
+                </div>`;
+        }).join('');
+        
         return `
             <tr>
                 <td>
@@ -156,20 +199,10 @@ function renderTable() {
                 </td>
                 <td>
                     <div class="field-stock">
-                        <input type="number" min="0" value="${c.stock || 0}" 
-                               onchange="updateField(${c.id}, 'stock', this.value)">
+                        ${stockInputs}
                     </div>
                 </td>
-                <td>
-                    <div class="field-condition">
-                        <select onchange="updateField(${c.id}, 'condition', this.value)">
-                            ${['NM','LP','MP','HP','DMG'].map(cond => 
-                                `<option value="${cond}" ${c.condition === cond ? 'selected' : ''}>${CONDITION_LABELS[cond]}</option>`
-                            ).join('')}
-                        </select>
-                        <span class="cond-dot" style="background:${condColor};display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:8px;vertical-align:middle;"></span>
-                    </div>
-                </td>
+                <td>${totalStock}</td>
                 <td>
                     <button class="delete-btn" onclick="deleteCard(${c.id})" title="Delete">🗑️</button>
                 </td>
@@ -184,14 +217,14 @@ function updateField(id, field, value) {
     
     if (field === 'price') {
         card.price = Math.max(0, parseFloat(value) || 0);
-    } else if (field === 'stock') {
-        const oldStock = card.stock || 0;
-        card.stock = Math.max(0, parseInt(value) || 0);
-        if (oldStock === 0 && card.stock > 0) {
+    } else if (field.startsWith('stock_')) {
+        const cond = field.replace('stock_', '');
+        if (!card.stocks) card.stocks = {};
+        const oldStock = card.stocks[cond] || 0;
+        card.stocks[cond] = Math.max(0, parseInt(value) || 0);
+        if (oldStock === 0 && card.stocks[cond] > 0) {
             card.lastRestocked = Date.now();
         }
-    } else if (field === 'condition') {
-        card.condition = value;
     }
     
     saveCards();
@@ -244,6 +277,13 @@ function saveCard() {
 
     const id = Date.now();
     const now = Date.now();
+    const condition = document.getElementById('modalCondition').value;
+    const stock = Math.max(0, parseInt(document.getElementById('modalStock').value) || 0);
+    const stocks = {};
+    if (stock > 0) {
+        stocks[condition] = stock;
+    }
+    
     cards.push({
         id: id,
         name: name,
@@ -252,8 +292,7 @@ function saveCard() {
         type: document.getElementById('modalType').value,
         rarity: document.getElementById('modalRarity').value,
         price: Math.max(0, parseFloat(document.getElementById('modalPrice').value) || 0),
-        stock: Math.max(0, parseInt(document.getElementById('modalStock').value) || 0),
-        condition: document.getElementById('modalCondition').value,
+        stocks: stocks,
         image: document.getElementById('modalImage').value.trim(),
         description: document.getElementById('modalDesc').value.trim() || 'No description.',
         lastRestocked: now,
