@@ -333,38 +333,102 @@ input, select { font-family: inherit; }
     color: var(--text-muted);
 }
 
-/* Hero Visual */
+/* Hero Visual — Top 3 Most Expensive */
 .hero-visual {
     flex: 1;
     position: relative;
-    height: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    min-height: 440px;
 }
 
-.hero-card {
+.top-cards-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.top-cards-grid {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.top-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    width: 150px;
+    transition: var(--transition);
+    position: relative;
+    animation: fadeInUp 0.5s ease backwards;
+}
+.top-card:nth-child(1) { animation-delay: 0.1s; }
+.top-card:nth-child(2) { animation-delay: 0.2s; }
+.top-card:nth-child(3) { animation-delay: 0.3s; }
+
+.top-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(124,92,252,0.4);
+    box-shadow: 0 8px 30px rgba(124,92,252,0.15);
+}
+
+.top-card-medal {
     position: absolute;
-    width: 140px;
-    border-radius: 12px;
+    top: -12px;
+    left: -8px;
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+
+.top-card img {
+    width: 100px;
+    height: 135px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(124,92,252,0.1), rgba(255,107,53,0.1));
+}
+
+.top-card-info {
+    text-align: center;
+}
+
+.top-card-name {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    animation: float 6s ease-in-out infinite;
+    text-overflow: ellipsis;
+    max-width: 130px;
 }
 
-.hero-card img { width: 100%; }
-
-.orbit-card-1 { top: 10%; left: 10%; animation-delay: 0s; z-index: 3; }
-.orbit-card-2 { top: 50%; right: 5%; transform: translateY(-50%); animation-delay: -2s; z-index: 2; }
-.orbit-card-3 { bottom: 10%; left: 25%; animation-delay: -4s; z-index: 1; }
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+.top-card-price {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-top: 2px;
 }
 
-.orbit-card-2 { animation-name: float2; }
-
-@keyframes float2 {
-    0%, 100% { transform: translateY(-50%) translateX(0); }
-    50% { transform: translateY(-50%) translateX(-10px); }
+.top-cards-empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 40px;
 }
 
 .hero-center-glow {
@@ -377,6 +441,13 @@ input, select { font-family: inherit; }
     background: radial-gradient(circle, rgba(124,92,252,0.2) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
+    z-index: 0;
+}
+
+.top-cards-title,
+.top-cards-grid {
+    position: relative;
+    z-index: 1;
 }
 
 .hero-wave { position: absolute; bottom: -2px; left: 0; right: 0; }
@@ -1703,8 +1774,9 @@ input, select { font-family: inherit; }
     .hero-content { display: flex; flex-direction: column; align-items: center; }
     .hero-content p { max-width: 100%; }
     .hero-stats { justify-content: center; }
-    .hero-visual { width: 100%; height: 320px; }
-    .hero-card { width: 110px; }
+    .hero-visual { width: 100%; min-height: 320px; }
+    .top-card { width: 140px; }
+    .top-card img { width: 90px; height: 120px; }
     .hero-content h1 { font-size: 2.5rem; }
 
     .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -1748,8 +1820,10 @@ input, select { font-family: inherit; }
     .search-box { display: none; }
     .hero { padding: 110px 0 50px; }
     .hero-content h1 { font-size: 2rem; }
-    .hero-visual { height: 250px; }
-    .hero-card { width: 90px; }
+    .hero-visual { min-height: 250px; }
+    .top-card { width: 120px; padding: 12px; }
+    .top-card img { width: 75px; height: 100px; }
+    .top-cards-title { font-size: 1rem; }
     .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
 
     /* Filter bar: stack vertically, make chips scrollable */
@@ -1816,8 +1890,12 @@ input, select { font-family: inherit; }
     .hero-buttons { flex-direction: column; width: 100%; }
     .hero-buttons .btn { width: 100%; justify-content: center; }
     .hero-stats { gap: 20px; flex-wrap: wrap; }
-    .hero-visual { height: 200px; }
-    .hero-card { width: 70px; }
+    .hero-visual { min-height: 200px; }
+    .top-card { width: 100px; padding: 10px; gap: 4px; }
+    .top-card img { width: 65px; height: 88px; }
+    .top-card-name { font-size: 0.75rem; max-width: 90px; }
+    .top-card-price { font-size: 0.95rem; }
+    .top-cards-title { font-size: 0.9rem; }
     .stat-number { font-size: 1.4rem; }
     .stat-label { font-size: 0.7rem; }
 
@@ -1882,6 +1960,9 @@ input, select { font-family: inherit; }
     .mystery-img-wrap { height: 200px; }
     .mystery-question { font-size: 3.5rem; }
     .hero-content h1 { font-size: 1.4rem; }
-    .hero-visual { height: 160px; }
-    .hero-card { width: 60px; }
+    .hero-visual { min-height: 160px; }
+    .top-card { width: 90px; padding: 8px; gap: 2px; }
+    .top-card img { width: 55px; height: 75px; }
+    .top-card-name { font-size: 0.7rem; max-width: 80px; }
+    .top-card-price { font-size: 0.85rem; }
 }

@@ -1044,9 +1044,41 @@ checkoutModal.addEventListener('click', function(e) {
     if (e.target === this) closeCheckout();
 });
 
+// ========== Top 3 Most Expensive Cards ==========
+function renderTopCards() {
+    const grid = document.getElementById('topCardsGrid');
+    if (!grid) return;
+
+    // Get top 3 by price (only cards with stock > 0)
+    const sorted = cardData
+        .filter(c => getTotalStock(c) > 0)
+        .sort((a, b) => b.price - a.price)
+        .slice(0, 3);
+
+    if (sorted.length === 0) {
+        grid.innerHTML = '<p class="top-cards-empty">No cards in stock yet</p>';
+        return;
+    }
+
+    const medals = ['🥇', '🥈', '🥉'];
+
+    grid.innerHTML = sorted.map((card, i) => `
+        <div class="top-card">
+            <span class="top-card-medal">${medals[i]}</span>
+            <img src="${card.image}" alt="${card.name}" loading="lazy"
+                 onerror="this.src='data:image/svg+xml,${generatePlaceholder(card.id)}'">
+            <div class="top-card-info">
+                <span class="top-card-name">${card.name}</span>
+                <span class="top-card-price">${formatPrice(card.price)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== Initialize ==========
 renderProducts();
 renderWishlist();
+renderTopCards();
 updateCartUI();
 
 console.log('⚡ PokéMart ready! Browse our collection of premium Pokémon cards.');
