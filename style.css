@@ -455,23 +455,22 @@ input, select { font-family: inherit; }
 
 /* ========== Lottery ========== */
 .lottery {
-    padding: 60px 0 20px;
-    background: linear-gradient(180deg, transparent 0%, rgba(245,158,11,0.03) 50%, transparent 100%);
+    padding: 40px 0 10px;
 }
 
 .lottery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-    max-width: 1000px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    max-width: 700px;
     margin: 0 auto;
 }
 
 .lottery-card {
     background: var(--bg-card);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
     text-align: center;
     transition: var(--transition);
     position: relative;
@@ -479,120 +478,87 @@ input, select { font-family: inherit; }
 }
 
 .lottery-card.jackpot-card {
-    border-color: rgba(245,158,11,0.4);
-    background: linear-gradient(135deg, rgba(245,158,11,0.06), rgba(255,204,2,0.03));
-}
-
-.lottery-card.jackpot-card::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: calc(var(--radius) + 2px);
-    background: linear-gradient(135deg, #f59e0b, #ffcc02, #f59e0b);
-    background-size: 200% 200%;
-    z-index: -1;
-    animation: lottery-glow 2s linear infinite;
-    opacity: 0.3;
+    border-color: rgba(245,158,11,0.35);
+    background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(255,204,2,0.02));
 }
 
 .lottery-card.instant-win-card {
-    border-color: rgba(168,85,247,0.4);
-    background: linear-gradient(135deg, rgba(168,85,247,0.06), rgba(236,72,153,0.03));
-}
-
-.lottery-card.instant-win-card::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: calc(var(--radius) + 2px);
-    background: linear-gradient(135deg, #7c5cfc, #ec4899, #7c5cfc);
-    background-size: 200% 200%;
-    z-index: -1;
-    animation: lottery-glow 2s linear infinite reverse;
-    opacity: 0.3;
-}
-
-@keyframes lottery-glow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    border-color: rgba(168,85,247,0.35);
+    background: linear-gradient(135deg, rgba(168,85,247,0.05), rgba(236,72,153,0.02));
 }
 
 .lottery-icon {
-    font-size: 4rem;
-    margin-bottom: 16px;
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    font-size: 2rem;
+    margin-bottom: 8px;
 }
 
 .lottery-card h3 {
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .lottery-card .lottery-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
-    margin-bottom: 16px;
-    line-height: 1.5;
+    margin-bottom: 10px;
+    line-height: 1.4;
 }
 
 .lottery-card .lottery-price {
-    font-size: 1.8rem;
-    font-weight: 800;
+    font-size: 1.3rem;
+    font-weight: 700;
     color: var(--secondary);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .lottery-card .lottery-tickets-sold {
-    font-size: 0.78rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .lottery-prize-info {
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
     text-align: left;
+    font-size: 0.72rem;
+    max-height: 140px;
+    overflow-y: auto;
 }
 
 .lottery-prize-info .prize-label {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
 }
 
 .lottery-prize-info .prize-detail {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text);
 }
 
 .jackpot-card .lottery-prize-info {
-    border-color: rgba(245,158,11,0.3);
-    background: rgba(245,158,11,0.05);
+    border-color: rgba(245,158,11,0.2);
+    background: rgba(245,158,11,0.03);
 }
 
 .instant-win-card .lottery-prize-info {
-    border-color: rgba(168,85,247,0.3);
-    background: rgba(168,85,247,0.05);
+    border-color: rgba(168,85,247,0.2);
+    background: rgba(168,85,247,0.03);
 }
 
 .lottery-card .btn {
     width: 100%;
     justify-content: center;
-    font-size: 1rem;
-    padding: 14px 28px;
+    font-size: 0.82rem;
+    padding: 10px 20px;
 }
 
 .lottery-card .btn:disabled {
@@ -604,39 +570,39 @@ input, select { font-family: inherit; }
 .jackpot-card .btn {
     background: linear-gradient(135deg, #f59e0b, #ef4444);
     color: white;
-    box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+    box-shadow: 0 4px 16px rgba(245,158,11,0.25);
 }
 
 .jackpot-card .btn:hover {
-    box-shadow: 0 8px 30px rgba(245,158,11,0.5);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(245,158,11,0.4);
+    transform: translateY(-1px);
 }
 
 .instant-win-card .btn {
     background: linear-gradient(135deg, #7c5cfc, #ec4899);
     color: white;
-    box-shadow: 0 4px 20px rgba(124,92,252,0.3);
+    box-shadow: 0 4px 16px rgba(124,92,252,0.25);
 }
 
 .instant-win-card .btn:hover {
-    box-shadow: 0 8px 30px rgba(124,92,252,0.5);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(124,92,252,0.4);
+    transform: translateY(-1px);
 }
 
 /* Lottery Result Modal */
 .lottery-result-modal {
-    max-width: 520px !important;
+    max-width: 440px !important;
 }
 
 .lottery-result-number {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 800;
-    letter-spacing: 4px;
-    padding: 20px;
+    letter-spacing: 3px;
+    padding: 14px;
     background: var(--bg-card);
     border: 2px solid var(--border);
     border-radius: var(--radius-sm);
-    margin: 16px 0;
+    margin: 12px 0;
     font-family: 'Courier New', monospace;
 }
 
@@ -653,17 +619,17 @@ input, select { font-family: inherit; }
 }
 
 .lottery-result-detail {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
-    margin-bottom: 16px;
-    line-height: 1.6;
+    margin-bottom: 10px;
+    line-height: 1.5;
 }
 
 .lottery-result-prize {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #4ade80;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .lottery-result-prize.consolation {
@@ -674,19 +640,19 @@ input, select { font-family: inherit; }
 .number-picker {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
     justify-content: center;
-    margin: 20px 0;
+    margin: 12px 0;
 }
 
 .number-picker input {
-    width: 160px;
+    width: 130px;
     background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
     color: var(--text);
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 700;
     text-align: center;
     font-family: 'Courier New', monospace;
@@ -700,13 +666,13 @@ input, select { font-family: inherit; }
 }
 
 .number-picker .random-btn {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: var(--bg-card);
     border: 1px solid var(--border);
     color: var(--text);
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -721,36 +687,67 @@ input, select { font-family: inherit; }
 
 .buy-ticket-info {
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     color: var(--text-muted);
-    line-height: 1.5;
-    margin-bottom: 8px;
+    line-height: 1.4;
+    margin-bottom: 6px;
 }
 
 .buy-ticket-info strong {
     color: var(--text);
 }
 
+/* Qty selector */
+.qty-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.qty-selector label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.qty-selector select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 32px 8px 12px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238888aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
 /* Lottery history */
 .lottery-history {
-    margin-top: 32px;
-    max-width: 1000px;
+    margin-top: 20px;
+    max-width: 700px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .lottery-history h4 {
-    font-size: 1rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     color: var(--text-muted);
 }
 
 .lottery-history-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-height: 300px;
+    gap: 4px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
@@ -758,24 +755,24 @@ input, select { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 6px 12px;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.85rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
 }
 
 .lottery-history-item .ticket-number {
     font-family: 'Courier New', monospace;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     letter-spacing: 1px;
 }
 
 .lottery-history-item .ticket-type {
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 4px;
+    font-size: 0.7rem;
+    padding: 1px 6px;
+    border-radius: 3px;
     font-weight: 600;
 }
 
@@ -783,7 +780,7 @@ input, select { font-family: inherit; }
 .ticket-type.instant { background: rgba(168,85,247,0.15); color: #a78bfa; }
 
 .lottery-history-item .ticket-result {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
@@ -794,8 +791,8 @@ input, select { font-family: inherit; }
 .lottery-history-empty {
     text-align: center;
     color: var(--text-muted);
-    padding: 20px;
-    font-size: 0.85rem;
+    padding: 12px;
+    font-size: 0.8rem;
 }
 
 /* Number wheel animation */
@@ -813,34 +810,34 @@ input, select { font-family: inherit; }
 @media (max-width: 768px) {
     .lottery-grid {
         grid-template-columns: 1fr;
-        max-width: 400px;
+        max-width: 360px;
     }
     .lottery-card {
-        padding: 24px;
+        padding: 16px;
     }
     .lottery-result-number {
-        font-size: 2.2rem;
+        font-size: 1.6rem;
         letter-spacing: 2px;
     }
 }
 
 @media (max-width: 480px) {
     .lottery-card {
-        padding: 20px;
+        padding: 14px;
     }
     .lottery-icon {
-        font-size: 3rem;
+        font-size: 1.6rem;
     }
     .lottery-card h3 {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
     }
     .lottery-card .lottery-price {
-        font-size: 1.4rem;
+        font-size: 1.1rem;
     }
     .number-picker input {
-        width: 130px;
-        font-size: 1.2rem;
-        padding: 10px 12px;
+        width: 110px;
+        font-size: 1rem;
+        padding: 8px 10px;
     }
 }
 

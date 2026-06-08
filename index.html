@@ -99,7 +99,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>🎰 <span class="gradient-text">Poké Lotto</span></h2>
-                <p>Buy a ticket, pick a number 1–99,999 — match the winning number for the jackpot!</p>
+                <p>Buy tickets, pick numbers 1–99,999 — match the winning number for the jackpot!</p>
             </div>
             <div class="lottery-grid" id="lotteryGrid">
                 <!-- Rendered by JS -->
@@ -233,8 +233,8 @@
             <div class="cart-currency">
                 <label for="cartCurrency">Pay with:</label>
                 <select id="cartCurrency" onchange="setCurrency(this.value)">
-                    <option value="USD">$ US Dollars</option>
                     <option value="GBP">£ Pounds</option>
+                    <option value="USD">$ US Dollars</option>
                 </select>
             </div>
             <button class="btn btn-primary btn-block" onclick="checkout()">
@@ -268,10 +268,10 @@
     <!-- Buy Ticket Modal -->
     <div class="modal-overlay" id="buyTicketModal">
         <div class="modal">
-            <h2 id="buyTicketTitle">🎫 Buy a Ticket</h2>
+            <h2 id="buyTicketTitle">🎫 Buy Tickets</h2>
             <div id="buyTicketContent"></div>
             <div class="modal-actions" style="display:flex;gap:12px;margin-top:24px;">
-                <button class="btn btn-primary" id="confirmBuyBtn" onclick="confirmBuyTicket()">Buy Ticket</button>
+                <button class="btn btn-primary" id="confirmBuyBtn" onclick="confirmBuyTicket()">Buy Tickets</button>
                 <button class="btn btn-outline" onclick="closeBuyTicket()">Cancel</button>
             </div>
         </div>

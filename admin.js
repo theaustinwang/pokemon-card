@@ -250,7 +250,7 @@ function resetAllCards() {
     mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
     saveMysteryProducts();
     renderMysteryTable();
-    lotteryConfig = { ...LOTTERY_DEFAULTS, instantWinPrizes: [...LOTTERY_DEFAULTS.instantWinPrizes] };
+    lotteryConfig = { ...LOTTERY_DEFAULTS, instantWinPrizes: LOTTERY_DEFAULTS.instantWinPrizes.map(p => ({...p})) };
     saveLotteryConfig(lotteryConfig);
     loadLotteryUI();
 }
@@ -495,18 +495,19 @@ function loadConditionMultipliersUI() {
 window.updateConditionMultiplier = updateConditionMultiplier;
 
 // ========== Lottery Admin Management ==========
+// instantWinPrizes: [{ number, prize }]
 const LOTTERY_DEFAULTS = {
-    jackpotTicketPrice: 4.99,
-    instantWinTicketPrice: 12.99,
+    jackpotTicketPrice: 3.99,
+    instantWinTicketPrice: 9.99,
     winningNumber: null,
-    jackpotPrize: '1× Mystery PSA Slab (worth $99.99)',
+    jackpotPrize: '£100 Cash Prize',
     instantWinPrizes: [
-        '1× Mystery Pack (worth $24.99)',
-        '1× Random Rare Holo Card',
-        '1× Random Ultra Rare Card',
-        '1× $10 Store Credit',
-        '1× Free Standard Ticket',
-        '1× Random Booster Pack',
+        { number: 777, prize: '£20 Cash Prize' },
+        { number: 7777, prize: '£50 Cash Prize' },
+        { number: 12345, prize: 'Pokémon Booster Box' },
+        { number: 50000, prize: '£25 Gift Voucher' },
+        { number: 88888, prize: 'Elite Trainer Box' },
+        { number: 11111, prize: 'Special Edition Playmat' },
     ],
 };
 
@@ -515,10 +516,17 @@ function loadLotteryConfig() {
         const saved = localStorage.getItem('pokemart-lottery-config');
         if (saved) {
             const config = JSON.parse(saved);
-            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || LOTTERY_DEFAULTS.instantWinPrizes };
+            // Migrate old string[] prizes to new {number, prize}[] format
+            if (config.instantWinPrizes && config.instantWinPrizes.length > 0 && typeof config.instantWinPrizes[0] === 'string') {
+                config.instantWinPrizes = config.instantWinPrizes.map((p, i) => ({
+                    number: 1000 + i * 1000,
+                    prize: p
+                }));
+            }
+            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || [...LOTTERY_DEFAULTS.instantWinPrizes] };
         }
     } catch { /* ignore */ }
-    return { ...LOTTERY_DEFAULTS, instantWinPrizes: [...LOTTERY_DEFAULTS.instantWinPrizes] };
+    return { ...LOTTERY_DEFAULTS, instantWinPrizes: LOTTERY_DEFAULTS.instantWinPrizes.map(p => ({...p})) };
 }
 
 function saveLotteryConfig(config) {
@@ -573,20 +581,34 @@ function renderPrizePoolList() {
     if (!list) return;
 
     const prizes = lotteryConfig.instantWinPrizes || [];
-    list.innerHTML = prizes.map((prize, i) => `
+    list.innerHTML = prizes.map((p, i) => `
         <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:0.75rem;color:var(--text-muted);min-width:20px;">${i + 1}.</span>
-            <input type="text" value="${prize.replace(/"/g, '&quot;')}" 
-                   style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.82rem;outline:none;"
-                   onchange="updateLotteryPrize(${i}, this.value)">
+            <span style="font-size:0.7rem;color:var(--text-muted);min-width:18px;">${i + 1}.</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);min-width:50px;">Number:</span>
+            <input type="number" value="${p.number}" min="1" max="99999"
+                   style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:0.78rem;outline:none;font-family:'Courier New',monospace;"
+                   onchange="updateLotteryPrizeNumber(${i}, this.value)">
+            <span style="font-size:0.7rem;color:var(--text-muted);min-width:40px;">Prize:</span>
+            <input type="text" value="${p.prize.replace(/"/g, '&quot;')}" 
+                   style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.78rem;outline:none;"
+                   onchange="updateLotteryPrizeName(${i}, this.value)">
             <button class="delete-btn" onclick="removeLotteryPrize(${i})" title="Remove prize">🗑️</button>
         </div>
     `).join('');
 }
 
-function updateLotteryPrize(index, value) {
+function updateLotteryPrizeNumber(index, value) {
     if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
-    lotteryConfig.instantWinPrizes[index] = value.trim();
+    const num = parseInt(value);
+    if (!isNaN(num) && num >= 1 && num <= 99999) {
+        lotteryConfig.instantWinPrizes[index].number = num;
+        saveLotteryConfig(lotteryConfig);
+    }
+}
+
+function updateLotteryPrizeName(index, value) {
+    if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
+    lotteryConfig.instantWinPrizes[index].prize = value.trim();
     saveLotteryConfig(lotteryConfig);
 }
 
@@ -598,7 +620,11 @@ function removeLotteryPrize(index) {
 
 function addLotteryPrize() {
     if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
-    lotteryConfig.instantWinPrizes.push('New Prize');
+    // Generate a random unused number
+    const used = new Set(lotteryConfig.instantWinPrizes.map(p => p.number));
+    let num;
+    do { num = Math.floor(Math.random() * 99999) + 1; } while (used.has(num));
+    lotteryConfig.instantWinPrizes.push({ number: num, prize: 'New Prize' });
     saveLotteryConfig(lotteryConfig);
     renderPrizePoolList();
 }
@@ -606,7 +632,8 @@ function addLotteryPrize() {
 // Expose to global scope
 window.updateLotterySetting = updateLotterySetting;
 window.randomWinningNumber = randomWinningNumber;
-window.updateLotteryPrize = updateLotteryPrize;
+window.updateLotteryPrizeNumber = updateLotteryPrizeNumber;
+window.updateLotteryPrizeName = updateLotteryPrizeName;
 window.removeLotteryPrize = removeLotteryPrize;
 window.addLotteryPrize = addLotteryPrize;
 

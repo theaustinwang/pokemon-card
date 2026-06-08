@@ -228,8 +228,8 @@ let exchangeRate = loadExchangeRate();
 
 function loadCurrency() {
     try {
-        return localStorage.getItem('pokemart-currency') || 'USD';
-    } catch { return 'USD'; }
+        return localStorage.getItem('pokemart-currency') || 'GBP';
+    } catch { return 'GBP'; }
 }
 
 function saveCurrency() {
@@ -1124,18 +1124,19 @@ function renderTopCards() {
 }
 
 // ========== Lottery System ==========
+// instantWinPrizes: [{ number, prize }] — each prize tied to a specific number
 const LOTTERY_DEFAULTS = {
-    jackpotTicketPrice: 4.99,
-    instantWinTicketPrice: 12.99,
-    winningNumber: null, // null = no winning number set yet (admin sets this)
-    jackpotPrize: "1× Mystery PSA Slab (worth $99.99)",
+    jackpotTicketPrice: 3.99,
+    instantWinTicketPrice: 9.99,
+    winningNumber: null,
+    jackpotPrize: "£100 Cash Prize",
     instantWinPrizes: [
-        "1× Mystery Pack (worth $24.99)",
-        "1× Random Rare Holo Card",
-        "1× Random Ultra Rare Card",
-        "1× $10 Store Credit",
-        "1× Free Standard Ticket",
-        "1× Random Booster Pack",
+        { number: 777, prize: "£20 Cash Prize" },
+        { number: 7777, prize: "£50 Cash Prize" },
+        { number: 12345, prize: "Pokémon Booster Box" },
+        { number: 50000, prize: "£25 Gift Voucher" },
+        { number: 88888, prize: "Elite Trainer Box" },
+        { number: 11111, prize: "Special Edition Playmat" },
     ],
 };
 
@@ -1144,10 +1145,17 @@ function loadLotteryConfig() {
         const saved = localStorage.getItem('pokemart-lottery-config');
         if (saved) {
             const config = JSON.parse(saved);
-            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || LOTTERY_DEFAULTS.instantWinPrizes };
+            // Migrate old string[] prizes to new {number, prize}[] format
+            if (config.instantWinPrizes && config.instantWinPrizes.length > 0 && typeof config.instantWinPrizes[0] === 'string') {
+                config.instantWinPrizes = config.instantWinPrizes.map((p, i) => ({
+                    number: 1000 + i * 1000,
+                    prize: p
+                }));
+            }
+            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || [...LOTTERY_DEFAULTS.instantWinPrizes] };
         }
     } catch { /* ignore */ }
-    return { ...LOTTERY_DEFAULTS, instantWinPrizes: [...LOTTERY_DEFAULTS.instantWinPrizes] };
+    return { ...LOTTERY_DEFAULTS, instantWinPrizes: LOTTERY_DEFAULTS.instantWinPrizes.map(p => ({...p})) };
 }
 
 function saveLotteryConfig(config) {
@@ -1169,28 +1177,18 @@ function saveLotteryTickets(tickets) {
 
 let lotteryTickets = loadLotteryTickets();
 
-// Count tickets per type
 function getTicketCount(type) {
     return lotteryTickets.filter(t => t.type === type).length;
 }
 
-// Get winning number (from config)
 function getWinningNumber() {
     return lotteryConfig.winningNumber;
 }
 
-// Check if a ticket is a winner
-function isWinningTicket(ticketNumber) {
-    const winNum = getWinningNumber();
-    if (winNum === null || winNum === undefined) return false;
-    return parseInt(ticketNumber) === parseInt(winNum);
-}
-
-// Get a random instant win prize
-function getRandomInstantWinPrize() {
-    const prizes = lotteryConfig.instantWinPrizes;
-    if (!prizes || prizes.length === 0) return 'No prizes available';
-    return prizes[Math.floor(Math.random() * prizes.length)];
+// Format a lottery price in pounds
+function formatLotteryPrice(usdPrice) {
+    const gbp = usdPrice * exchangeRate;
+    return '£' + gbp.toFixed(2);
 }
 
 // Render lottery section
@@ -1208,16 +1206,16 @@ function renderLottery() {
         <div class="lottery-card jackpot-card">
             <div class="lottery-icon">🎟️</div>
             <h3>Standard Ticket</h3>
-            <p class="lottery-subtitle">Pick a number 1–99,999.<br>Match the winning number to win the jackpot!</p>
-            <div class="lottery-price">${formatPrice(lotteryConfig.jackpotTicketPrice)}</div>
-            <p class="lottery-tickets-sold">${standardCount} ticket${standardCount !== 1 ? 's' : ''} sold</p>
+            <p class="lottery-subtitle">Pick numbers 1–99,999. Match the winning number for the jackpot!</p>
+            <div class="lottery-price">${formatLotteryPrice(lotteryConfig.jackpotTicketPrice)}</div>
+            <p class="lottery-tickets-sold">${standardCount} sold</p>
             <div class="lottery-prize-info">
                 <div class="prize-label">🏆 Jackpot Prize</div>
                 <div class="prize-detail">${lotteryConfig.jackpotPrize}</div>
-                ${hasWinningNumber ? `<div class="prize-label" style="margin-top:8px;">🎯 Winning Number</div><div class="prize-detail" style="font-size:1.2rem;font-family:'Courier New',monospace;letter-spacing:2px;color:#ffcc02;">#${String(winNum).padStart(5, '0')}</div>` : '<div class="prize-label" style="margin-top:8px;color:#ef4444;">⚠️ Winning number not yet set</div>'}
+                ${hasWinningNumber ? `<div class="prize-label" style="margin-top:6px;">🎯 Winning Number</div><div class="prize-detail" style="font-size:1rem;font-family:'Courier New',monospace;letter-spacing:2px;color:#ffcc02;">#${String(winNum).padStart(5, '0')}</div>` : '<div class="prize-label" style="margin-top:6px;color:#ef4444;">⚠️ No winning number set</div>'}
             </div>
             <button class="btn" onclick="openBuyTicket('standard')" ${!hasWinningNumber ? 'disabled' : ''}>
-                🎫 Buy Standard Ticket
+                🎫 Buy Tickets
             </button>
         </div>
 
@@ -1225,22 +1223,21 @@ function renderLottery() {
         <div class="lottery-card instant-win-card">
             <div class="lottery-icon">⚡</div>
             <h3>Instant Win Ticket</h3>
-            <p class="lottery-subtitle">Pick a number 1–99,999. If you miss the jackpot, you still win a prize from the pool below!</p>
-            <div class="lottery-price">${formatPrice(lotteryConfig.instantWinTicketPrice)}</div>
-            <p class="lottery-tickets-sold">${instantCount} ticket${instantCount !== 1 ? 's' : ''} sold</p>
+            <p class="lottery-subtitle">Higher chance! Each prize has its own number. Match any to win!</p>
+            <div class="lottery-price">${formatLotteryPrice(lotteryConfig.instantWinTicketPrice)}</div>
+            <p class="lottery-tickets-sold">${instantCount} sold</p>
             <div class="lottery-prize-info">
-                <div class="prize-label">🎁 Instant Win Prize Pool</div>
-                ${lotteryConfig.instantWinPrizes.map(p => `<div class="prize-detail" style="font-size:0.8rem;padding:3px 0;">• ${p}</div>`).join('')}
-                <div class="prize-label" style="margin-top:8px;">🏆 Also eligible for Jackpot</div>
+                <div class="prize-label">🎁 Instant Win Numbers</div>
+                ${(lotteryConfig.instantWinPrizes || []).map(p => `<div class="prize-detail" style="font-size:0.7rem;padding:1px 0;">#${String(p.number).padStart(5, '0')} → ${p.prize}</div>`).join('')}
+                <div class="prize-label" style="margin-top:6px;">🏆 Also eligible for Jackpot</div>
                 <div class="prize-detail">${lotteryConfig.jackpotPrize}</div>
             </div>
             <button class="btn" onclick="openBuyTicket('instant')" ${!hasWinningNumber ? 'disabled' : ''}>
-                ⚡ Buy Instant Win Ticket
+                ⚡ Buy Tickets
             </button>
         </div>
     `;
 
-    // Render history if there are tickets
     renderLotteryHistory();
 }
 
@@ -1264,10 +1261,10 @@ function renderLotteryHistory() {
         return;
     }
 
-    const sorted = [...lotteryTickets].reverse(); // newest first
+    const sorted = [...lotteryTickets].reverse();
 
     historyEl.innerHTML = `
-        <h4>📋 Your Ticket History (${lotteryTickets.length} total)</h4>
+        <h4>📋 Your Tickets (${lotteryTickets.length})</h4>
         <div class="lottery-history-list">
             ${sorted.map(t => {
                 let resultClass = '';
@@ -1277,18 +1274,18 @@ function renderLotteryHistory() {
                     resultText = '🏆 JACKPOT!';
                 } else if (t.result === 'consolation') {
                     resultClass = 'consolation';
-                    resultText = `🎁 ${t.prize || 'Instant Win Prize'}`;
+                    resultText = `🎁 ${t.prize || 'Instant Win'}`;
                 } else if (t.result === 'lost') {
                     resultClass = 'lost';
                     resultText = 'No win';
                 } else {
                     resultClass = '';
-                    resultText = 'Pending draw';
+                    resultText = 'Pending';
                 }
                 return `
                 <div class="lottery-history-item">
                     <span class="ticket-number">#${String(t.number).padStart(5, '0')}</span>
-                    <span class="ticket-type ${t.type}">${t.type === 'instant' ? '⚡ Instant' : '🎟️ Standard'}</span>
+                    <span class="ticket-type ${t.type}">${t.type === 'instant' ? '⚡ Instant' : '🎟️ Std'}</span>
                     <span class="ticket-result ${resultClass}">${resultText}</span>
                 </div>`;
             }).join('')}
@@ -1298,11 +1295,11 @@ function renderLotteryHistory() {
 
 // Buy ticket flow
 let pendingTicketType = null;
-let pendingTicketNumber = null;
+let pendingTicketQty = 1;
 
 function openBuyTicket(type) {
     pendingTicketType = type;
-    pendingTicketNumber = Math.floor(Math.random() * 99999) + 1;
+    pendingTicketQty = 1;
 
     const modal = document.getElementById('buyTicketModal');
     const title = document.getElementById('buyTicketTitle');
@@ -1313,139 +1310,160 @@ function openBuyTicket(type) {
     const typeLabel = type === 'instant' ? 'Instant Win' : 'Standard';
     const typeEmoji = type === 'instant' ? '⚡' : '🎟️';
 
-    title.textContent = `${typeEmoji} Buy ${typeLabel} Ticket`;
+    title.textContent = `${typeEmoji} Buy ${typeLabel} Tickets`;
     content.innerHTML = `
-        <p class="buy-ticket-info">Choose your lucky number between <strong>1</strong> and <strong>99,999</strong>.</p>
-        <div class="number-picker">
-            <button class="random-btn" onclick="randomizeTicketNumber()" title="Random number">🎲</button>
-            <input type="number" id="ticketNumberInput" min="1" max="99999" value="${pendingTicketNumber}" onchange="updatePendingNumber(this.value)">
-            <button class="random-btn" onclick="randomizeTicketNumber()" title="Random number">🎲</button>
+        <p class="buy-ticket-info">Numbers will be randomly assigned between <strong>1</strong> and <strong>99,999</strong>.</p>
+        <div class="qty-selector">
+            <label>How many tickets?</label>
+            <select id="ticketQtySelect" onchange="updatePendingQty(this.value)">
+                ${[1,2,3,5,10,20].map(n => `<option value="${n}" ${n === 1 ? 'selected' : ''}>${n}</option>`).join('')}
+            </select>
         </div>
-        <p class="buy-ticket-info">Price: <strong>${formatPrice(price)}</strong> per ticket</p>
-        ${type === 'instant' ? '<p class="buy-ticket-info" style="color:#a78bfa;">⚡ Guaranteed prize even if you miss the jackpot!</p>' : ''}
+        <p class="buy-ticket-info">Price per ticket: <strong>${formatLotteryPrice(price)}</strong></p>
+        <p class="buy-ticket-info" id="totalPriceInfo">Total: <strong>${formatLotteryPrice(price)}</strong></p>
+        ${type === 'instant' ? '<p class="buy-ticket-info" style="color:#a78bfa;">⚡ Each ticket checks against all instant win numbers!</p>' : '<p class="buy-ticket-info" style="color:#f59e0b;">Only the jackpot number wins. No consolation prizes.</p>'}
     `;
 
-    confirmBtn.textContent = `Pay ${formatPrice(price)} — Buy Ticket`;
+    confirmBtn.textContent = `Pay ${formatLotteryPrice(price)} — Buy`;
     modal.classList.add('open');
+}
+
+function updatePendingQty(val) {
+    pendingTicketQty = parseInt(val) || 1;
+    const price = pendingTicketType === 'instant' ? lotteryConfig.instantWinTicketPrice : lotteryConfig.jackpotTicketPrice;
+    const totalEl = document.getElementById('totalPriceInfo');
+    const confirmBtn = document.getElementById('confirmBuyBtn');
+    if (totalEl) totalEl.innerHTML = `Total: <strong>${formatLotteryPrice(price * pendingTicketQty)}</strong>`;
+    if (confirmBtn) confirmBtn.textContent = `Pay ${formatLotteryPrice(price * pendingTicketQty)} — Buy`;
 }
 
 function closeBuyTicket() {
     document.getElementById('buyTicketModal').classList.remove('open');
     pendingTicketType = null;
-    pendingTicketNumber = null;
+    pendingTicketQty = 1;
 }
-
-function updatePendingNumber(value) {
-    let num = parseInt(value);
-    if (isNaN(num) || num < 1) num = 1;
-    if (num > 99999) num = 99999;
-    pendingTicketNumber = num;
-    document.getElementById('ticketNumberInput').value = num;
-}
-
-function randomizeTicketNumber() {
-    pendingTicketNumber = Math.floor(Math.random() * 99999) + 1;
-    document.getElementById('ticketNumberInput').value = pendingTicketNumber;
-}
-
-// Expose to global scope
-window.openBuyTicket = openBuyTicket;
-window.closeBuyTicket = closeBuyTicket;
-window.updatePendingNumber = updatePendingNumber;
-window.randomizeTicketNumber = randomizeTicketNumber;
 
 function confirmBuyTicket() {
-    if (!pendingTicketType || !pendingTicketNumber) return;
+    if (!pendingTicketType) return;
 
-    const input = document.getElementById('ticketNumberInput');
-    if (input) {
-        const val = parseInt(input.value);
-        if (isNaN(val) || val < 1 || val > 99999) {
-            showToast('❌ Please enter a number between 1 and 99,999!');
-            return;
-        }
-        pendingTicketNumber = val;
-    }
-
-    // Check if this number is already taken
-    const existing = lotteryTickets.find(t => t.number === pendingTicketNumber);
-    if (existing) {
-        showToast('❌ That number has already been picked! Choose another.');
-        return;
-    }
-
-    const ticket = {
-        id: Date.now(),
-        type: pendingTicketType,
-        number: pendingTicketNumber,
-        purchasedAt: Date.now(),
-        result: null, // 'jackpot', 'consolation', 'lost'
-        prize: null,
-    };
-
-    // Determine result immediately
+    const qty = pendingTicketQty || 1;
+    const type = pendingTicketType;
     const winNum = getWinningNumber();
-    if (winNum !== null && winNum !== undefined) {
-        if (ticket.number === parseInt(winNum)) {
-            ticket.result = 'jackpot';
-            ticket.prize = lotteryConfig.jackpotPrize;
-        } else if (pendingTicketType === 'instant') {
-            ticket.result = 'consolation';
-            ticket.prize = getRandomInstantWinPrize();
-        } else {
-            ticket.result = 'lost';
-        }
+    const instantPrizes = lotteryConfig.instantWinPrizes || [];
+    const results = [];
+
+    // Generate unique numbers
+    const usedNumbers = new Set(lotteryTickets.map(t => t.number));
+    const generatedNumbers = [];
+
+    for (let i = 0; i < qty; i++) {
+        let num;
+        let attempts = 0;
+        do {
+            num = Math.floor(Math.random() * 99999) + 1;
+            attempts++;
+            if (attempts > 1000) {
+                showToast('❌ Could not generate unique numbers. Try fewer tickets.');
+                return;
+            }
+        } while (usedNumbers.has(num) || generatedNumbers.includes(num));
+        generatedNumbers.push(num);
+        usedNumbers.add(num);
     }
 
-    lotteryTickets.push(ticket);
-    saveLotteryTickets(lotteryTickets);
+    // Create and evaluate each ticket
+    generatedNumbers.forEach(num => {
+        const ticket = {
+            id: Date.now() + Math.random(),
+            type: type,
+            number: num,
+            purchasedAt: Date.now(),
+            result: null,
+            prize: null,
+        };
 
+        if (winNum !== null && winNum !== undefined) {
+            if (ticket.number === parseInt(winNum)) {
+                ticket.result = 'jackpot';
+                ticket.prize = lotteryConfig.jackpotPrize;
+            } else if (type === 'instant') {
+                // Check against all instant win prize numbers
+                const matchedPrize = instantPrizes.find(p => p.number === ticket.number);
+                if (matchedPrize) {
+                    ticket.result = 'consolation';
+                    ticket.prize = matchedPrize.prize;
+                } else {
+                    ticket.result = 'lost';
+                }
+            } else {
+                ticket.result = 'lost';
+            }
+        }
+
+        lotteryTickets.push(ticket);
+        results.push(ticket);
+    });
+
+    saveLotteryTickets(lotteryTickets);
     closeBuyTicket();
     renderLottery();
 
-    // Show result modal
-    showLotteryResult(ticket);
+    // Show results
+    showLotteryResults(results, type);
 }
 
-function showLotteryResult(ticket) {
+function showLotteryResults(tickets, type) {
     const modal = document.getElementById('lotteryResultModal');
     const title = document.getElementById('lotteryResultTitle');
     const content = document.getElementById('lotteryResultContent');
 
-    const numStr = String(ticket.number).padStart(5, '0');
     const winNum = getWinningNumber();
     const winNumStr = winNum !== null ? String(winNum).padStart(5, '0') : '?????';
+    const jackpotWinner = tickets.find(t => t.result === 'jackpot');
+    const consolationWins = tickets.filter(t => t.result === 'consolation');
+    const losers = tickets.filter(t => t.result === 'lost');
 
     let resultHTML = '';
-    if (ticket.result === 'jackpot') {
+    if (jackpotWinner) {
         title.innerHTML = '🏆 JACKPOT WINNER!';
         resultHTML = `
             <div class="lottery-spinning">
-                <div class="lottery-result-number win">#${numStr}</div>
+                <div class="lottery-result-number win">#${String(jackpotWinner.number).padStart(5, '0')}</div>
             </div>
-            <p class="lottery-result-detail">🎉 Your number matches the winning number <strong>#${winNumStr}</strong>!</p>
-            <p class="lottery-result-prize">🏆 ${ticket.prize}</p>
-            <p class="lottery-result-detail">Congratulations! You've won the grand prize!</p>
+            <p class="lottery-result-detail">🎉 Matches winning number <strong>#${winNumStr}</strong>!</p>
+            <p class="lottery-result-prize">🏆 ${jackpotWinner.prize}</p>
         `;
-    } else if (ticket.result === 'consolation') {
+        if (tickets.length > 1) {
+            resultHTML += `<p class="lottery-result-detail">${tickets.length - 1} other ticket${tickets.length > 2 ? 's' : ''} didn't win.</p>`;
+        }
+    } else if (consolationWins.length > 0) {
         title.innerHTML = '🎁 Instant Win!';
-        resultHTML = `
+        resultHTML = consolationWins.map(t => `
             <div class="lottery-spinning">
-                <div class="lottery-result-number">#${numStr}</div>
+                <div class="lottery-result-number">#${String(t.number).padStart(5, '0')}</div>
             </div>
-            <p class="lottery-result-detail">The winning number is <strong>#${winNumStr}</strong> — not a match this time.</p>
-            <p class="lottery-result-prize consolation">🎁 ${ticket.prize}</p>
-            <p class="lottery-result-detail">But your Instant Win ticket guarantees a prize! Enjoy!</p>
-        `;
+            <p class="lottery-result-detail">Winning number is <strong>#${winNumStr}</strong></p>
+            <p class="lottery-result-prize consolation">🎁 ${t.prize}</p>
+        `).join('<hr style="border-color:var(--border);margin:12px 0;">');
+        if (losers.length > 0) {
+            resultHTML += `<p class="lottery-result-detail">${losers.length} other ticket${losers.length > 1 ? 's' : ''} didn't win.</p>`;
+        }
     } else {
         title.innerHTML = '😔 Better Luck Next Time';
-        resultHTML = `
+        resultHTML = tickets.length === 1
+            ? `
             <div class="lottery-spinning">
-                <div class="lottery-result-number">#${numStr}</div>
+                <div class="lottery-result-number">#${String(tickets[0].number).padStart(5, '0')}</div>
             </div>
-            <p class="lottery-result-detail">The winning number is <strong>#${winNumStr}</strong></p>
-            <p class="lottery-result-detail">Your number didn't match. Try again with another ticket!</p>
-        `;
+            <p class="lottery-result-detail">Winning number is <strong>#${winNumStr}</strong></p>
+            <p class="lottery-result-detail">No match. Try again!</p>`
+            : `
+            <p class="lottery-result-detail">${tickets.length} tickets purchased. Winning number is <strong>#${winNumStr}</strong>.</p>
+            <p class="lottery-result-detail">None matched. Try again!</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:8px;">
+                ${tickets.slice(0, 20).map(t => `<span style="font-family:'Courier New',monospace;font-size:0.75rem;color:var(--text-muted);">#${String(t.number).padStart(5, '0')}</span>`).join(' ')}
+                ${tickets.length > 20 ? `<span style="font-size:0.7rem;color:var(--text-muted);">+${tickets.length - 20} more</span>` : ''}
+            </div>`;
     }
 
     content.innerHTML = resultHTML;
@@ -1457,6 +1475,9 @@ function closeLotteryResult() {
 }
 
 // Expose to global scope
+window.openBuyTicket = openBuyTicket;
+window.closeBuyTicket = closeBuyTicket;
+window.updatePendingQty = updatePendingQty;
 window.confirmBuyTicket = confirmBuyTicket;
 window.closeLotteryResult = closeLotteryResult;
 window.refreshLotteryConfig = refreshLotteryConfig;
@@ -1464,9 +1485,9 @@ window.refreshLotteryConfig = refreshLotteryConfig;
 // Refresh lottery config from localStorage (called when admin updates)
 function refreshLotteryConfig() {
     lotteryConfig = loadLotteryConfig();
-    // Re-check all pending tickets
-    let changed = false;
     const winNum = getWinningNumber();
+    const instantPrizes = lotteryConfig.instantWinPrizes || [];
+    let changed = false;
     lotteryTickets.forEach(t => {
         if (t.result === null && winNum !== null) {
             if (t.number === parseInt(winNum)) {
@@ -1474,8 +1495,13 @@ function refreshLotteryConfig() {
                 t.prize = lotteryConfig.jackpotPrize;
                 changed = true;
             } else if (t.type === 'instant') {
-                t.result = 'consolation';
-                t.prize = getRandomInstantWinPrize();
+                const matchedPrize = instantPrizes.find(p => p.number === t.number);
+                if (matchedPrize) {
+                    t.result = 'consolation';
+                    t.prize = matchedPrize.prize;
+                } else {
+                    t.result = 'lost';
+                }
                 changed = true;
             } else {
                 t.result = 'lost';
