@@ -1084,6 +1084,14 @@ checkoutModal.addEventListener('click', function(e) {
     if (e.target === this) closeCheckout();
 });
 
+// Close lottery modals on overlay click
+document.getElementById('lotteryResultModal').addEventListener('click', function(e) {
+    if (e.target === this) closeLotteryResult();
+});
+document.getElementById('buyTicketModal').addEventListener('click', function(e) {
+    if (e.target === this) closeBuyTicket();
+});
+
 // ========== Top 3 Most Expensive Cards ==========
 function renderTopCards() {
     const grid = document.getElementById('topCardsGrid');
@@ -1115,11 +1123,376 @@ function renderTopCards() {
     `).join('');
 }
 
+// ========== Lottery System ==========
+const LOTTERY_DEFAULTS = {
+    jackpotTicketPrice: 4.99,
+    instantWinTicketPrice: 12.99,
+    winningNumber: null, // null = no winning number set yet (admin sets this)
+    jackpotPrize: "1× Mystery PSA Slab (worth $99.99)",
+    instantWinPrizes: [
+        "1× Mystery Pack (worth $24.99)",
+        "1× Random Rare Holo Card",
+        "1× Random Ultra Rare Card",
+        "1× $10 Store Credit",
+        "1× Free Standard Ticket",
+        "1× Random Booster Pack",
+    ],
+};
+
+function loadLotteryConfig() {
+    try {
+        const saved = localStorage.getItem('pokemart-lottery-config');
+        if (saved) {
+            const config = JSON.parse(saved);
+            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || LOTTERY_DEFAULTS.instantWinPrizes };
+        }
+    } catch { /* ignore */ }
+    return { ...LOTTERY_DEFAULTS, instantWinPrizes: [...LOTTERY_DEFAULTS.instantWinPrizes] };
+}
+
+function saveLotteryConfig(config) {
+    localStorage.setItem('pokemart-lottery-config', JSON.stringify(config));
+}
+
+let lotteryConfig = loadLotteryConfig();
+
+function loadLotteryTickets() {
+    try {
+        const saved = localStorage.getItem('pokemart-lottery-tickets');
+        return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+}
+
+function saveLotteryTickets(tickets) {
+    localStorage.setItem('pokemart-lottery-tickets', JSON.stringify(tickets));
+}
+
+let lotteryTickets = loadLotteryTickets();
+
+// Count tickets per type
+function getTicketCount(type) {
+    return lotteryTickets.filter(t => t.type === type).length;
+}
+
+// Get winning number (from config)
+function getWinningNumber() {
+    return lotteryConfig.winningNumber;
+}
+
+// Check if a ticket is a winner
+function isWinningTicket(ticketNumber) {
+    const winNum = getWinningNumber();
+    if (winNum === null || winNum === undefined) return false;
+    return parseInt(ticketNumber) === parseInt(winNum);
+}
+
+// Get a random instant win prize
+function getRandomInstantWinPrize() {
+    const prizes = lotteryConfig.instantWinPrizes;
+    if (!prizes || prizes.length === 0) return 'No prizes available';
+    return prizes[Math.floor(Math.random() * prizes.length)];
+}
+
+// Render lottery section
+function renderLottery() {
+    const grid = document.getElementById('lotteryGrid');
+    if (!grid) return;
+
+    const standardCount = getTicketCount('standard');
+    const instantCount = getTicketCount('instant');
+    const winNum = getWinningNumber();
+    const hasWinningNumber = winNum !== null && winNum !== undefined;
+
+    grid.innerHTML = `
+        <!-- Standard Ticket -->
+        <div class="lottery-card jackpot-card">
+            <div class="lottery-icon">🎟️</div>
+            <h3>Standard Ticket</h3>
+            <p class="lottery-subtitle">Pick a number 1–99,999.<br>Match the winning number to win the jackpot!</p>
+            <div class="lottery-price">${formatPrice(lotteryConfig.jackpotTicketPrice)}</div>
+            <p class="lottery-tickets-sold">${standardCount} ticket${standardCount !== 1 ? 's' : ''} sold</p>
+            <div class="lottery-prize-info">
+                <div class="prize-label">🏆 Jackpot Prize</div>
+                <div class="prize-detail">${lotteryConfig.jackpotPrize}</div>
+                ${hasWinningNumber ? `<div class="prize-label" style="margin-top:8px;">🎯 Winning Number</div><div class="prize-detail" style="font-size:1.2rem;font-family:'Courier New',monospace;letter-spacing:2px;color:#ffcc02;">#${String(winNum).padStart(5, '0')}</div>` : '<div class="prize-label" style="margin-top:8px;color:#ef4444;">⚠️ Winning number not yet set</div>'}
+            </div>
+            <button class="btn" onclick="openBuyTicket('standard')" ${!hasWinningNumber ? 'disabled' : ''}>
+                🎫 Buy Standard Ticket
+            </button>
+        </div>
+
+        <!-- Instant Win Ticket -->
+        <div class="lottery-card instant-win-card">
+            <div class="lottery-icon">⚡</div>
+            <h3>Instant Win Ticket</h3>
+            <p class="lottery-subtitle">Pick a number 1–99,999. If you miss the jackpot, you still win a prize from the pool below!</p>
+            <div class="lottery-price">${formatPrice(lotteryConfig.instantWinTicketPrice)}</div>
+            <p class="lottery-tickets-sold">${instantCount} ticket${instantCount !== 1 ? 's' : ''} sold</p>
+            <div class="lottery-prize-info">
+                <div class="prize-label">🎁 Instant Win Prize Pool</div>
+                ${lotteryConfig.instantWinPrizes.map(p => `<div class="prize-detail" style="font-size:0.8rem;padding:3px 0;">• ${p}</div>`).join('')}
+                <div class="prize-label" style="margin-top:8px;">🏆 Also eligible for Jackpot</div>
+                <div class="prize-detail">${lotteryConfig.jackpotPrize}</div>
+            </div>
+            <button class="btn" onclick="openBuyTicket('instant')" ${!hasWinningNumber ? 'disabled' : ''}>
+                ⚡ Buy Instant Win Ticket
+            </button>
+        </div>
+    `;
+
+    // Render history if there are tickets
+    renderLotteryHistory();
+}
+
+function renderLotteryHistory() {
+    const grid = document.getElementById('lotteryGrid');
+    if (!grid) return;
+
+    let historyEl = document.getElementById('lotteryHistory');
+    if (!historyEl) {
+        historyEl = document.createElement('div');
+        historyEl.id = 'lotteryHistory';
+        historyEl.className = 'lottery-history';
+        grid.parentElement.appendChild(historyEl);
+    }
+
+    if (lotteryTickets.length === 0) {
+        historyEl.innerHTML = `
+            <h4>📋 Your Ticket History</h4>
+            <p class="lottery-history-empty">No tickets purchased yet. Try your luck!</p>
+        `;
+        return;
+    }
+
+    const sorted = [...lotteryTickets].reverse(); // newest first
+
+    historyEl.innerHTML = `
+        <h4>📋 Your Ticket History (${lotteryTickets.length} total)</h4>
+        <div class="lottery-history-list">
+            ${sorted.map(t => {
+                let resultClass = '';
+                let resultText = '';
+                if (t.result === 'jackpot') {
+                    resultClass = 'won';
+                    resultText = '🏆 JACKPOT!';
+                } else if (t.result === 'consolation') {
+                    resultClass = 'consolation';
+                    resultText = `🎁 ${t.prize || 'Instant Win Prize'}`;
+                } else if (t.result === 'lost') {
+                    resultClass = 'lost';
+                    resultText = 'No win';
+                } else {
+                    resultClass = '';
+                    resultText = 'Pending draw';
+                }
+                return `
+                <div class="lottery-history-item">
+                    <span class="ticket-number">#${String(t.number).padStart(5, '0')}</span>
+                    <span class="ticket-type ${t.type}">${t.type === 'instant' ? '⚡ Instant' : '🎟️ Standard'}</span>
+                    <span class="ticket-result ${resultClass}">${resultText}</span>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+// Buy ticket flow
+let pendingTicketType = null;
+let pendingTicketNumber = null;
+
+function openBuyTicket(type) {
+    pendingTicketType = type;
+    pendingTicketNumber = Math.floor(Math.random() * 99999) + 1;
+
+    const modal = document.getElementById('buyTicketModal');
+    const title = document.getElementById('buyTicketTitle');
+    const content = document.getElementById('buyTicketContent');
+    const confirmBtn = document.getElementById('confirmBuyBtn');
+
+    const price = type === 'instant' ? lotteryConfig.instantWinTicketPrice : lotteryConfig.jackpotTicketPrice;
+    const typeLabel = type === 'instant' ? 'Instant Win' : 'Standard';
+    const typeEmoji = type === 'instant' ? '⚡' : '🎟️';
+
+    title.textContent = `${typeEmoji} Buy ${typeLabel} Ticket`;
+    content.innerHTML = `
+        <p class="buy-ticket-info">Choose your lucky number between <strong>1</strong> and <strong>99,999</strong>.</p>
+        <div class="number-picker">
+            <button class="random-btn" onclick="randomizeTicketNumber()" title="Random number">🎲</button>
+            <input type="number" id="ticketNumberInput" min="1" max="99999" value="${pendingTicketNumber}" onchange="updatePendingNumber(this.value)">
+            <button class="random-btn" onclick="randomizeTicketNumber()" title="Random number">🎲</button>
+        </div>
+        <p class="buy-ticket-info">Price: <strong>${formatPrice(price)}</strong> per ticket</p>
+        ${type === 'instant' ? '<p class="buy-ticket-info" style="color:#a78bfa;">⚡ Guaranteed prize even if you miss the jackpot!</p>' : ''}
+    `;
+
+    confirmBtn.textContent = `Pay ${formatPrice(price)} — Buy Ticket`;
+    modal.classList.add('open');
+}
+
+function closeBuyTicket() {
+    document.getElementById('buyTicketModal').classList.remove('open');
+    pendingTicketType = null;
+    pendingTicketNumber = null;
+}
+
+function updatePendingNumber(value) {
+    let num = parseInt(value);
+    if (isNaN(num) || num < 1) num = 1;
+    if (num > 99999) num = 99999;
+    pendingTicketNumber = num;
+    document.getElementById('ticketNumberInput').value = num;
+}
+
+function randomizeTicketNumber() {
+    pendingTicketNumber = Math.floor(Math.random() * 99999) + 1;
+    document.getElementById('ticketNumberInput').value = pendingTicketNumber;
+}
+
+// Expose to global scope
+window.openBuyTicket = openBuyTicket;
+window.closeBuyTicket = closeBuyTicket;
+window.updatePendingNumber = updatePendingNumber;
+window.randomizeTicketNumber = randomizeTicketNumber;
+
+function confirmBuyTicket() {
+    if (!pendingTicketType || !pendingTicketNumber) return;
+
+    const input = document.getElementById('ticketNumberInput');
+    if (input) {
+        const val = parseInt(input.value);
+        if (isNaN(val) || val < 1 || val > 99999) {
+            showToast('❌ Please enter a number between 1 and 99,999!');
+            return;
+        }
+        pendingTicketNumber = val;
+    }
+
+    // Check if this number is already taken
+    const existing = lotteryTickets.find(t => t.number === pendingTicketNumber);
+    if (existing) {
+        showToast('❌ That number has already been picked! Choose another.');
+        return;
+    }
+
+    const ticket = {
+        id: Date.now(),
+        type: pendingTicketType,
+        number: pendingTicketNumber,
+        purchasedAt: Date.now(),
+        result: null, // 'jackpot', 'consolation', 'lost'
+        prize: null,
+    };
+
+    // Determine result immediately
+    const winNum = getWinningNumber();
+    if (winNum !== null && winNum !== undefined) {
+        if (ticket.number === parseInt(winNum)) {
+            ticket.result = 'jackpot';
+            ticket.prize = lotteryConfig.jackpotPrize;
+        } else if (pendingTicketType === 'instant') {
+            ticket.result = 'consolation';
+            ticket.prize = getRandomInstantWinPrize();
+        } else {
+            ticket.result = 'lost';
+        }
+    }
+
+    lotteryTickets.push(ticket);
+    saveLotteryTickets(lotteryTickets);
+
+    closeBuyTicket();
+    renderLottery();
+
+    // Show result modal
+    showLotteryResult(ticket);
+}
+
+function showLotteryResult(ticket) {
+    const modal = document.getElementById('lotteryResultModal');
+    const title = document.getElementById('lotteryResultTitle');
+    const content = document.getElementById('lotteryResultContent');
+
+    const numStr = String(ticket.number).padStart(5, '0');
+    const winNum = getWinningNumber();
+    const winNumStr = winNum !== null ? String(winNum).padStart(5, '0') : '?????';
+
+    let resultHTML = '';
+    if (ticket.result === 'jackpot') {
+        title.innerHTML = '🏆 JACKPOT WINNER!';
+        resultHTML = `
+            <div class="lottery-spinning">
+                <div class="lottery-result-number win">#${numStr}</div>
+            </div>
+            <p class="lottery-result-detail">🎉 Your number matches the winning number <strong>#${winNumStr}</strong>!</p>
+            <p class="lottery-result-prize">🏆 ${ticket.prize}</p>
+            <p class="lottery-result-detail">Congratulations! You've won the grand prize!</p>
+        `;
+    } else if (ticket.result === 'consolation') {
+        title.innerHTML = '🎁 Instant Win!';
+        resultHTML = `
+            <div class="lottery-spinning">
+                <div class="lottery-result-number">#${numStr}</div>
+            </div>
+            <p class="lottery-result-detail">The winning number is <strong>#${winNumStr}</strong> — not a match this time.</p>
+            <p class="lottery-result-prize consolation">🎁 ${ticket.prize}</p>
+            <p class="lottery-result-detail">But your Instant Win ticket guarantees a prize! Enjoy!</p>
+        `;
+    } else {
+        title.innerHTML = '😔 Better Luck Next Time';
+        resultHTML = `
+            <div class="lottery-spinning">
+                <div class="lottery-result-number">#${numStr}</div>
+            </div>
+            <p class="lottery-result-detail">The winning number is <strong>#${winNumStr}</strong></p>
+            <p class="lottery-result-detail">Your number didn't match. Try again with another ticket!</p>
+        `;
+    }
+
+    content.innerHTML = resultHTML;
+    modal.classList.add('open');
+}
+
+function closeLotteryResult() {
+    document.getElementById('lotteryResultModal').classList.remove('open');
+}
+
+// Expose to global scope
+window.confirmBuyTicket = confirmBuyTicket;
+window.closeLotteryResult = closeLotteryResult;
+window.refreshLotteryConfig = refreshLotteryConfig;
+
+// Refresh lottery config from localStorage (called when admin updates)
+function refreshLotteryConfig() {
+    lotteryConfig = loadLotteryConfig();
+    // Re-check all pending tickets
+    let changed = false;
+    const winNum = getWinningNumber();
+    lotteryTickets.forEach(t => {
+        if (t.result === null && winNum !== null) {
+            if (t.number === parseInt(winNum)) {
+                t.result = 'jackpot';
+                t.prize = lotteryConfig.jackpotPrize;
+                changed = true;
+            } else if (t.type === 'instant') {
+                t.result = 'consolation';
+                t.prize = getRandomInstantWinPrize();
+                changed = true;
+            } else {
+                t.result = 'lost';
+                changed = true;
+            }
+        }
+    });
+    if (changed) saveLotteryTickets(lotteryTickets);
+    renderLottery();
+}
+
 // ========== Initialize ==========
 renderProducts();
 renderWishlist();
 renderTopCards();
 updateCartUI();
+renderLottery();
 
 console.log('⚡ PokéMart ready! Browse our collection of premium Pokémon cards.');
 console.log('💡 Tip: Press Ctrl+K to search, Esc to close panels.');

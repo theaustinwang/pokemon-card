@@ -94,6 +94,19 @@
         </div>
     </section>
 
+    <!-- Lottery Section -->
+    <section class="lottery" id="lottery">
+        <div class="container">
+            <div class="section-header">
+                <h2>🎰 <span class="gradient-text">Poké Lotto</span></h2>
+                <p>Buy a ticket, pick a number 1–99,999 — match the winning number for the jackpot!</p>
+            </div>
+            <div class="lottery-grid" id="lotteryGrid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </section>
+
     <!-- Filter Bar -->
     <section class="filter-bar" id="products">
         <div class="container">
@@ -240,6 +253,27 @@
             <p id="checkoutMsg">Your Pokémon cards are on the way!</p>
             <div class="modal-details" id="modalDetails"></div>
             <button class="btn btn-primary" onclick="closeCheckout()">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- Lottery Result Modal -->
+    <div class="modal-overlay" id="lotteryResultModal">
+        <div class="modal lottery-result-modal">
+            <h2 id="lotteryResultTitle">🎰 Lottery Result</h2>
+            <div id="lotteryResultContent"></div>
+            <button class="btn btn-primary" onclick="closeLotteryResult()">Close</button>
+        </div>
+    </div>
+
+    <!-- Buy Ticket Modal -->
+    <div class="modal-overlay" id="buyTicketModal">
+        <div class="modal">
+            <h2 id="buyTicketTitle">🎫 Buy a Ticket</h2>
+            <div id="buyTicketContent"></div>
+            <div class="modal-actions" style="display:flex;gap:12px;margin-top:24px;">
+                <button class="btn btn-primary" id="confirmBuyBtn" onclick="confirmBuyTicket()">Buy Ticket</button>
+                <button class="btn btn-outline" onclick="closeBuyTicket()">Cancel</button>
+            </div>
         </div>
     </div>
 

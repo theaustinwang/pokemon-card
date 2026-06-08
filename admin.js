@@ -243,11 +243,16 @@ function resetAllCards() {
     cards = JSON.parse(JSON.stringify(defaultCardData));
     localStorage.removeItem('pokemart-mystery-stock');
     localStorage.removeItem('pokemart-mystery-prices');
+    localStorage.removeItem('pokemart-lottery-config');
+    localStorage.removeItem('pokemart-lottery-tickets');
     saveCards();
     renderTable();
     mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
     saveMysteryProducts();
     renderMysteryTable();
+    lotteryConfig = { ...LOTTERY_DEFAULTS, instantWinPrizes: [...LOTTERY_DEFAULTS.instantWinPrizes] };
+    saveLotteryConfig(lotteryConfig);
+    loadLotteryUI();
 }
 
 // ========== Add Modal ==========
@@ -489,6 +494,122 @@ function loadConditionMultipliersUI() {
 // Expose to global scope
 window.updateConditionMultiplier = updateConditionMultiplier;
 
+// ========== Lottery Admin Management ==========
+const LOTTERY_DEFAULTS = {
+    jackpotTicketPrice: 4.99,
+    instantWinTicketPrice: 12.99,
+    winningNumber: null,
+    jackpotPrize: '1× Mystery PSA Slab (worth $99.99)',
+    instantWinPrizes: [
+        '1× Mystery Pack (worth $24.99)',
+        '1× Random Rare Holo Card',
+        '1× Random Ultra Rare Card',
+        '1× $10 Store Credit',
+        '1× Free Standard Ticket',
+        '1× Random Booster Pack',
+    ],
+};
+
+function loadLotteryConfig() {
+    try {
+        const saved = localStorage.getItem('pokemart-lottery-config');
+        if (saved) {
+            const config = JSON.parse(saved);
+            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || LOTTERY_DEFAULTS.instantWinPrizes };
+        }
+    } catch { /* ignore */ }
+    return { ...LOTTERY_DEFAULTS, instantWinPrizes: [...LOTTERY_DEFAULTS.instantWinPrizes] };
+}
+
+function saveLotteryConfig(config) {
+    localStorage.setItem('pokemart-lottery-config', JSON.stringify(config));
+    const el = document.getElementById('lotterySaveIndicator');
+    if (el) {
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2000);
+    }
+}
+
+let lotteryConfig = loadLotteryConfig();
+
+function loadLotteryUI() {
+    document.getElementById('lotteryStandardPrice').value = lotteryConfig.jackpotTicketPrice;
+    document.getElementById('lotteryInstantPrice').value = lotteryConfig.instantWinTicketPrice;
+    document.getElementById('lotteryJackpotPrize').value = lotteryConfig.jackpotPrize;
+    const winNumInput = document.getElementById('lotteryWinningNumber');
+    if (lotteryConfig.winningNumber !== null && lotteryConfig.winningNumber !== undefined) {
+        winNumInput.value = lotteryConfig.winningNumber;
+    } else {
+        winNumInput.value = '';
+    }
+    renderPrizePoolList();
+}
+
+function updateLotterySetting(key, value) {
+    if (key === 'jackpotTicketPrice' || key === 'instantWinTicketPrice') {
+        lotteryConfig[key] = Math.max(0.01, parseFloat(value) || 0.01);
+    } else if (key === 'winningNumber') {
+        const num = parseInt(value);
+        if (value === '' || isNaN(num)) {
+            lotteryConfig.winningNumber = null;
+        } else {
+            lotteryConfig.winningNumber = Math.max(1, Math.min(99999, num));
+        }
+    } else {
+        lotteryConfig[key] = value;
+    }
+    saveLotteryConfig(lotteryConfig);
+}
+
+function randomWinningNumber() {
+    const num = Math.floor(Math.random() * 99999) + 1;
+    lotteryConfig.winningNumber = num;
+    saveLotteryConfig(lotteryConfig);
+    document.getElementById('lotteryWinningNumber').value = num;
+}
+
+function renderPrizePoolList() {
+    const list = document.getElementById('lotteryPrizePoolList');
+    if (!list) return;
+
+    const prizes = lotteryConfig.instantWinPrizes || [];
+    list.innerHTML = prizes.map((prize, i) => `
+        <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:0.75rem;color:var(--text-muted);min-width:20px;">${i + 1}.</span>
+            <input type="text" value="${prize.replace(/"/g, '&quot;')}" 
+                   style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.82rem;outline:none;"
+                   onchange="updateLotteryPrize(${i}, this.value)">
+            <button class="delete-btn" onclick="removeLotteryPrize(${i})" title="Remove prize">🗑️</button>
+        </div>
+    `).join('');
+}
+
+function updateLotteryPrize(index, value) {
+    if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
+    lotteryConfig.instantWinPrizes[index] = value.trim();
+    saveLotteryConfig(lotteryConfig);
+}
+
+function removeLotteryPrize(index) {
+    lotteryConfig.instantWinPrizes.splice(index, 1);
+    saveLotteryConfig(lotteryConfig);
+    renderPrizePoolList();
+}
+
+function addLotteryPrize() {
+    if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
+    lotteryConfig.instantWinPrizes.push('New Prize');
+    saveLotteryConfig(lotteryConfig);
+    renderPrizePoolList();
+}
+
+// Expose to global scope
+window.updateLotterySetting = updateLotterySetting;
+window.randomWinningNumber = randomWinningNumber;
+window.updateLotteryPrize = updateLotteryPrize;
+window.removeLotteryPrize = removeLotteryPrize;
+window.addLotteryPrize = addLotteryPrize;
+
 // ========== Init ==========
 if (!checkAuth()) {
     document.querySelector('.header').style.display = 'none';
@@ -499,6 +620,7 @@ if (!checkAuth()) {
     loadMysteryProducts();
     loadExchangeRateUI();
     loadConditionMultipliersUI();
+    loadLotteryUI();
     renderStats();
     renderTable();
     renderMysteryTable();
