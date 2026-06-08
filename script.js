@@ -42,6 +42,31 @@ const CONDITION_COLORS = {
 
 const CONDITION_ORDER = ['NM', 'LP', 'MP', 'HP', 'DMG'];
 
+// ========== Condition Price Multipliers ==========
+const DEFAULT_CONDITION_MULTIPLIERS = {
+    'NM':  1.00,
+    'LP':  0.90,
+    'MP':  0.75,
+    'HP':  0.55,
+    'DMG': 0.35,
+};
+
+function loadConditionMultipliers() {
+    try {
+        const saved = localStorage.getItem('pokemart-condition-multipliers');
+        if (saved) return { ...DEFAULT_CONDITION_MULTIPLIERS, ...JSON.parse(saved) };
+    } catch { /* ignore */ }
+    return { ...DEFAULT_CONDITION_MULTIPLIERS };
+}
+
+let conditionMultipliers = loadConditionMultipliers();
+
+// Get price for a specific condition
+function getConditionPrice(card, condition) {
+    const multiplier = conditionMultipliers[condition] || 1.0;
+    return card.price * multiplier;
+}
+
 // Get total stock across all conditions for a card
 function getTotalStock(card) {
     if (!card.stocks || typeof card.stocks !== 'object') return 0;
@@ -295,6 +320,8 @@ function renderWishlist() {
         const totalStock = getTotalStock(card);
         const outOfStock = totalStock <= 0;
         const stockSummary = getStockSummary(card);
+        const bestCond = getBestCondition(card);
+        const bestPrice = bestCond ? getConditionPrice(card, bestCond) : card.price;
 
         return `
         <div class="wishlist-dropdown-item">
@@ -304,7 +331,7 @@ function renderWishlist() {
                 <h5>${card.name}</h5>
                 <p class="set">${card.setName}</p>
                 <p class="wishlist-stock-summary">${stockSummary}</p>
-                <span class="price">${formatPrice(card.price)}</span>
+                <span class="price">${formatPrice(bestPrice)}</span>
             </div>
             <button class="wishlist-dropdown-remove" onclick="toggleWishlist(${card.id}); event.stopPropagation();" title="Remove">✕</button>
             <button class="wishlist-dropdown-add" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''} title="${outOfStock ? 'Sold Out' : 'Add to cart'}">🛒</button>
@@ -508,17 +535,24 @@ function renderProducts() {
         const rankNum = activeFilter === 'bestseller' ? index + 1 : 0;
         const rankMedal = rankNum === 1 ? '🥇' : rankNum === 2 ? '🥈' : rankNum === 3 ? '🥉' : '';
         
-        // Build condition pills
-        const condPills = card.stocks ? CONDITION_ORDER.filter(c => card.stocks[c] && card.stocks[c] > 0).map(c => {
-            return `<span class="stock-cond-pill" style="border-color:${CONDITION_COLORS[c]};color:${CONDITION_COLORS[c]}">${c}:${card.stocks[c]}</span>`;
+        // Build condition rows with prices
+        const conditionRows = card.stocks ? CONDITION_ORDER.filter(c => card.stocks[c] && card.stocks[c] > 0).map(c => {
+            const condPrice = getConditionPrice(card, c);
+            return `<div class="cond-row" onclick="addToCart(${card.id}, '${c}'); event.stopPropagation();" title="Add ${CONDITION_LABELS[c]} to cart">
+                <span class="cond-dot" style="background:${CONDITION_COLORS[c]}"></span>
+                <span class="cond-label">${c}</span>
+                <span class="cond-price">${formatPrice(condPrice)}</span>
+                <span class="cond-stock-badge">×${card.stocks[c]}</span>
+            </div>`;
         }).join('') : '';
+        
+        const basePrice = getConditionPrice(card, bestCondition || 'NM');
         
         return `
             <div class="product-card ${outOfStock ? 'out-of-stock' : ''}" data-id="${card.id}">
                 <div class="card-image-wrapper">
                     <span class="card-type-badge ${typeBadgeClass}">${card.type}</span>
                     <span class="rarity-badge">${starCount}</span>
-                    <span class="condition-badge" style="background:${condColor}">${bestCondition || 'N/A'}</span>
                     ${rankNum > 0 ? `<span class="rank-badge ${rankNum <= 3 ? 'rank-podium' : ''}">${rankMedal ? rankMedal + ' #' + rankNum : '#' + rankNum}</span>` : ''}
                     ${isNewArrival ? '<span class="new-badge">NEW</span>' : ''}
                     ${isBestSeller ? '<span class="best-seller-badge">🔥 Best Seller</span>' : ''}
@@ -532,16 +566,9 @@ function renderProducts() {
                 <div class="card-info">
                     <h3>${card.name}</h3>
                     <p class="card-set">${card.setName} (${card.setCode})</p>
-                    <p class="card-condition">
-                        <span class="cond-dot" style="background:${condColor}"></span>
-                        ${condLabel}
-                        ${condPills ? `<span class="card-stock">${condPills}</span>` : ''}
-                    </p>
-                    <div class="card-bottom">
-                        <span class="card-price">${formatPrice(card.price)}</span>
-                        <button class="add-to-cart-btn" onclick="addToCart(${card.id}); event.stopPropagation();" ${outOfStock ? 'disabled' : ''}>
-                            <span>🛒</span> ${outOfStock ? 'Sold Out' : 'Add'}
-                        </button>
+                    <p class="card-condition-title">Condition & Price:</p>
+                    <div class="cond-rows">
+                        ${conditionRows}
                     </div>
                 </div>
             </div>
@@ -626,7 +653,8 @@ function addToCart(id, condition) {
     if (existing) {
         existing.quantity++;
     } else {
-        cart.push({ ...card, quantity: 1, cartKey, condition: chosenCondition });
+        const condPrice = getConditionPrice(card, chosenCondition);
+        cart.push({ ...card, quantity: 1, cartKey, condition: chosenCondition, price: condPrice });
     }
     
     saveCart();
@@ -636,27 +664,39 @@ function addToCart(id, condition) {
     showToast(`${card.name} (${CONDITION_LABELS[chosenCondition]}) added to cart!`);
     
     // Animate button
-    animateAddBtn(id, false, card);
+    animateAddBtn(id, false, card, chosenCondition);
 }
 
-function animateAddBtn(id, isMystery, card) {
-    const btn = document.querySelector(`.product-card[data-id="${id}"] .add-to-cart-btn`);
-    if (!btn) return;
-    btn.classList.add('added');
-    const icon = isMystery ? '<span>🎲</span>' : '<span>✅</span>';
-    btn.innerHTML = `${icon} Added`;
-    setTimeout(() => {
-        btn.classList.remove('added');
-        const total = isMystery ? (card.stock ?? 0) : getTotalStock(card);
-        if (total <= 0) {
-            const soldIcon = isMystery ? '🎲' : '🛒';
-            btn.innerHTML = `<span>${soldIcon}</span> Sold Out`;
-            btn.disabled = true;
-        } else {
-            const resetIcon = isMystery ? '🎲' : '🛒';
-            btn.innerHTML = `<span>${resetIcon}</span> Add`;
-        }
-    }, 1500);
+function animateAddBtn(id, isMystery, card, condition) {
+    // For mystery products, flash the add button
+    if (isMystery) {
+        const btn = document.querySelector(`.product-card[data-id="${id}"] .add-to-cart-btn`);
+        if (!btn) return;
+        btn.classList.add('added');
+        btn.innerHTML = '<span>🎲</span> Added';
+        setTimeout(() => {
+            btn.classList.remove('added');
+            const total = card.stock ?? 0;
+            if (total <= 0) {
+                btn.innerHTML = '<span>🎲</span> Sold Out';
+                btn.disabled = true;
+            } else {
+                btn.innerHTML = '<span>🎲</span> Add';
+            }
+        }, 1500);
+        return;
+    }
+    
+    // For regular cards, flash the condition row that was clicked
+    if (condition) {
+        const rows = document.querySelectorAll(`.product-card[data-id="${id}"] .cond-row`);
+        rows.forEach(row => {
+            if (row.querySelector('.cond-label').textContent === condition) {
+                row.classList.add('cond-row-added');
+                setTimeout(() => row.classList.remove('cond-row-added'), 1200);
+            }
+        });
+    }
 }
 
 function removeFromCart(cartKey) {

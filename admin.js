@@ -453,6 +453,42 @@ function loadExchangeRateUI() {
 // Expose to global scope
 window.updateExchangeRate = updateExchangeRate;
 
+// ========== Condition Price Multipliers ==========
+function updateConditionMultiplier(cond, value) {
+    const pct = Math.max(1, Math.min(100, parseInt(value) || 100));
+    const input = document.getElementById('condMult' + cond);
+    if (input) input.value = pct;
+    
+    const multipliers = loadConditionMultipliers();
+    multipliers[cond] = pct / 100;
+    localStorage.setItem('pokemart-condition-multipliers', JSON.stringify(multipliers));
+    
+    const el = document.getElementById('condMultSaved');
+    if (el) {
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2000);
+    }
+}
+
+function loadConditionMultipliers() {
+    try {
+        const saved = localStorage.getItem('pokemart-condition-multipliers');
+        if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return { 'NM': 1.00, 'LP': 0.90, 'MP': 0.75, 'HP': 0.55, 'DMG': 0.35 };
+}
+
+function loadConditionMultipliersUI() {
+    const multipliers = loadConditionMultipliers();
+    CONDITION_ORDER.forEach(cond => {
+        const input = document.getElementById('condMult' + cond);
+        if (input) input.value = Math.round((multipliers[cond] || 1) * 100);
+    });
+}
+
+// Expose to global scope
+window.updateConditionMultiplier = updateConditionMultiplier;
+
 // ========== Init ==========
 if (!checkAuth()) {
     document.querySelector('.header').style.display = 'none';
@@ -462,6 +498,7 @@ if (!checkAuth()) {
     loadCards();
     loadMysteryProducts();
     loadExchangeRateUI();
+    loadConditionMultipliersUI();
     renderStats();
     renderTable();
     renderMysteryTable();

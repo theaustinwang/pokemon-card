@@ -439,6 +439,47 @@
                 </div>
             </div>
 
+            <!-- Condition Price Multipliers -->
+            <div class="admin-table-wrap" style="margin-bottom:32px;">
+                <div class="admin-table-header">
+                    <h3>📉 Condition Price Multipliers</h3>
+                </div>
+                <div style="padding:20px 24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+                    <span style="font-size:0.75rem;color:var(--text-muted);">% of base price:</span>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.8rem;font-weight:600;color:#22c55e;min-width:28px;">NM</span>
+                        <input type="number" id="condMultNM" step="1" min="1" max="100" value="100" 
+                               style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;outline:none;text-align:center;"
+                               onchange="updateConditionMultiplier('NM', this.value)"><span style="font-size:0.8rem;color:var(--text-muted);">%</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.8rem;font-weight:600;color:#4ade80;min-width:28px;">LP</span>
+                        <input type="number" id="condMultLP" step="1" min="1" max="100" value="90" 
+                               style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;outline:none;text-align:center;"
+                               onchange="updateConditionMultiplier('LP', this.value)"><span style="font-size:0.8rem;color:var(--text-muted);">%</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.8rem;font-weight:600;color:#facc15;min-width:28px;">MP</span>
+                        <input type="number" id="condMultMP" step="1" min="1" max="100" value="75" 
+                               style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;outline:none;text-align:center;"
+                               onchange="updateConditionMultiplier('MP', this.value)"><span style="font-size:0.8rem;color:var(--text-muted);">%</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.8rem;font-weight:600;color:#f97316;min-width:28px;">HP</span>
+                        <input type="number" id="condMultHP" step="1" min="1" max="100" value="55" 
+                               style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;outline:none;text-align:center;"
+                               onchange="updateConditionMultiplier('HP', this.value)"><span style="font-size:0.8rem;color:var(--text-muted);">%</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.8rem;font-weight:600;color:#ef4444;min-width:28px;">DMG</span>
+                        <input type="number" id="condMultDMG" step="1" min="1" max="100" value="35" 
+                               style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;outline:none;text-align:center;"
+                               onchange="updateConditionMultiplier('DMG', this.value)"><span style="font-size:0.8rem;color:var(--text-muted);">%</span>
+                    </div>
+                    <span id="condMultSaved" class="saved-indicator" style="margin-left:auto;">✅ Saved</span>
+                </div>
+            </div>
+
             <div class="admin-table-wrap">
                 <div class="admin-table-header">
                     <h3>All Cards</h3>

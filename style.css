@@ -972,6 +972,81 @@ input, select { font-family: inherit; }
     flex-shrink: 0;
 }
 
+/* Condition rows inside product cards */
+.card-condition-title {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cond-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.cond-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cond-row:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--border);
+}
+
+.cond-row-added {
+    animation: cond-flash 0.4s ease;
+    background: rgba(34,197,94,0.15) !important;
+    border-color: #22c55e !important;
+}
+
+@keyframes cond-flash {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+.cond-row .cond-dot {
+    width: 7px;
+    height: 7px;
+}
+
+.cond-row .cond-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text);
+    min-width: 30px;
+}
+
+.cond-row .cond-price {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--secondary);
+    flex: 1;
+    text-align: right;
+}
+
+.cond-row .cond-stock-badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    padding: 1px 7px;
+    border-radius: 4px;
+}
+
 .card-stock {
     margin-left: auto;
     color: var(--text-muted);
