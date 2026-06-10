@@ -954,6 +954,12 @@ function smoothScroll(target) {
 
 // ========== Nav Filter ==========
 function setNavFilter(filter) {
+    if (filter === 'lotto') {
+        updateNavActive('lotto');
+        smoothScroll('#lottery');
+        mobileMenu.classList.remove('open');
+        return;
+    }
     activeFilter = filter;
     searchTerm = '';
     currentSort = 'default';
@@ -969,7 +975,7 @@ function setNavFilter(filter) {
 
 function updateNavActive(filter) {
     document.querySelectorAll('.nav-link, .mobile-link').forEach(link => link.classList.remove('active'));
-    const navMap = { all: 'navShop,mobShop', new: 'navNew,mobNew', bestseller: 'navBest,mobBest' };
+    const navMap = { all: 'navShop,mobShop', new: 'navNew,mobNew', bestseller: 'navBest,mobBest', lotto: 'navLotto,mobLotto' };
     const ids = (navMap[filter] || 'navShop,mobShop').split(',');
     ids.forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('active'); });
 }
