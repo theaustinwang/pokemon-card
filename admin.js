@@ -496,19 +496,46 @@ window.updateConditionMultiplier = updateConditionMultiplier;
 
 // ========== Lottery Admin Management ==========
 // instantWinPrizes: [{ number, prize }]
+function generateRandomInstantPrizes(count = 50) {
+    const prizes = [
+        "£5 Cash Prize", "£10 Cash Prize", "£15 Cash Prize", "£20 Cash Prize",
+        "£25 Cash Prize", "£30 Cash Prize", "£50 Cash Prize", "£100 Cash Prize",
+        "Pokémon Booster Pack", "Pokémon Booster Box", "Elite Trainer Box",
+        "Special Edition Playmat", "£25 Gift Voucher", "£50 Gift Voucher",
+        "Holo Card Pack", "Ultra Rare Card Pack", "Mystery Slab Pack",
+        "Collector's Tin", "Pokémon Plushie", "Premium Card Sleeves (x50)",
+        "Deck Box", "Pokémon TCG Online Code Card (x10)", "Poster Collection",
+        "Mini Portfolio", "Charizard Figure", "Pikachu Keychain",
+        "Squirtle Sticker Set", "Eevee Pin Badge", "Legendary Bird Trio Print",
+        "Mewtwo Coin", "Gym Badge Set", "Poké Ball Replica",
+        "Energy Card Pack (x20)", "Trainer Card Bundle", "VSTAR Marker Set",
+        "Damage Counter Dice Set", "Pokémon Stickers (x50)",
+        "TCG Card Binder", "Foil Energy Set", "Rare Candy Token Set",
+        "Custom Playmat Design", "Regional Championship Deck Box",
+        "Gold Star Promo Card", "Rainbow Rare Card Sleeves",
+        "Vintage Booster Pack", "Japanese Promo Pack", "World Championship Deck",
+        "Premium Card Storage Box", "Pokémon Center Keychain", "Gengar Plushie",
+    ];
+    const used = new Set();
+    const result = [];
+    for (let i = 0; i < count; i++) {
+        let num;
+        do {
+            num = Math.floor(Math.random() * 99999) + 1;
+        } while (used.has(num));
+        used.add(num);
+        const prize = prizes[Math.floor(Math.random() * prizes.length)];
+        result.push({ number: num, prize: prize });
+    }
+    return result;
+}
+
 const LOTTERY_DEFAULTS = {
     jackpotTicketPrice: 3.99,
     instantWinTicketPrice: 9.99,
     winningNumber: null,
     jackpotPrize: '£100 Cash Prize',
-    instantWinPrizes: [
-        { number: 777, prize: '£20 Cash Prize' },
-        { number: 7777, prize: '£50 Cash Prize' },
-        { number: 12345, prize: 'Pokémon Booster Box' },
-        { number: 50000, prize: '£25 Gift Voucher' },
-        { number: 88888, prize: 'Elite Trainer Box' },
-        { number: 11111, prize: 'Special Edition Playmat' },
-    ],
+    instantWinPrizes: generateRandomInstantPrizes(50),
 };
 
 function loadLotteryConfig() {
