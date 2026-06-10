@@ -954,12 +954,26 @@ function smoothScroll(target) {
 
 // ========== Nav Filter ==========
 function setNavFilter(filter) {
+    const lottery = document.getElementById('lottery');
+    const products = document.getElementById('products');
+    const filterBar = document.querySelector('.filter-bar');
+    const noResults = document.getElementById('noResults');
+    
     if (filter === 'lotto') {
+        // Show lottery, hide shop
+        if (lottery) lottery.style.display = '';
+        if (products) products.style.display = 'none';
+        if (filterBar) filterBar.style.display = 'none';
+        if (noResults) noResults.style.display = 'none';
         updateNavActive('lotto');
         smoothScroll('#lottery');
         mobileMenu.classList.remove('open');
         return;
     }
+    // Show shop, hide lottery
+    if (lottery) lottery.style.display = 'none';
+    if (products) products.style.display = '';
+    if (filterBar) filterBar.style.display = '';
     activeFilter = filter;
     searchTerm = '';
     currentSort = 'default';
@@ -1520,6 +1534,8 @@ function refreshLotteryConfig() {
 }
 
 // ========== Initialize ==========
+// Start in shop mode — hide lottery initially
+document.getElementById('lottery').style.display = 'none';
 renderProducts();
 renderWishlist();
 renderTopCards();
