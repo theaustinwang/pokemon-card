@@ -1146,6 +1146,75 @@ function renderTopCards() {
     `).join('');
 }
 
+// ========== Prize Image Generator ==========
+function generatePrizeImage(prize) {
+    const name = prize.toLowerCase();
+    let theme, icon;
+    
+    if (name.includes('cash') || name.includes('£')) {
+        if (name.includes('100')) { theme = ['#f59e0b', '#d97706']; icon = '💷💷'; }
+        else if (name.includes('50')) { theme = ['#eab308', '#ca8a04']; icon = '💷'; }
+        else if (name.includes('30')) { theme = ['#22c55e', '#16a34a']; icon = '💵'; }
+        else if (name.includes('25')) { theme = ['#14b8a6', '#0d9488']; icon = '💵'; }
+        else if (name.includes('20')) { theme = ['#3b82f6', '#2563eb']; icon = '💵'; }
+        else if (name.includes('15')) { theme = ['#a855f7', '#9333ea']; icon = '💷'; }
+        else if (name.includes('10')) { theme = ['#f97316', '#ea580c']; icon = '💷'; }
+        else { theme = ['#ef4444', '#dc2626']; icon = '💷'; }
+    } else if (name.includes('booster box')) { theme = ['#7c3aed', '#6d28d9']; icon = '📦'; }
+    else if (name.includes('booster pack') || name.includes('promo pack')) { theme = ['#ec4899', '#db2777']; icon = '🃏'; }
+    else if (name.includes('elite trainer') || name.includes('etb')) { theme = ['#06b6d4', '#0891b2']; icon = '🏆'; }
+    else if (name.includes('playmat')) { theme = ['#8b5cf6', '#7c3aed']; icon = '🎨'; }
+    else if (name.includes('voucher')) { theme = ['#f59e0b', '#d97706']; icon = '🎫'; }
+    else if (name.includes('holo card') || name.includes('ultra rare card')) { theme = ['#c026d3', '#a21caf']; icon = '✨'; }
+    else if (name.includes('mystery slab')) { theme = ['#fbbf24', '#f59e0b']; icon = '🔮'; }
+    else if (name.includes("collector's tin") || name.includes('storage box')) { theme = ['#059669', '#047857']; icon = '🎁'; }
+    else if (name.includes('plushie')) { theme = ['#f472b6', '#ec4899']; icon = '🧸'; }
+    else if (name.includes('card sleeves')) { theme = ['#6366f1', '#4f46e5']; icon = '🛡️'; }
+    else if (name.includes('deck box')) { theme = ['#0284c7', '#0369a1']; icon = '🗃️'; }
+    else if (name.includes('code card')) { theme = ['#0ea5e9', '#0284c7']; icon = '💻'; }
+    else if (name.includes('poster')) { theme = ['#ef4444', '#b91c1c']; icon = '🖼️'; }
+    else if (name.includes('figure')) { theme = ['#f97316', '#ea580c']; icon = '🔥'; }
+    else if (name.includes('keychain') || name.includes('pin')) { theme = ['#eab308', '#ca8a04']; icon = '⭐'; }
+    else if (name.includes('sticker')) { theme = ['#22c55e', '#16a34a']; icon = '🏷️'; }
+    else if (name.includes('coin') || name.includes('marker') || name.includes('dice') || name.includes('token')) { theme = ['#a1a1aa', '#71717a']; icon = '🪙'; }
+    else if (name.includes('binder') || name.includes('folio')) { theme = ['#db2777', '#be185d']; icon = '📚'; }
+    else if (name.includes('print') || name.includes('art')) { theme = ['#8b5cf6', '#6d28d9']; icon = '🖌️'; }
+    else if (name.includes('gym badge')) { theme = ['#dc2626', '#b91c1c']; icon = '🏅'; }
+    else if (name.includes('poké ball')) { theme = ['#ef4444', '#dc2626']; icon = '🔴'; }
+    else if (name.includes('energy')) { theme = ['#facc15', '#eab308']; icon = '⚡'; }
+    else if (name.includes('championship deck') || name.includes('world')) { theme = ['#f59e0b', '#b45309']; icon = '🌍'; }
+    else if (name.includes('vintage') || name.includes('japanese')) { theme = ['#a855f7', '#7e22ce']; icon = '🏯'; }
+    else if (name.includes('gold star') || name.includes('rainbow') || name.includes('promo card')) { theme = ['#fbbf24', '#f59e0b']; icon = '🌟'; }
+    else if (name.includes('premium')) { theme = ['#1e3a5f', '#162d4a']; icon = '💎'; }
+    else { theme = ['#7c5cfc', '#6d28d9']; icon = '🎰'; }
+
+    const gradientId = 'g' + Math.random().toString(36).slice(2, 8);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200">
+        <defs>
+            <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:${theme[0]};stop-opacity:0.9"/>
+                <stop offset="100%" style="stop-color:${theme[1]};stop-opacity:0.95"/>
+            </linearGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect width="280" height="200" rx="16" fill="url(#${gradientId})"/>
+        <!-- Decorative circles -->
+        <circle cx="40" cy="30" r="80" fill="rgba(255,255,255,0.06)"/>
+        <circle cx="250" cy="170" r="100" fill="rgba(255,255,255,0.04)"/>
+        <circle cx="260" cy="30" r="50" fill="rgba(255,255,255,0.05)"/>
+        <!-- Diagonal lines pattern -->
+        <line x1="0" y1="60" x2="280" y2="60" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="0" y1="140" x2="280" y2="140" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <!-- Main icon -->
+        <text x="140" y="110" text-anchor="middle" font-size="64" filter="url(#glow)">${icon}</text>
+        <!-- Bottom label -->
+        <rect x="0" y="155" width="280" height="45" fill="rgba(0,0,0,0.25)" rx="0 0 16 16"/>
+        <text x="140" y="183" text-anchor="middle" fill="#fff" font-family="Poppins,Arial" font-size="12" font-weight="700" letter-spacing="2">INSTANT WIN</text>
+    </svg>`;
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
 // ========== Lottery System ==========
 // instantWinPrizes: [{ number, prize }] — each prize tied to a specific number
 function generateRandomInstantPrizes(count = 50) {
@@ -1251,20 +1320,47 @@ function renderLottery() {
     const hasWinningNumber = winNum !== null && winNum !== undefined;
 
     const instantPrizes = lotteryConfig.instantWinPrizes || [];
-    const miniCards = instantPrizes.map(p => `
-        <div class="instant-win-mini" onclick="openBuyTicket('instant')">
-            <span class="iw-number">#${String(p.number).padStart(5, '0')}</span>
-            <span class="iw-prize-name">${p.prize}</span>
-            <button class="iw-btn" ${!hasWinningNumber ? 'disabled' : ''} onclick="event.stopPropagation(); openBuyTicket('instant')">
-                ⚡ ${formatLotteryPrice(lotteryConfig.instantWinTicketPrice)}
-            </button>
-        </div>
-    `).join('');
+    const miniCards = instantPrizes.map(p => {
+        const imgSrc = generatePrizeImage(p.prize);
+        return `
+        <div class="prize-card" onclick="openBuyTicket('instant')">
+            <div class="prize-image-wrapper">
+                <img src="${imgSrc}" alt="${p.prize}" loading="lazy">
+                <span class="prize-number-badge">#${String(p.number).padStart(5, '0')}</span>
+            </div>
+            <div class="prize-info">
+                <h3>${p.prize}</h3>
+                <button class="prize-buy-btn" ${!hasWinningNumber ? 'disabled' : ''} onclick="event.stopPropagation(); openBuyTicket('instant')">
+                    ⚡ ${formatLotteryPrice(lotteryConfig.instantWinTicketPrice)}
+                </button>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Jackpot banner image
+    const jackpotSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="180" viewBox="0 0 400 180">
+        <defs>
+            <linearGradient id="jg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1"/>
+                <stop offset="50%" style="stop-color:#e63946;stop-opacity:1"/>
+                <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1"/>
+            </linearGradient>
+            <filter id="jglow"><feGaussianBlur stdDeviation="2"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect width="400" height="180" rx="16" fill="url(#jg)"/>
+        <circle cx="60" cy="40" r="120" fill="rgba(255,255,255,0.08)"/>
+        <circle cx="360" cy="150" r="100" fill="rgba(255,255,255,0.05)"/>
+        <text x="200" y="85" text-anchor="middle" font-size="72" filter="url(#jglow)">👑</text>
+        <text x="200" y="135" text-anchor="middle" fill="#fff" font-family="Poppins,Arial" font-size="13" font-weight="700" letter-spacing="3">JACKPOT DRAW</text>
+    </svg>`;
+    const jackpotImg = 'data:image/svg+xml,' + encodeURIComponent(jackpotSvg);
 
     grid.innerHTML = `
         <!-- Jackpot -->
         <div class="lottery-card jackpot-card">
-            <div class="lottery-icon">👑</div>
+            <div class="jackpot-banner">
+                <img src="${jackpotImg}" alt="Jackpot Draw">
+            </div>
             <h3>Jackpot Draw</h3>
             <p class="lottery-subtitle">Pick a number 1–99,999. Match the winning number to claim the grand prize!</p>
             <div class="lottery-price">${lotteryConfig.jackpotPrize}</div>
