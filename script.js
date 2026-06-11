@@ -1151,41 +1151,76 @@ function generatePrizeImage(prize) {
     const name = prize.toLowerCase();
     let theme, icon;
     
-    if (name.includes('cash') || name.includes('£')) {
-        if (name.includes('100')) { theme = ['#f59e0b', '#d97706']; icon = '💷💷'; }
-        else if (name.includes('50')) { theme = ['#eab308', '#ca8a04']; icon = '💷'; }
-        else if (name.includes('30')) { theme = ['#22c55e', '#16a34a']; icon = '💵'; }
-        else if (name.includes('25')) { theme = ['#14b8a6', '#0d9488']; icon = '💵'; }
-        else if (name.includes('20')) { theme = ['#3b82f6', '#2563eb']; icon = '💵'; }
-        else if (name.includes('15')) { theme = ['#a855f7', '#9333ea']; icon = '💷'; }
-        else if (name.includes('10')) { theme = ['#f97316', '#ea580c']; icon = '💷'; }
-        else { theme = ['#ef4444', '#dc2626']; icon = '💷'; }
-    } else if (name.includes('booster box')) { theme = ['#7c3aed', '#6d28d9']; icon = '📦'; }
-    else if (name.includes('booster pack') || name.includes('promo pack')) { theme = ['#ec4899', '#db2777']; icon = '🃏'; }
-    else if (name.includes('elite trainer') || name.includes('etb')) { theme = ['#06b6d4', '#0891b2']; icon = '🏆'; }
-    else if (name.includes('playmat')) { theme = ['#8b5cf6', '#7c3aed']; icon = '🎨'; }
-    else if (name.includes('voucher')) { theme = ['#f59e0b', '#d97706']; icon = '🎫'; }
-    else if (name.includes('holo card') || name.includes('ultra rare card')) { theme = ['#c026d3', '#a21caf']; icon = '✨'; }
-    else if (name.includes('mystery slab')) { theme = ['#fbbf24', '#f59e0b']; icon = '🔮'; }
-    else if (name.includes("collector's tin") || name.includes('storage box')) { theme = ['#059669', '#047857']; icon = '🎁'; }
-    else if (name.includes('plushie')) { theme = ['#f472b6', '#ec4899']; icon = '🧸'; }
-    else if (name.includes('card sleeves')) { theme = ['#6366f1', '#4f46e5']; icon = '🛡️'; }
-    else if (name.includes('deck box')) { theme = ['#0284c7', '#0369a1']; icon = '🗃️'; }
-    else if (name.includes('code card')) { theme = ['#0ea5e9', '#0284c7']; icon = '💻'; }
-    else if (name.includes('poster')) { theme = ['#ef4444', '#b91c1c']; icon = '🖼️'; }
-    else if (name.includes('figure')) { theme = ['#f97316', '#ea580c']; icon = '🔥'; }
-    else if (name.includes('keychain') || name.includes('pin')) { theme = ['#eab308', '#ca8a04']; icon = '⭐'; }
-    else if (name.includes('sticker')) { theme = ['#22c55e', '#16a34a']; icon = '🏷️'; }
-    else if (name.includes('coin') || name.includes('marker') || name.includes('dice') || name.includes('token')) { theme = ['#a1a1aa', '#71717a']; icon = '🪙'; }
-    else if (name.includes('binder') || name.includes('folio')) { theme = ['#db2777', '#be185d']; icon = '📚'; }
-    else if (name.includes('print') || name.includes('art')) { theme = ['#8b5cf6', '#6d28d9']; icon = '🖌️'; }
-    else if (name.includes('gym badge')) { theme = ['#dc2626', '#b91c1c']; icon = '🏅'; }
-    else if (name.includes('poké ball')) { theme = ['#ef4444', '#dc2626']; icon = '🔴'; }
-    else if (name.includes('energy')) { theme = ['#facc15', '#eab308']; icon = '⚡'; }
-    else if (name.includes('championship deck') || name.includes('world')) { theme = ['#f59e0b', '#b45309']; icon = '🌍'; }
-    else if (name.includes('vintage') || name.includes('japanese')) { theme = ['#a855f7', '#7e22ce']; icon = '🏯'; }
-    else if (name.includes('gold star') || name.includes('rainbow') || name.includes('promo card')) { theme = ['#fbbf24', '#f59e0b']; icon = '🌟'; }
-    else if (name.includes('premium')) { theme = ['#1e3a5f', '#162d4a']; icon = '💎'; }
+    // Graded Slabs — diamond/trophy theme
+    if (name.includes('cgc 10') || name.includes('psa 10') || name.includes('bgs 10')) {
+        theme = ['#fbbf24', '#b45309']; icon = '💎';
+    } else if (name.includes('cgc 9.5') || name.includes('bgs 9.5')) {
+        theme = ['#c084fc', '#7e22ce']; icon = '💎';
+    } else if (name.includes('cgc 9') || name.includes('psa 9') || name.includes('bgs 9')) {
+        theme = ['#60a5fa', '#2563eb']; icon = '💎';
+    } else if (name.includes('cgc') || name.includes('psa') || name.includes('bgs')) {
+        theme = ['#a78bfa', '#6d28d9']; icon = '💎';
+    }
+    // Elite Trainer Boxes
+    else if (name.includes('etb') || name.includes('elite trainer')) {
+        if (name.includes('evolving skies')) { theme = ['#8b5cf6', '#6d28d9']; icon = '📦'; }
+        else if (name.includes('151')) { theme = ['#fbbf24', '#d97706']; icon = '📦'; }
+        else if (name.includes('crown zenith')) { theme = ['#facc15', '#eab308']; icon = '📦'; }
+        else if (name.includes('lost origin')) { theme = ['#06b6d4', '#0891b2']; icon = '📦'; }
+        else if (name.includes('fusion strike')) { theme = ['#ec4899', '#db2777']; icon = '📦'; }
+        else if (name.includes('paldean fates')) { theme = ['#f472b6', '#ec4899']; icon = '📦'; }
+        else if (name.includes('shrouded fable')) { theme = ['#22c55e', '#16a34a']; icon = '📦'; }
+        else if (name.includes('twilight masquerade')) { theme = ['#6366f1', '#4f46e5']; icon = '📦'; }
+        else if (name.includes('temporal forces')) { theme = ['#0ea5e9', '#0284c7']; icon = '📦'; }
+        else if (name.includes('paradox rift')) { theme = ['#ef4444', '#dc2626']; icon = '📦'; }
+        else if (name.includes('obsidian flames')) { theme = ['#f97316', '#ea580c']; icon = '📦'; }
+        else if (name.includes('chilling reign')) { theme = ['#14b8a6', '#0d9488']; icon = '📦'; }
+        else if (name.includes('brilliant stars')) { theme = ['#fbbf24', '#f59e0b']; icon = '📦'; }
+        else if (name.includes('sword & shield')) { theme = ['#a1a1aa', '#71717a']; icon = '📦'; }
+        else if (name.includes('scarlet & violet')) { theme = ['#dc2626', '#991b1b']; icon = '📦'; }
+        else { theme = ['#06b6d4', '#0891b2']; icon = '📦'; }
+    }
+    // Booster Boxes
+    else if (name.includes('booster box')) {
+        if (name.includes('evolving skies')) { theme = ['#8b5cf6', '#5b21b6']; icon = '🃏🃏'; }
+        else if (name.includes('151')) { theme = ['#fbbf24', '#b45309']; icon = '🃏🃏'; }
+        else if (name.includes('crown zenith')) { theme = ['#facc15', '#ca8a04']; icon = '🃏🃏'; }
+        else if (name.includes('lost origin')) { theme = ['#06b6d4', '#0e7490']; icon = '🃏🃏'; }
+        else if (name.includes('chilling reign')) { theme = ['#14b8a6', '#0f766e']; icon = '🃏🃏'; }
+        else if (name.includes('fusion strike')) { theme = ['#ec4899', '#be185d']; icon = '🃏🃏'; }
+        else if (name.includes('brilliant stars')) { theme = ['#f59e0b', '#b45309']; icon = '🃏🃏'; }
+        else if (name.includes('silver tempest')) { theme = ['#c084fc', '#7e22ce']; icon = '🃏🃏'; }
+        else if (name.includes('astral radiance')) { theme = ['#60a5fa', '#1d4ed8']; icon = '🃏🃏'; }
+        else if (name.includes('darkness ablaze')) { theme = ['#dc2626', '#991b1b']; icon = '🃏🃏'; }
+        else if (name.includes('vivid voltage')) { theme = ['#fbbf24', '#d97706']; icon = '🃏🃏'; }
+        else if (name.includes('rebel clash')) { theme = ['#ef4444', '#b91c1c']; icon = '🃏🃏'; }
+        else { theme = ['#7c3aed', '#6d28d9']; icon = '🃏🃏'; }
+    }
+    // Premium / Ultra Premium Collections
+    else if (name.includes('upc') || name.includes('ultra premium') || name.includes('premium collection')) {
+        if (name.includes('charizard')) { theme = ['#f97316', '#ea580c']; icon = '🔥'; }
+        else if (name.includes('celebrations')) { theme = ['#fbbf24', '#d97706']; icon = '🎉'; }
+        else if (name.includes('mew')) { theme = ['#f472b6', '#ec4899']; icon = '🌟'; }
+        else if (name.includes('arceus')) { theme = ['#facc15', '#eab308']; icon = '🌟'; }
+        else if (name.includes('eevee')) { theme = ['#c084fc', '#a855f7']; icon = '🦊'; }
+        else if (name.includes('reshiram') || name.includes('charizard gx')) { theme = ['#dc2626', '#991b1b']; icon = '🔥'; }
+        else if (name.includes('zacian')) { theme = ['#3b82f6', '#1d4ed8']; icon = '⚔️'; }
+        else if (name.includes('zamazenta')) { theme = ['#dc2626', '#b91c1c']; icon = '🛡️'; }
+        else if (name.includes('pikachu')) { theme = ['#fbbf24', '#d97706']; icon = '⚡'; }
+        else { theme = ['#f59e0b', '#d97706']; icon = '🏆'; }
+    }
+    // Collector's Boxes / Special Collections
+    else if (name.includes('special illustration') || name.includes('special collection') || name.includes('special case') || name.includes('special box')) {
+        if (name.includes('charizard')) { theme = ['#ef4444', '#b91c1c']; icon = '🔥'; }
+        else if (name.includes('pikachu')) { theme = ['#fbbf24', '#d97706']; icon = '⚡'; }
+        else if (name.includes('eevee')) { theme = ['#a78bfa', '#7e22ce']; icon = '🦊'; }
+        else if (name.includes('detective pikachu')) { theme = ['#fbbf24', '#b45309']; icon = '🔍'; }
+        else if (name.includes('anniversary')) { theme = ['#f59e0b', '#d97706']; icon = '🎂'; }
+        else { theme = ['#f59e0b', '#d97706']; icon = '🎁'; }
+    }
+    // Trainer's Toolkit
+    else if (name.includes("trainer's toolkit")) { theme = ['#ef4444', '#dc2626']; icon = '🎒'; }
+    // Fallback
     else { theme = ['#7c5cfc', '#6d28d9']; icon = '🎰'; }
 
     const gradientId = 'g' + Math.random().toString(36).slice(2, 8);
@@ -1219,23 +1254,30 @@ function generatePrizeImage(prize) {
 // instantWinPrizes: [{ number, prize }] — each prize tied to a specific number
 function generateRandomInstantPrizes(count = 50) {
     const prizes = [
-        "£5 Cash Prize", "£10 Cash Prize", "£15 Cash Prize", "£20 Cash Prize",
-        "£25 Cash Prize", "£30 Cash Prize", "£50 Cash Prize", "£100 Cash Prize",
-        "Pokémon Booster Pack", "Pokémon Booster Box", "Elite Trainer Box",
-        "Special Edition Playmat", "£25 Gift Voucher", "£50 Gift Voucher",
-        "Holo Card Pack", "Ultra Rare Card Pack", "Mystery Slab Pack",
-        "Collector's Tin", "Pokémon Plushie", "Premium Card Sleeves (x50)",
-        "Deck Box", "Pokémon TCG Online Code Card (x10)", "Poster Collection",
-        "Mini Portfolio", "Charizard Figure", "Pikachu Keychain",
-        "Squirtle Sticker Set", "Eevee Pin Badge", "Legendary Bird Trio Print",
-        "Mewtwo Coin", "Gym Badge Set", "Poké Ball Replica",
-        "Energy Card Pack (x20)", "Trainer Card Bundle", "VSTAR Marker Set",
-        "Damage Counter Dice Set", "Pokémon Stickers (x50)",
-        "TCG Card Binder", "Foil Energy Set", "Rare Candy Token Set",
-        "Custom Playmat Design", "Regional Championship Deck Box",
-        "Gold Star Promo Card", "Rainbow Rare Card Sleeves",
-        "Vintage Booster Pack", "Japanese Promo Pack", "World Championship Deck",
-        "Premium Card Storage Box", "Pokémon Center Keychain", "Gengar Plushie",
+        // Slabs
+        "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
+        "CGC 9.5 Pikachu VMAX", "PSA 10 Umbreon V", "BGS 10 Giratina VSTAR",
+        "CGC 10 Lugia V", "PSA 9 Charizard V", "BGS 9 Mew VMAX",
+        "PSA 10 Celebi V", "CGC 9 Snorlax VMAX", "BGS 9.5 Blaziken VMAX",
+        // Elite Trainer Boxes
+        "Sword & Shield ETB", "Scarlet & Violet ETB", "Paldean Fates ETB",
+        "151 ETB", "Obsidian Flames ETB", "Paradox Rift ETB",
+        "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
+        "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
+        "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
+        // Booster Boxes
+        "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
+        "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
+        "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
+        "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
+        // Premium Collections
+        "Charizard UPC", "Celebrations Ultra Premium", "Mew UPC",
+        "Arceus VSTAR Premium Collection", "Zacian Premium Collection",
+        "Zamazenta Premium Collection", "Reshiram & Charizard GX Premium Collection",
+        // Collector's Boxes
+        "Charizard EX Special Illustration Box", "Pikachu VMAX Special Collection",
+        "Eevee VMAX Premium Collection", "Detective Pikachu Special Case",
+        "Trainer's Toolkit 2024", "20th Anniversary Special Box",
     ];
     const used = new Set();
     const result = [];
@@ -1255,7 +1297,7 @@ const LOTTERY_DEFAULTS = {
     jackpotTicketPrice: 3.99,
     instantWinTicketPrice: 9.99,
     winningNumber: null,
-    jackpotPrize: "£100 Cash Prize",
+    jackpotPrize: "PSA 10 Charizard VMAX Slab",
     instantWinPrizes: generateRandomInstantPrizes(50),
 };
 

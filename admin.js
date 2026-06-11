@@ -498,23 +498,30 @@ window.updateConditionMultiplier = updateConditionMultiplier;
 // instantWinPrizes: [{ number, prize }]
 function generateRandomInstantPrizes(count = 50) {
     const prizes = [
-        "£5 Cash Prize", "£10 Cash Prize", "£15 Cash Prize", "£20 Cash Prize",
-        "£25 Cash Prize", "£30 Cash Prize", "£50 Cash Prize", "£100 Cash Prize",
-        "Pokémon Booster Pack", "Pokémon Booster Box", "Elite Trainer Box",
-        "Special Edition Playmat", "£25 Gift Voucher", "£50 Gift Voucher",
-        "Holo Card Pack", "Ultra Rare Card Pack", "Mystery Slab Pack",
-        "Collector's Tin", "Pokémon Plushie", "Premium Card Sleeves (x50)",
-        "Deck Box", "Pokémon TCG Online Code Card (x10)", "Poster Collection",
-        "Mini Portfolio", "Charizard Figure", "Pikachu Keychain",
-        "Squirtle Sticker Set", "Eevee Pin Badge", "Legendary Bird Trio Print",
-        "Mewtwo Coin", "Gym Badge Set", "Poké Ball Replica",
-        "Energy Card Pack (x20)", "Trainer Card Bundle", "VSTAR Marker Set",
-        "Damage Counter Dice Set", "Pokémon Stickers (x50)",
-        "TCG Card Binder", "Foil Energy Set", "Rare Candy Token Set",
-        "Custom Playmat Design", "Regional Championship Deck Box",
-        "Gold Star Promo Card", "Rainbow Rare Card Sleeves",
-        "Vintage Booster Pack", "Japanese Promo Pack", "World Championship Deck",
-        "Premium Card Storage Box", "Pokémon Center Keychain", "Gengar Plushie",
+        // Slabs
+        "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
+        "CGC 9.5 Pikachu VMAX", "PSA 10 Umbreon V", "BGS 10 Giratina VSTAR",
+        "CGC 10 Lugia V", "PSA 9 Charizard V", "BGS 9 Mew VMAX",
+        "PSA 10 Celebi V", "CGC 9 Snorlax VMAX", "BGS 9.5 Blaziken VMAX",
+        // Elite Trainer Boxes
+        "Sword & Shield ETB", "Scarlet & Violet ETB", "Paldean Fates ETB",
+        "151 ETB", "Obsidian Flames ETB", "Paradox Rift ETB",
+        "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
+        "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
+        "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
+        // Booster Boxes
+        "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
+        "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
+        "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
+        "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
+        // Premium Collections
+        "Charizard UPC", "Celebrations Ultra Premium", "Mew UPC",
+        "Arceus VSTAR Premium Collection", "Zacian Premium Collection",
+        "Zamazenta Premium Collection", "Reshiram & Charizard GX Premium Collection",
+        // Collector's Boxes
+        "Charizard EX Special Illustration Box", "Pikachu VMAX Special Collection",
+        "Eevee VMAX Premium Collection", "Detective Pikachu Special Case",
+        "Trainer's Toolkit 2024", "20th Anniversary Special Box",
     ];
     const used = new Set();
     const result = [];
@@ -534,7 +541,7 @@ const LOTTERY_DEFAULTS = {
     jackpotTicketPrice: 3.99,
     instantWinTicketPrice: 9.99,
     winningNumber: null,
-    jackpotPrize: '£100 Cash Prize',
+    jackpotPrize: 'PSA 10 Charizard VMAX Slab',
     instantWinPrizes: generateRandomInstantPrizes(50),
 };
 
