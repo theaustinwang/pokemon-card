@@ -956,13 +956,15 @@ function smoothScroll(target) {
 function setNavFilter(filter) {
     const lottery = document.getElementById('lottery');
     const products = document.getElementById('products');
+    const productSection = document.getElementById('productSection');
     const filterBar = document.querySelector('.filter-bar');
     const noResults = document.getElementById('noResults');
     
     if (filter === 'lotto') {
-        // Show lottery, hide shop
+        // Show lottery, hide shop entirely
         if (lottery) lottery.style.display = '';
         if (products) products.style.display = 'none';
+        if (productSection) productSection.style.display = 'none';
         if (filterBar) filterBar.style.display = 'none';
         if (noResults) noResults.style.display = 'none';
         updateNavActive('lotto');
@@ -973,6 +975,7 @@ function setNavFilter(filter) {
     // Show shop, hide lottery
     if (lottery) lottery.style.display = 'none';
     if (products) products.style.display = '';
+    if (productSection) productSection.style.display = '';
     if (filterBar) filterBar.style.display = '';
     activeFilter = filter;
     searchTerm = '';
@@ -1252,29 +1255,31 @@ function renderLottery() {
         <div class="instant-win-mini" onclick="openBuyTicket('instant')">
             <span class="iw-number">#${String(p.number).padStart(5, '0')}</span>
             <span class="iw-prize-name">${p.prize}</span>
-            <button class="iw-btn" ${!hasWinningNumber ? 'disabled' : ''} onclick="event.stopPropagation(); openBuyTicket('instant')">⚡ Buy</button>
+            <button class="iw-btn" ${!hasWinningNumber ? 'disabled' : ''} onclick="event.stopPropagation(); openBuyTicket('instant')">
+                ⚡ ${formatLotteryPrice(lotteryConfig.instantWinTicketPrice)}
+            </button>
         </div>
     `).join('');
 
     grid.innerHTML = `
-        <!-- Standard Ticket -->
+        <!-- Jackpot -->
         <div class="lottery-card jackpot-card">
-            <div class="lottery-icon">🎟️</div>
-            <h3>Standard Ticket</h3>
-            <p class="lottery-subtitle">Pick numbers 1–99,999. Match the winning number for the jackpot!</p>
-            <div class="lottery-price">${formatLotteryPrice(lotteryConfig.jackpotTicketPrice)}</div>
-            <p class="lottery-tickets-sold">${standardCount} sold</p>
+            <div class="lottery-icon">👑</div>
+            <h3>Jackpot Draw</h3>
+            <p class="lottery-subtitle">Pick a number 1–99,999. Match the winning number to claim the grand prize!</p>
+            <div class="lottery-price">${lotteryConfig.jackpotPrize}</div>
+            <p class="lottery-tickets-sold">${standardCount} tickets sold · ${formatLotteryPrice(lotteryConfig.jackpotTicketPrice)} per ticket</p>
             <div class="lottery-prize-info">
-                <div class="prize-label">🏆 Jackpot Prize</div>
-                <div class="prize-detail">${lotteryConfig.jackpotPrize}</div>
-                ${hasWinningNumber ? `<div class="prize-label" style="margin-top:6px;">🎯 Winning Number</div><div class="prize-detail" style="font-size:1rem;font-family:'Courier New',monospace;letter-spacing:2px;color:#ffcc02;">#${String(winNum).padStart(5, '0')}</div>` : '<div class="prize-label" style="margin-top:6px;color:#ef4444;">⚠️ No winning number set</div>'}
+                ${hasWinningNumber 
+                    ? `<div class="prize-label">🎯 Winning Number</div><div class="prize-detail" style="font-size:1.4rem;font-family:'Courier New',monospace;letter-spacing:3px;color:#fbbf24;">#${String(winNum).padStart(5, '0')}</div>`
+                    : '<div class="prize-label" style="color:#ef4444;">⚠️ No winning number set</div>'}
             </div>
             <button class="btn" onclick="openBuyTicket('standard')" ${!hasWinningNumber ? 'disabled' : ''}>
-                🎫 Buy Tickets
+                🎫 Buy Jackpot Tickets
             </button>
         </div>
 
-        <!-- Instant Win Mini Cards -->
+        <!-- Instant Wins -->
         ${miniCards}
     `;
 
