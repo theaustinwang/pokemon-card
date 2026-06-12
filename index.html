@@ -18,7 +18,7 @@
             <nav class="nav">
                 <a href="#" class="nav-link active" id="navShop" onclick="setNavFilter('all'); return false;">Shop</a>
                 <a href="#" class="nav-link" id="navNew" onclick="setNavFilter('new'); return false;">✨ New Arrivals</a>
-                <a href="#" class="nav-link" id="navLotto" onclick="setNavFilter('lotto'); return false;">🎰 Lotto</a>
+                <a href="#" class="nav-link" id="navLotto" onclick="setNavFilter('lotto'); return false;">🎰 Draws</a>
             </nav>
             <div class="header-actions">
                 <div class="search-box">
@@ -62,7 +62,7 @@
     <div class="mobile-menu" id="mobileMenu">
         <a href="#" class="mobile-link active" id="mobShop" onclick="setNavFilter('all'); return false;">Shop</a>
         <a href="#" class="mobile-link" id="mobNew" onclick="setNavFilter('new'); return false;">✨ New Arrivals</a>
-        <a href="#" class="mobile-link" id="mobLotto" onclick="setNavFilter('lotto'); return false;">🎰 Lotto</a>
+        <a href="#" class="mobile-link" id="mobLotto" onclick="setNavFilter('lotto'); return false;">🎰 Draws</a>
     </div>
 
     <!-- Hero Section -->
@@ -100,8 +100,8 @@
     <section class="lottery" id="lottery">
         <div class="container">
             <div class="section-header">
-                <h2>🎰 <span class="gradient-text">Poké Lotto</span></h2>
-                <p>Buy tickets, pick numbers 1–99,999 — match the winning number for the jackpot!</p>
+                <h2>🎰 <span class="gradient-text">Poké Draws</span></h2>
+                <p>Buy tickets for a chance to win slabs, booster boxes, ETBs &amp; more!</p>
             </div>
             <div class="lottery-grid" id="lotteryGrid">
                 <!-- Rendered by JS -->
@@ -238,6 +238,9 @@
                     <option value="GBP">£ Pounds</option>
                     <option value="USD">$ US Dollars</option>
                 </select>
+            </div>
+            <div class="store-credit-section" id="storeCreditSection">
+                <!-- Rendered by JS -->
             </div>
             <button class="btn btn-primary btn-block" onclick="checkout()">
                 Proceed to Checkout

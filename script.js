@@ -266,6 +266,28 @@ function saveCart() {
     localStorage.setItem('pokemart-cart', JSON.stringify(cart));
 }
 
+// ========== In-Store Credit ==========
+let storeCredit = loadStoreCredit();
+
+function loadStoreCredit() {
+    try {
+        return parseFloat(localStorage.getItem('pokemart-store-credit')) || 0;
+    } catch { return 0; }
+}
+
+function saveStoreCredit() {
+    localStorage.setItem('pokemart-store-credit', storeCredit.toFixed(2));
+}
+
+function creditStoreBalance(amount) {
+    storeCredit += amount;
+    saveStoreCredit();
+}
+
+function getStoreCredit() {
+    return storeCredit;
+}
+
 // ========== Wishlist ==========
 let wishlist = loadWishlist();
 
@@ -789,12 +811,79 @@ function updateCartUI() {
         
         cartFooter.style.display = 'flex';
         cartTotal.textContent = formatPrice(getCartTotal());
+
+        // Update store credit section
+        updateStoreCreditSection();
     }
+}
+
+// ========== Store Credit Section in Cart ==========
+// Credit is stored in GBP. Convert for display + checkout.
+function formatCreditAmount(gbpAmount) {
+    if (currency === 'GBP') return '£' + gbpAmount.toFixed(2);
+    const usdAmount = gbpAmount / exchangeRate;
+    return '$' + usdAmount.toFixed(2);
+}
+
+function creditToCurrentCurrency(gbpAmount) {
+    if (currency === 'GBP') return gbpAmount;
+    return gbpAmount / exchangeRate;
+}
+
+function currentCurrencyToCredit(amount) {
+    if (currency === 'GBP') return amount;
+    return amount * exchangeRate;
+}
+
+function updateStoreCreditSection() {
+    const storeCreditEl = document.getElementById('storeCreditSection');
+    if (!storeCreditEl) return;
+    
+    const creditGbp = getStoreCredit();
+    const creditDisplay = formatCreditAmount(creditGbp);
+    const cartTotalUsd = getCartTotal();
+    const cartTotalDisplay = currency === 'GBP' ? cartTotalUsd * exchangeRate : cartTotalUsd;
+    const creditInCurrent = creditToCurrentCurrency(creditGbp);
+    
+    if (creditGbp <= 0) {
+        storeCreditEl.innerHTML = '';
+        return;
+    }
+    
+    const applicable = Math.min(creditInCurrent, cartTotalDisplay);
+    const afterCredit = Math.max(0, cartTotalDisplay - applicable);
+    const sym = getCurrencySymbol();
+    
+    storeCreditEl.innerHTML = `
+        <div class="store-credit-info">
+            <span class="store-credit-icon">🏪</span>
+            <div class="store-credit-details">
+                <span class="store-credit-label">Store Credit</span>
+                <span class="store-credit-amount">${creditDisplay} available</span>
+            </div>
+        </div>
+        <div class="store-credit-preview">
+            After credit: <strong>${sym}${afterCredit.toFixed(2)}</strong>
+        </div>
+    `;
 }
 
 // ========== Checkout ==========
 function checkout() {
     if (cart.length === 0) return;
+    
+    // Apply store credit (credit stored in GBP; convert for deduction)
+    const cartTotalUsd = getCartTotal();
+    const creditInCurrent = creditToCurrentCurrency(storeCredit);
+    const cartTotalDisplay = currency === 'GBP' ? cartTotalUsd * exchangeRate : cartTotalUsd;
+    let creditUsedGbp = 0;
+    let creditUsedDisplay = 0;
+    if (storeCredit > 0 && cartTotalDisplay > 0) {
+        creditUsedDisplay = Math.min(creditInCurrent, cartTotalDisplay);
+        creditUsedGbp = currentCurrencyToCredit(creditUsedDisplay);
+        storeCredit -= creditUsedGbp;
+        saveStoreCredit();
+    }
     
     const mysteryResults = [];
     const normalItems = [];
@@ -875,10 +964,31 @@ function checkout() {
         `).join('');
     }
     
-    modalDetails.innerHTML = detailsHTML + `
+    // Build payment breakdown
+    const sym = getCurrencySymbol();
+    let paymentBreakdown = '';
+    if (creditUsedGbp > 0) {
+        const remainingCredit = getStoreCredit();
+        const remainingDisplay = formatCreditAmount(remainingCredit);
+        paymentBreakdown = `
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px;">
+                    <span style="color:var(--text-muted);">Store Credit Applied</span>
+                    <span style="color:#4ade80;">−${sym}${creditUsedDisplay.toFixed(2)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px;">
+                    <span style="color:var(--text-muted);">Remaining Credit</span>
+                    <span style="color:#22c55e;">${remainingDisplay}</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    const remainingToPay = cartTotalDisplay - creditUsedDisplay;
+    modalDetails.innerHTML = detailsHTML + paymentBreakdown + `
         <div class="cart-total" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
             <span>Total Paid</span>
-            <span>${formatPrice(getCartTotal())}</span>
+            <span>${sym}${remainingToPay.toFixed(2)}</span>
         </div>
     `;
     
@@ -1220,6 +1330,55 @@ function generatePrizeImage(prize) {
     }
     // Trainer's Toolkit
     else if (name.includes("trainer's toolkit")) { theme = ['#ef4444', '#dc2626']; icon = '🎒'; }
+    // In-Store Credit
+    else if (name.includes('in-store credit') || name.includes('store credit')) {
+        if (name.includes('500')) { theme = ['#fbbf24', '#b45309']; icon = '🏪💷'; }
+        else if (name.includes('200')) { theme = ['#f59e0b', '#d97706']; icon = '🏪💷'; }
+        else if (name.includes('100')) { theme = ['#22c55e', '#16a34a']; icon = '🏪💷'; }
+        else if (name.includes('50')) { theme = ['#3b82f6', '#2563eb']; icon = '🏪💷'; }
+        else if (name.includes('25')) { theme = ['#8b5cf6', '#6d28d9']; icon = '🏪💷'; }
+        else { theme = ['#14b8a6', '#0d9488']; icon = '🏪💰'; }
+    }
+    // Vintage Packs
+    else if (name.includes('1st ed') || name.includes('base set') || name.includes('jungle') || name.includes('fossil') || name.includes('team rocket') || name.includes('gym heroes') || name.includes('neo genesis')) {
+        theme = ['#d4a574', '#8b5e3c']; icon = '📜';
+    }
+    // Japanese Sets
+    else if (name.includes('shiny star') || name.includes('vmax climax') || name.includes('tag team') || name.includes('dream league') || name.includes('remix bout') || name.includes('matchless fighters')) {
+        theme = ['#dc2626', '#991b1b']; icon = '🏯';
+    }
+    // Booster Packs / Bundles
+    else if (name.includes('booster pack') || name.includes('booster bundle')) {
+        if (name.includes('evolving skies')) { theme = ['#8b5cf6', '#5b21b6']; icon = '🃏'; }
+        else if (name.includes('151')) { theme = ['#fbbf24', '#b45309']; icon = '🃏'; }
+        else if (name.includes('crown zenith')) { theme = ['#facc15', '#ca8a04']; icon = '🃏'; }
+        else if (name.includes('lost origin')) { theme = ['#06b6d4', '#0e7490']; icon = '🃏'; }
+        else if (name.includes('fusion strike')) { theme = ['#ec4899', '#be185d']; icon = '🃏'; }
+        else if (name.includes('brilliant stars')) { theme = ['#f59e0b', '#b45309']; icon = '🃏'; }
+        else { theme = ['#ec4899', '#db2777']; icon = '🃏'; }
+    }
+    // Pokémon Center ETB
+    else if (name.includes('pokémon center')) {
+        theme = ['#3b82f6', '#1d4ed8']; icon = '🏪';
+    }
+    // Prismatic Evolutions
+    else if (name.includes('prismatic evolutions')) {
+        theme = ['#c084fc', '#a855f7']; icon = '💎';
+    }
+    // Stellar Crown
+    else if (name.includes('stellar crown')) {
+        theme = ['#fbbf24', '#f59e0b']; icon = '👑';
+    }
+    // Surging Sparks
+    else if (name.includes('surging sparks')) {
+        theme = ['#facc15', '#eab308']; icon = '⚡';
+    }
+    // Paldea Evolved
+    else if (name.includes('paldea evolved')) {
+        theme = ['#22c55e', '#16a34a']; icon = '🌿';
+    }
+    // Vintage Pack (generic)
+    else if (name.includes('booster pack')) { theme = ['#d4a574', '#8b5e3c']; icon = '📜'; }
     // Fallback
     else { theme = ['#7c5cfc', '#6d28d9']; icon = '🎰'; }
 
@@ -1245,60 +1404,65 @@ function generatePrizeImage(prize) {
         <text x="140" y="110" text-anchor="middle" font-size="64" filter="url(#glow)">${icon}</text>
         <!-- Bottom label -->
         <rect x="0" y="155" width="280" height="45" fill="rgba(0,0,0,0.25)" rx="0 0 16 16"/>
-        <text x="140" y="183" text-anchor="middle" fill="#fff" font-family="Poppins,Arial" font-size="12" font-weight="700" letter-spacing="2">INSTANT WIN</text>
+        <text x="140" y="183" text-anchor="middle" fill="#fff" font-family="Poppins,Arial" font-size="12" font-weight="700" letter-spacing="2">DRAW PRIZE</text>
     </svg>`;
     return 'data:image/svg+xml,' + encodeURIComponent(svg);
 }
 
 // ========== Lottery System ==========
 // instantWinPrizes: [{ number, prize }] — each prize tied to a specific number
-function generateRandomInstantPrizes(count = 50) {
-    const prizes = [
-        // Slabs
-        "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
-        "CGC 9.5 Pikachu VMAX", "PSA 10 Umbreon V", "BGS 10 Giratina VSTAR",
-        "CGC 10 Lugia V", "PSA 9 Charizard V", "BGS 9 Mew VMAX",
-        "PSA 10 Celebi V", "CGC 9 Snorlax VMAX", "BGS 9.5 Blaziken VMAX",
-        // Elite Trainer Boxes
-        "Sword & Shield ETB", "Scarlet & Violet ETB", "Paldean Fates ETB",
-        "151 ETB", "Obsidian Flames ETB", "Paradox Rift ETB",
-        "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
-        "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
-        "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
-        // Booster Boxes
-        "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
-        "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
-        "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
-        "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
-        // Premium Collections
-        "Charizard UPC", "Celebrations Ultra Premium", "Mew UPC",
-        "Arceus VSTAR Premium Collection", "Zacian Premium Collection",
-        "Zamazenta Premium Collection", "Reshiram & Charizard GX Premium Collection",
-        // Collector's Boxes
-        "Charizard EX Special Illustration Box", "Pikachu VMAX Special Collection",
-        "Eevee VMAX Premium Collection", "Detective Pikachu Special Case",
-        "Trainer's Toolkit 2024", "20th Anniversary Special Box",
-    ];
-    const used = new Set();
-    const result = [];
-    for (let i = 0; i < count; i++) {
-        let num;
-        do {
-            num = Math.floor(Math.random() * 99999) + 1;
-        } while (used.has(num));
-        used.add(num);
-        const prize = prizes[Math.floor(Math.random() * prizes.length)];
-        result.push({ number: num, prize: prize });
-    }
-    return result;
-}
+const DRAW_PRIZES = [
+    // Graded Slabs
+    "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
+    "CGC 9.5 Pikachu VMAX", "PSA 10 Umbreon V", "BGS 10 Giratina VSTAR",
+    "CGC 10 Lugia V", "PSA 9 Charizard V", "BGS 9 Mew VMAX",
+    "PSA 10 Celebi V", "CGC 9 Snorlax VMAX", "BGS 9.5 Blaziken VMAX",
+    "PSA 10 Gengar VMAX", "CGC 10 Mew VMAX", "BGS 9.5 Charizard GX",
+    // Elite Trainer Boxes
+    "Sword & Shield ETB", "Scarlet & Violet ETB", "Paldean Fates ETB",
+    "151 ETB", "Obsidian Flames ETB", "Paradox Rift ETB",
+    "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
+    "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
+    "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
+    // Booster Boxes
+    "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
+    "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
+    "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
+    "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
+    // Premium Collections
+    "Charizard UPC", "Celebrations Ultra Premium", "Mew UPC",
+    "Arceus VSTAR Premium Collection", "Zacian Premium Collection",
+    "Zamazenta Premium Collection", "Reshiram & Charizard GX Premium Collection",
+    // Collector's Boxes
+    "Charizard EX Special Illustration Box", "Pikachu VMAX Special Collection",
+    "Eevee VMAX Premium Collection", "Detective Pikachu Special Case",
+    "Trainer's Toolkit 2024", "20th Anniversary Special Box",
+    // Japanese Promo Packs
+    "Shiny Star V Booster Box", "VMAX Climax Booster Box", "Tag Team GX All Stars",
+    "Dream League Booster Box", "Remix Bout Booster Box", "Matchless Fighters Booster Box",
+    // Vintage
+    "Jungle Booster Pack (1st Ed)", "Fossil Booster Pack (1st Ed)",
+    "Team Rocket Booster Pack", "Gym Heroes Booster Pack",
+    "Neo Genesis Booster Pack", "Base Set Booster Pack",
+    // More Premium
+    "Evolving Skies ETB (Pokémon Center)", "151 ETB (Pokémon Center)",
+    "Paldea Evolved Booster Box", "Stellar Crown Booster Box",
+    "Surging Sparks Booster Box", "Scarlet & Violet 151 Booster Bundle",
+    "Prismatic Evolutions ETB",
+    // Loose Booster Packs
+    "Evolving Skies Booster Pack (x10)", "Crown Zenith Booster Pack (x10)",
+    "151 Booster Pack (x10)", "Fusion Strike Booster Pack (x10)",
+    "Lost Origin Booster Pack (x10)", "Brilliant Stars Booster Pack (x10)",
+    // In-Store Credit
+    "£500 In-Store Credit", "£200 In-Store Credit", "£100 In-Store Credit",
+    "£50 In-Store Credit", "£25 In-Store Credit",
+];
 
 const LOTTERY_DEFAULTS = {
     jackpotTicketPrice: 3.99,
-    instantWinTicketPrice: 9.99,
     winningNumber: null,
     jackpotPrize: "PSA 10 Charizard VMAX Slab",
-    instantWinPrizes: generateRandomInstantPrizes(50),
+    drawPrizes: [...DRAW_PRIZES],
 };
 
 function loadLotteryConfig() {
@@ -1306,17 +1470,18 @@ function loadLotteryConfig() {
         const saved = localStorage.getItem('pokemart-lottery-config');
         if (saved) {
             const config = JSON.parse(saved);
-            // Migrate old string[] prizes to new {number, prize}[] format
-            if (config.instantWinPrizes && config.instantWinPrizes.length > 0 && typeof config.instantWinPrizes[0] === 'string') {
-                config.instantWinPrizes = config.instantWinPrizes.map((p, i) => ({
-                    number: 1000 + i * 1000,
-                    prize: p
-                }));
-            }
-            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || [...LOTTERY_DEFAULTS.instantWinPrizes] };
+            // Migrate old instantWinPrizes to drawPrizes
+            const drawPrizes = config.drawPrizes || [];
+            delete config.instantWinPrizes;
+            delete config.instantWinTicketPrice;
+            return { ...LOTTERY_DEFAULTS, ...config, drawPrizes: drawPrizes.length > 0 ? drawPrizes : [...LOTTERY_DEFAULTS.drawPrizes] };
         }
     } catch { /* ignore */ }
-    return { ...LOTTERY_DEFAULTS, instantWinPrizes: LOTTERY_DEFAULTS.instantWinPrizes.map(p => ({...p})) };
+    // First time: auto-generate a random winning number
+    const defaults = { ...LOTTERY_DEFAULTS, drawPrizes: [...DRAW_PRIZES] };
+    defaults.winningNumber = Math.floor(Math.random() * 99999) + 1;
+    saveLotteryConfig(defaults);
+    return defaults;
 }
 
 function saveLotteryConfig(config) {
@@ -1357,24 +1522,21 @@ function renderLottery() {
     const grid = document.getElementById('lotteryGrid');
     if (!grid) return;
 
-    const standardCount = getTicketCount('standard');
+    const ticketCount = getTicketCount('standard');
     const winNum = getWinningNumber();
     const hasWinningNumber = winNum !== null && winNum !== undefined;
 
-    const instantPrizes = lotteryConfig.instantWinPrizes || [];
-    const miniCards = instantPrizes.map(p => {
-        const imgSrc = generatePrizeImage(p.prize);
+    // Prize gallery cards
+    const drawPrizes = lotteryConfig.drawPrizes || [];
+    const prizeCards = drawPrizes.map(p => {
+        const imgSrc = generatePrizeImage(p);
         return `
-        <div class="prize-card" onclick="openBuyTicket('instant')">
+        <div class="prize-card">
             <div class="prize-image-wrapper">
-                <img src="${imgSrc}" alt="${p.prize}" loading="lazy">
-                <span class="prize-number-badge">#${String(p.number).padStart(5, '0')}</span>
+                <img src="${imgSrc}" alt="${p}" loading="lazy">
             </div>
             <div class="prize-info">
-                <h3>${p.prize}</h3>
-                <button class="prize-buy-btn" ${!hasWinningNumber ? 'disabled' : ''} onclick="event.stopPropagation(); openBuyTicket('instant')">
-                    ⚡ ${formatLotteryPrice(lotteryConfig.instantWinTicketPrice)}
-                </button>
+                <h3>${p}</h3>
             </div>
         </div>`;
     }).join('');
@@ -1406,19 +1568,25 @@ function renderLottery() {
             <h3>Jackpot Draw</h3>
             <p class="lottery-subtitle">Pick a number 1–99,999. Match the winning number to claim the grand prize!</p>
             <div class="lottery-price">${lotteryConfig.jackpotPrize}</div>
-            <p class="lottery-tickets-sold">${standardCount} tickets sold · ${formatLotteryPrice(lotteryConfig.jackpotTicketPrice)} per ticket</p>
+            <p class="lottery-tickets-sold">${ticketCount} tickets sold · ${formatLotteryPrice(lotteryConfig.jackpotTicketPrice)} per ticket</p>
             <div class="lottery-prize-info">
                 ${hasWinningNumber 
                     ? `<div class="prize-label">🎯 Winning Number</div><div class="prize-detail" style="font-size:1.4rem;font-family:'Courier New',monospace;letter-spacing:3px;color:#fbbf24;">#${String(winNum).padStart(5, '0')}</div>`
                     : '<div class="prize-label" style="color:#ef4444;">⚠️ No winning number set</div>'}
             </div>
-            <button class="btn" onclick="openBuyTicket('standard')" ${!hasWinningNumber ? 'disabled' : ''}>
-                🎫 Buy Jackpot Tickets
+            <button class="btn" onclick="openBuyTicket()" ${!hasWinningNumber ? 'disabled' : ''}>
+                🎫 Buy Tickets
             </button>
         </div>
 
-        <!-- Instant Wins -->
-        ${miniCards}
+        <!-- Prize Gallery Heading -->
+        <div class="prize-gallery-heading">
+            <h3>🎁 Prizes You Could Win</h3>
+            <p>Every ticket enters you into the draw for one of these prizes!</p>
+        </div>
+
+        <!-- Prize Gallery -->
+        ${prizeCards}
     `;
 
     renderLotteryHistory();
@@ -1455,9 +1623,9 @@ function renderLotteryHistory() {
                 if (t.result === 'jackpot') {
                     resultClass = 'won';
                     resultText = '🏆 JACKPOT!';
-                } else if (t.result === 'consolation') {
+                } else if (t.result === 'draw') {
                     resultClass = 'consolation';
-                    resultText = `🎁 ${t.prize || 'Instant Win'}`;
+                    resultText = '🎁 ' + (t.prize || 'Draw Prize');
                 } else if (t.result === 'lost') {
                     resultClass = 'lost';
                     resultText = 'No win';
@@ -1468,7 +1636,6 @@ function renderLotteryHistory() {
                 return `
                 <div class="lottery-history-item">
                     <span class="ticket-number">#${String(t.number).padStart(5, '0')}</span>
-                    <span class="ticket-type ${t.type}">${t.type === 'instant' ? '⚡ Instant' : '🎟️ Std'}</span>
                     <span class="ticket-result ${resultClass}">${resultText}</span>
                 </div>`;
             }).join('')}
@@ -1477,11 +1644,9 @@ function renderLotteryHistory() {
 }
 
 // Buy ticket flow
-let pendingTicketType = null;
 let pendingTicketQty = 1;
 
-function openBuyTicket(type) {
-    pendingTicketType = type;
+function openBuyTicket() {
     pendingTicketQty = 1;
 
     const modal = document.getElementById('buyTicketModal');
@@ -1489,11 +1654,9 @@ function openBuyTicket(type) {
     const content = document.getElementById('buyTicketContent');
     const confirmBtn = document.getElementById('confirmBuyBtn');
 
-    const price = type === 'instant' ? lotteryConfig.instantWinTicketPrice : lotteryConfig.jackpotTicketPrice;
-    const typeLabel = type === 'instant' ? 'Instant Win' : 'Standard';
-    const typeEmoji = type === 'instant' ? '⚡' : '🎟️';
+    const price = lotteryConfig.jackpotTicketPrice;
 
-    title.textContent = `${typeEmoji} Buy ${typeLabel} Tickets`;
+    title.textContent = '🎟️ Buy Draw Tickets';
     content.innerHTML = `
         <p class="buy-ticket-info">Numbers will be randomly assigned between <strong>1</strong> and <strong>99,999</strong>.</p>
         <div class="qty-selector">
@@ -1504,7 +1667,6 @@ function openBuyTicket(type) {
         </div>
         <p class="buy-ticket-info">Price per ticket: <strong>${formatLotteryPrice(price)}</strong></p>
         <p class="buy-ticket-info" id="totalPriceInfo">Total: <strong>${formatLotteryPrice(price)}</strong></p>
-        ${type === 'instant' ? '<p class="buy-ticket-info" style="color:#a78bfa;">⚡ Each ticket checks against all instant win numbers!</p>' : '<p class="buy-ticket-info" style="color:#f59e0b;">Only the jackpot number wins. No consolation prizes.</p>'}
     `;
 
     confirmBtn.textContent = `Pay ${formatLotteryPrice(price)} — Buy`;
@@ -1513,7 +1675,7 @@ function openBuyTicket(type) {
 
 function updatePendingQty(val) {
     pendingTicketQty = parseInt(val) || 1;
-    const price = pendingTicketType === 'instant' ? lotteryConfig.instantWinTicketPrice : lotteryConfig.jackpotTicketPrice;
+    const price = lotteryConfig.jackpotTicketPrice;
     const totalEl = document.getElementById('totalPriceInfo');
     const confirmBtn = document.getElementById('confirmBuyBtn');
     if (totalEl) totalEl.innerHTML = `Total: <strong>${formatLotteryPrice(price * pendingTicketQty)}</strong>`;
@@ -1522,17 +1684,12 @@ function updatePendingQty(val) {
 
 function closeBuyTicket() {
     document.getElementById('buyTicketModal').classList.remove('open');
-    pendingTicketType = null;
     pendingTicketQty = 1;
 }
 
 function confirmBuyTicket() {
-    if (!pendingTicketType) return;
-
     const qty = pendingTicketQty || 1;
-    const type = pendingTicketType;
     const winNum = getWinningNumber();
-    const instantPrizes = lotteryConfig.instantWinPrizes || [];
     const results = [];
 
     // Generate unique numbers
@@ -1554,33 +1711,45 @@ function confirmBuyTicket() {
         usedNumbers.add(num);
     }
 
+    // Draw a random prize for each ticket from the draw pool
+    const drawPrizes = lotteryConfig.drawPrizes || [];
+    let totalCreditAwarded = 0;
+
     // Create and evaluate each ticket
     generatedNumbers.forEach(num => {
         const ticket = {
             id: Date.now() + Math.random(),
-            type: type,
+            type: 'standard',
             number: num,
             purchasedAt: Date.now(),
             result: null,
             prize: null,
         };
 
+        // Check if jackpot winner
         if (winNum !== null && winNum !== undefined) {
             if (ticket.number === parseInt(winNum)) {
                 ticket.result = 'jackpot';
                 ticket.prize = lotteryConfig.jackpotPrize;
-            } else if (type === 'instant') {
-                // Check against all instant win prize numbers
-                const matchedPrize = instantPrizes.find(p => p.number === ticket.number);
-                if (matchedPrize) {
-                    ticket.result = 'consolation';
-                    ticket.prize = matchedPrize.prize;
-                } else {
-                    ticket.result = 'lost';
-                }
-            } else {
-                ticket.result = 'lost';
             }
+        }
+
+        // If not jackpot, draw a random prize from the pool
+        if (ticket.result !== 'jackpot' && drawPrizes.length > 0) {
+            const randomIndex = Math.floor(Math.random() * drawPrizes.length);
+            const drawnPrize = drawPrizes[randomIndex];
+            ticket.result = 'draw';
+            ticket.prize = drawnPrize;
+
+            // If the prize is in-store credit, credit the account
+            const creditMatch = drawnPrize.match(/£(\d+)\s*in-store\s*credit/i);
+            if (creditMatch) {
+                const creditAmount = parseFloat(creditMatch[1]);
+                creditStoreBalance(creditAmount);
+                totalCreditAwarded += creditAmount;
+            }
+        } else if (ticket.result !== 'jackpot') {
+            ticket.result = 'lost';
         }
 
         lotteryTickets.push(ticket);
@@ -1591,8 +1760,14 @@ function confirmBuyTicket() {
     closeBuyTicket();
     renderLottery();
 
+    // Show toast if credit was awarded
+    if (totalCreditAwarded > 0) {
+        const awardedDisplay = formatCreditAmount(totalCreditAwarded);
+        showToast(`🏪 ${awardedDisplay} store credit added to your account!`);
+    }
+
     // Show results
-    showLotteryResults(results, type);
+    showLotteryResults(results, 'standard');
 }
 
 function showLotteryResults(tickets, type) {
@@ -1603,7 +1778,7 @@ function showLotteryResults(tickets, type) {
     const winNum = getWinningNumber();
     const winNumStr = winNum !== null ? String(winNum).padStart(5, '0') : '?????';
     const jackpotWinner = tickets.find(t => t.result === 'jackpot');
-    const consolationWins = tickets.filter(t => t.result === 'consolation');
+    const drawWins = tickets.filter(t => t.result === 'draw');
     const losers = tickets.filter(t => t.result === 'lost');
 
     let resultHTML = '';
@@ -1617,17 +1792,35 @@ function showLotteryResults(tickets, type) {
             <p class="lottery-result-prize">🏆 ${jackpotWinner.prize}</p>
         `;
         if (tickets.length > 1) {
-            resultHTML += `<p class="lottery-result-detail">${tickets.length - 1} other ticket${tickets.length > 2 ? 's' : ''} didn't win.</p>`;
+            resultHTML += `<p class="lottery-result-detail">${tickets.length - 1} other ticket${tickets.length > 2 ? 's' : ''} also drew prizes below.</p>`;
         }
-    } else if (consolationWins.length > 0) {
-        title.innerHTML = '🎁 Instant Win!';
-        resultHTML = consolationWins.map(t => `
+        // Show draw prize results for other tickets
+        const otherDraws = tickets.filter(t => t.result === 'draw');
+        if (otherDraws.length > 0) {
+            resultHTML += '<hr style="border-color:var(--border);margin:12px 0;">';
+            resultHTML += '<p class="lottery-result-detail" style="color:#a78bfa;">🎁 Your Draw Prizes:</p>';
+            resultHTML += otherDraws.map(t => `
+                <div class="lottery-result-detail" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:0.8rem;">
+                    <span style="font-family:'Courier New',monospace;color:var(--text-muted);">#${String(t.number).padStart(5, '0')}</span>
+                    <span style="color:#22c55e;font-weight:600;">${t.prize}</span>
+                </div>
+            `).join('');
+        }
+    } else if (drawWins.length > 0) {
+        title.innerHTML = '🎁 You Won!';
+        resultHTML = `<p class="lottery-result-detail">Winning number is <strong>#${winNumStr}</strong></p>`;
+        resultHTML += drawWins.map(t => {
+            const isCredit = /in-store\s*credit/i.test(t.prize || '');
+            const prizeClass = isCredit ? 'draw-credit' : 'draw-prize';
+            const prizeColor = isCredit ? '#4ade80' : '#a78bfa';
+            return `
             <div class="lottery-spinning">
                 <div class="lottery-result-number">#${String(t.number).padStart(5, '0')}</div>
             </div>
-            <p class="lottery-result-detail">Winning number is <strong>#${winNumStr}</strong></p>
-            <p class="lottery-result-prize consolation">🎁 ${t.prize}</p>
-        `).join('<hr style="border-color:var(--border);margin:12px 0;">');
+            <p class="lottery-result-prize ${prizeClass}" style="color:${prizeColor};">🎁 ${t.prize}</p>
+            ${isCredit ? '<p class="lottery-result-detail" style="color:#22c55e;">💰 Added to your store credit balance!</p>' : ''}
+            `;
+        }).join('<hr style="border-color:var(--border);margin:12px 0;">');
         if (losers.length > 0) {
             resultHTML += `<p class="lottery-result-detail">${losers.length} other ticket${losers.length > 1 ? 's' : ''} didn't win.</p>`;
         }
@@ -1664,12 +1857,14 @@ window.updatePendingQty = updatePendingQty;
 window.confirmBuyTicket = confirmBuyTicket;
 window.closeLotteryResult = closeLotteryResult;
 window.refreshLotteryConfig = refreshLotteryConfig;
+window.getStoreCredit = getStoreCredit;
+window.creditStoreBalance = creditStoreBalance;
 
 // Refresh lottery config from localStorage (called when admin updates)
 function refreshLotteryConfig() {
     lotteryConfig = loadLotteryConfig();
     const winNum = getWinningNumber();
-    const instantPrizes = lotteryConfig.instantWinPrizes || [];
+    const drawPrizes = lotteryConfig.drawPrizes || [];
     let changed = false;
     lotteryTickets.forEach(t => {
         if (t.result === null && winNum !== null) {
@@ -1677,15 +1872,17 @@ function refreshLotteryConfig() {
                 t.result = 'jackpot';
                 t.prize = lotteryConfig.jackpotPrize;
                 changed = true;
-            } else if (t.type === 'instant') {
-                const matchedPrize = instantPrizes.find(p => p.number === t.number);
-                if (matchedPrize) {
-                    t.result = 'consolation';
-                    t.prize = matchedPrize.prize;
-                } else {
-                    t.result = 'lost';
-                }
+            } else if (drawPrizes.length > 0) {
+                const randomIndex = Math.floor(Math.random() * drawPrizes.length);
+                t.result = 'draw';
+                t.prize = drawPrizes[randomIndex];
                 changed = true;
+                
+                // Credit in-store credit prizes
+                const creditMatch = (t.prize || '').match(/£(\d+)\s*in-store\s*credit/i);
+                if (creditMatch) {
+                    creditStoreBalance(parseFloat(creditMatch[1]));
+                }
             } else {
                 t.result = 'lost';
                 changed = true;

@@ -250,7 +250,7 @@ function resetAllCards() {
     mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
     saveMysteryProducts();
     renderMysteryTable();
-    lotteryConfig = { ...LOTTERY_DEFAULTS, instantWinPrizes: LOTTERY_DEFAULTS.instantWinPrizes.map(p => ({...p})) };
+    lotteryConfig = { ...LOTTERY_DEFAULTS, drawPrizes: [...LOTTERY_DEFAULTS.drawPrizes], winningNumber: Math.floor(Math.random() * 99999) + 1 };
     saveLotteryConfig(lotteryConfig);
     loadLotteryUI();
 }
@@ -495,54 +495,58 @@ function loadConditionMultipliersUI() {
 window.updateConditionMultiplier = updateConditionMultiplier;
 
 // ========== Lottery Admin Management ==========
-// instantWinPrizes: [{ number, prize }]
-function generateRandomInstantPrizes(count = 50) {
-    const prizes = [
-        // Slabs
-        "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
-        "CGC 9.5 Pikachu VMAX", "PSA 10 Umbreon V", "BGS 10 Giratina VSTAR",
-        "CGC 10 Lugia V", "PSA 9 Charizard V", "BGS 9 Mew VMAX",
-        "PSA 10 Celebi V", "CGC 9 Snorlax VMAX", "BGS 9.5 Blaziken VMAX",
-        // Elite Trainer Boxes
-        "Sword & Shield ETB", "Scarlet & Violet ETB", "Paldean Fates ETB",
-        "151 ETB", "Obsidian Flames ETB", "Paradox Rift ETB",
-        "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
-        "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
-        "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
-        // Booster Boxes
-        "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
-        "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
-        "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
-        "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
-        // Premium Collections
-        "Charizard UPC", "Celebrations Ultra Premium", "Mew UPC",
-        "Arceus VSTAR Premium Collection", "Zacian Premium Collection",
-        "Zamazenta Premium Collection", "Reshiram & Charizard GX Premium Collection",
-        // Collector's Boxes
-        "Charizard EX Special Illustration Box", "Pikachu VMAX Special Collection",
-        "Eevee VMAX Premium Collection", "Detective Pikachu Special Case",
-        "Trainer's Toolkit 2024", "20th Anniversary Special Box",
-    ];
-    const used = new Set();
-    const result = [];
-    for (let i = 0; i < count; i++) {
-        let num;
-        do {
-            num = Math.floor(Math.random() * 99999) + 1;
-        } while (used.has(num));
-        used.add(num);
-        const prize = prizes[Math.floor(Math.random() * prizes.length)];
-        result.push({ number: num, prize: prize });
-    }
-    return result;
-}
+const DRAW_PRIZES = [
+    // Graded Slabs
+    "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
+    "CGC 9.5 Pikachu VMAX", "PSA 10 Umbreon V", "BGS 10 Giratina VSTAR",
+    "CGC 10 Lugia V", "PSA 9 Charizard V", "BGS 9 Mew VMAX",
+    "PSA 10 Celebi V", "CGC 9 Snorlax VMAX", "BGS 9.5 Blaziken VMAX",
+    "PSA 10 Gengar VMAX", "CGC 10 Mew VMAX", "BGS 9.5 Charizard GX",
+    // Elite Trainer Boxes
+    "Sword & Shield ETB", "Scarlet & Violet ETB", "Paldean Fates ETB",
+    "151 ETB", "Obsidian Flames ETB", "Paradox Rift ETB",
+    "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
+    "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
+    "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
+    // Booster Boxes
+    "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
+    "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
+    "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
+    "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
+    // Premium Collections
+    "Charizard UPC", "Celebrations Ultra Premium", "Mew UPC",
+    "Arceus VSTAR Premium Collection", "Zacian Premium Collection",
+    "Zamazenta Premium Collection", "Reshiram & Charizard GX Premium Collection",
+    // Collector's Boxes
+    "Charizard EX Special Illustration Box", "Pikachu VMAX Special Collection",
+    "Eevee VMAX Premium Collection", "Detective Pikachu Special Case",
+    "Trainer's Toolkit 2024", "20th Anniversary Special Box",
+    // Japanese Promo Packs
+    "Shiny Star V Booster Box", "VMAX Climax Booster Box", "Tag Team GX All Stars",
+    "Dream League Booster Box", "Remix Bout Booster Box", "Matchless Fighters Booster Box",
+    // Vintage
+    "Jungle Booster Pack (1st Ed)", "Fossil Booster Pack (1st Ed)",
+    "Team Rocket Booster Pack", "Gym Heroes Booster Pack",
+    "Neo Genesis Booster Pack", "Base Set Booster Pack",
+    // More Premium
+    "Evolving Skies ETB (Pokémon Center)", "151 ETB (Pokémon Center)",
+    "Paldea Evolved Booster Box", "Stellar Crown Booster Box",
+    "Surging Sparks Booster Box", "Scarlet & Violet 151 Booster Bundle",
+    "Prismatic Evolutions ETB",
+    // Loose Booster Packs
+    "Evolving Skies Booster Pack (x10)", "Crown Zenith Booster Pack (x10)",
+    "151 Booster Pack (x10)", "Fusion Strike Booster Pack (x10)",
+    "Lost Origin Booster Pack (x10)", "Brilliant Stars Booster Pack (x10)",
+    // In-Store Credit
+    "£500 In-Store Credit", "£200 In-Store Credit", "£100 In-Store Credit",
+    "£50 In-Store Credit", "£25 In-Store Credit",
+];
 
 const LOTTERY_DEFAULTS = {
     jackpotTicketPrice: 3.99,
-    instantWinTicketPrice: 9.99,
     winningNumber: null,
     jackpotPrize: 'PSA 10 Charizard VMAX Slab',
-    instantWinPrizes: generateRandomInstantPrizes(50),
+    drawPrizes: [...DRAW_PRIZES],
 };
 
 function loadLotteryConfig() {
@@ -550,17 +554,17 @@ function loadLotteryConfig() {
         const saved = localStorage.getItem('pokemart-lottery-config');
         if (saved) {
             const config = JSON.parse(saved);
-            // Migrate old string[] prizes to new {number, prize}[] format
-            if (config.instantWinPrizes && config.instantWinPrizes.length > 0 && typeof config.instantWinPrizes[0] === 'string') {
-                config.instantWinPrizes = config.instantWinPrizes.map((p, i) => ({
-                    number: 1000 + i * 1000,
-                    prize: p
-                }));
-            }
-            return { ...LOTTERY_DEFAULTS, ...config, instantWinPrizes: config.instantWinPrizes || [...LOTTERY_DEFAULTS.instantWinPrizes] };
+            // Migrate old instantWinPrizes to drawPrizes
+            delete config.instantWinPrizes;
+            delete config.instantWinTicketPrice;
+            return { ...LOTTERY_DEFAULTS, ...config, drawPrizes: config.drawPrizes || [...LOTTERY_DEFAULTS.drawPrizes] };
         }
     } catch { /* ignore */ }
-    return { ...LOTTERY_DEFAULTS, instantWinPrizes: LOTTERY_DEFAULTS.instantWinPrizes.map(p => ({...p})) };
+    // First time: auto-generate a random winning number
+    const defaults = { ...LOTTERY_DEFAULTS, drawPrizes: [...DRAW_PRIZES] };
+    defaults.winningNumber = Math.floor(Math.random() * 99999) + 1;
+    saveLotteryConfig(defaults);
+    return defaults;
 }
 
 function saveLotteryConfig(config) {
@@ -576,7 +580,6 @@ let lotteryConfig = loadLotteryConfig();
 
 function loadLotteryUI() {
     document.getElementById('lotteryStandardPrice').value = lotteryConfig.jackpotTicketPrice;
-    document.getElementById('lotteryInstantPrice').value = lotteryConfig.instantWinTicketPrice;
     document.getElementById('lotteryJackpotPrize').value = lotteryConfig.jackpotPrize;
     const winNumInput = document.getElementById('lotteryWinningNumber');
     if (lotteryConfig.winningNumber !== null && lotteryConfig.winningNumber !== undefined) {
@@ -588,7 +591,7 @@ function loadLotteryUI() {
 }
 
 function updateLotterySetting(key, value) {
-    if (key === 'jackpotTicketPrice' || key === 'instantWinTicketPrice') {
+    if (key === 'jackpotTicketPrice') {
         lotteryConfig[key] = Math.max(0.01, parseFloat(value) || 0.01);
     } else if (key === 'winningNumber') {
         const num = parseInt(value);
@@ -614,51 +617,33 @@ function renderPrizePoolList() {
     const list = document.getElementById('lotteryPrizePoolList');
     if (!list) return;
 
-    const prizes = lotteryConfig.instantWinPrizes || [];
+    const prizes = lotteryConfig.drawPrizes || [];
     list.innerHTML = prizes.map((p, i) => `
         <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:0.7rem;color:var(--text-muted);min-width:18px;">${i + 1}.</span>
-            <span style="font-size:0.7rem;color:var(--text-muted);min-width:50px;">Number:</span>
-            <input type="number" value="${p.number}" min="1" max="99999"
-                   style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:0.78rem;outline:none;font-family:'Courier New',monospace;"
-                   onchange="updateLotteryPrizeNumber(${i}, this.value)">
-            <span style="font-size:0.7rem;color:var(--text-muted);min-width:40px;">Prize:</span>
-            <input type="text" value="${p.prize.replace(/"/g, '&quot;')}" 
+            <span style="font-size:0.7rem;color:var(--text-muted);min-width:22px;">${i + 1}.</span>
+            <input type="text" value="${p.replace(/"/g, '&quot;')}" 
                    style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.78rem;outline:none;"
-                   onchange="updateLotteryPrizeName(${i}, this.value)">
+                   onchange="updateLotteryPrize(${i}, this.value)">
             <button class="delete-btn" onclick="removeLotteryPrize(${i})" title="Remove prize">🗑️</button>
         </div>
     `).join('');
 }
 
-function updateLotteryPrizeNumber(index, value) {
-    if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
-    const num = parseInt(value);
-    if (!isNaN(num) && num >= 1 && num <= 99999) {
-        lotteryConfig.instantWinPrizes[index].number = num;
-        saveLotteryConfig(lotteryConfig);
-    }
-}
-
-function updateLotteryPrizeName(index, value) {
-    if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
-    lotteryConfig.instantWinPrizes[index].prize = value.trim();
+function updateLotteryPrize(index, value) {
+    if (!lotteryConfig.drawPrizes) lotteryConfig.drawPrizes = [];
+    lotteryConfig.drawPrizes[index] = value.trim();
     saveLotteryConfig(lotteryConfig);
 }
 
 function removeLotteryPrize(index) {
-    lotteryConfig.instantWinPrizes.splice(index, 1);
+    lotteryConfig.drawPrizes.splice(index, 1);
     saveLotteryConfig(lotteryConfig);
     renderPrizePoolList();
 }
 
 function addLotteryPrize() {
-    if (!lotteryConfig.instantWinPrizes) lotteryConfig.instantWinPrizes = [];
-    // Generate a random unused number
-    const used = new Set(lotteryConfig.instantWinPrizes.map(p => p.number));
-    let num;
-    do { num = Math.floor(Math.random() * 99999) + 1; } while (used.has(num));
-    lotteryConfig.instantWinPrizes.push({ number: num, prize: 'New Prize' });
+    if (!lotteryConfig.drawPrizes) lotteryConfig.drawPrizes = [];
+    lotteryConfig.drawPrizes.push('New Prize');
     saveLotteryConfig(lotteryConfig);
     renderPrizePoolList();
 }
@@ -666,8 +651,7 @@ function addLotteryPrize() {
 // Expose to global scope
 window.updateLotterySetting = updateLotterySetting;
 window.randomWinningNumber = randomWinningNumber;
-window.updateLotteryPrizeNumber = updateLotteryPrizeNumber;
-window.updateLotteryPrizeName = updateLotteryPrizeName;
+window.updateLotteryPrize = updateLotteryPrize;
 window.removeLotteryPrize = removeLotteryPrize;
 window.addLotteryPrize = addLotteryPrize;
 

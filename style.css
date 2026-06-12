@@ -623,7 +623,7 @@ input, select { font-family: inherit; }
     box-shadow: 0 4px 12px rgba(245,158,11,0.1);
 }
 
-/* ===== Instant Win Prize Cards (shop-style with images) ===== */
+/* ===== Instant Win Prize Cards (gallery-style) ===== */
 .prize-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -631,7 +631,7 @@ input, select { font-family: inherit; }
     overflow: hidden;
     transition: var(--transition);
     position: relative;
-    cursor: pointer;
+    cursor: default;
     backdrop-filter: blur(10px);
 }
 .prize-card:hover {
@@ -655,55 +655,31 @@ input, select { font-family: inherit; }
     transition: transform 0.4s ease;
 }
 .prize-card:hover .prize-image-wrapper img { transform: scale(1.05); }
-.prize-card .prize-number-badge {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(6px);
-    color: #c084fc;
-    font-family: 'Courier New', monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    padding: 3px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(168,85,247,0.3);
-}
 .prize-card .prize-info {
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    padding: 12px 14px;
 }
 .prize-card .prize-info h3 {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.3;
-}
-.prize-card .prize-buy-btn {
-    width: 100%;
-    padding: 9px 0;
-    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 700;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--text);
+    line-height: 1.35;
 }
-.prize-card .prize-buy-btn:hover {
-    background: linear-gradient(135deg, #a78bfa, #7c3aed);
-    box-shadow: 0 4px 16px rgba(139,92,246,0.4);
+
+/* Gallery section heading */
+.prize-gallery-heading {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin: 20px 0 6px;
 }
-.prize-card .prize-buy-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    box-shadow: none;
+.prize-gallery-heading h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+}
+.prize-gallery-heading p {
+    font-size: 0.82rem;
+    color: #999;
 }
 
 /* ===== Jackpot Banner Image ===== */
@@ -721,9 +697,6 @@ input, select { font-family: inherit; }
     display: block;
 }
 
-/* Old compact cards — hidden, replaced by prize-card */
-.instant-win-mini { display: none; }
-
 /* Legacy compatibility */
 .lottery-card {
     background: var(--bg-card);
@@ -735,11 +708,6 @@ input, select { font-family: inherit; }
     position: relative;
     overflow: hidden;
 }
-.lottery-card.instant-win-card {
-    border-color: rgba(168,85,247,0.35);
-    background: linear-gradient(135deg, rgba(168,85,247,0.05), rgba(236,72,153,0.02));
-}
-
 .lottery-icon {
     font-size: 2rem;
     margin-bottom: 8px;
@@ -802,11 +770,6 @@ input, select { font-family: inherit; }
     background: rgba(245,158,11,0.03);
 }
 
-.instant-win-card .lottery-prize-info {
-    border-color: rgba(168,85,247,0.2);
-    background: rgba(168,85,247,0.03);
-}
-
 .lottery-card .btn {
     width: 100%;
     justify-content: center;
@@ -828,17 +791,6 @@ input, select { font-family: inherit; }
 
 .jackpot-card .btn:hover {
     box-shadow: 0 6px 24px rgba(245,158,11,0.4);
-    transform: translateY(-1px);
-}
-
-.instant-win-card .btn {
-    background: linear-gradient(135deg, #7c5cfc, #ec4899);
-    color: white;
-    box-shadow: 0 4px 16px rgba(124,92,252,0.25);
-}
-
-.instant-win-card .btn:hover {
-    box-shadow: 0 6px 24px rgba(124,92,252,0.4);
     transform: translateY(-1px);
 }
 
@@ -2408,6 +2360,64 @@ input, select { font-family: inherit; }
 
 .cart-currency select:focus {
     border-color: var(--primary);
+}
+
+/* Store Credit Section in Cart */
+.store-credit-section {
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 4px 0;
+}
+
+.store-credit-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.store-credit-icon {
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(22,163,74,0.1));
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(34,197,94,0.25);
+    flex-shrink: 0;
+}
+
+.store-credit-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.store-credit-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.store-credit-amount {
+    font-size: 0.75rem;
+    color: #4ade80;
+    font-weight: 700;
+}
+
+.store-credit-preview {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: right;
+    padding: 4px 0;
+}
+
+.store-credit-preview strong {
+    color: #22c55e;
+    font-weight: 700;
 }
 
 .cart-total {
