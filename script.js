@@ -1424,35 +1424,18 @@ const DRAW_PRIZES = [
     "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
     "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
     "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
+    "Evolving Skies ETB (Pokémon Center)", "151 ETB (Pokémon Center)",
+    "Prismatic Evolutions ETB",
     // Booster Boxes
     "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
     "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
     "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
     "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
-    // Premium Collections
-    "Charizard UPC", "Celebrations Ultra Premium", "Mew UPC",
-    "Arceus VSTAR Premium Collection", "Zacian Premium Collection",
-    "Zamazenta Premium Collection", "Reshiram & Charizard GX Premium Collection",
-    // Collector's Boxes
-    "Charizard EX Special Illustration Box", "Pikachu VMAX Special Collection",
-    "Eevee VMAX Premium Collection", "Detective Pikachu Special Case",
-    "Trainer's Toolkit 2024", "20th Anniversary Special Box",
-    // Japanese Promo Packs
-    "Shiny Star V Booster Box", "VMAX Climax Booster Box", "Tag Team GX All Stars",
-    "Dream League Booster Box", "Remix Bout Booster Box", "Matchless Fighters Booster Box",
-    // Vintage
+    "Paldea Evolved Booster Box", "Stellar Crown Booster Box", "Surging Sparks Booster Box",
+    // Vintage Booster Packs
     "Jungle Booster Pack (1st Ed)", "Fossil Booster Pack (1st Ed)",
     "Team Rocket Booster Pack", "Gym Heroes Booster Pack",
     "Neo Genesis Booster Pack", "Base Set Booster Pack",
-    // More Premium
-    "Evolving Skies ETB (Pokémon Center)", "151 ETB (Pokémon Center)",
-    "Paldea Evolved Booster Box", "Stellar Crown Booster Box",
-    "Surging Sparks Booster Box", "Scarlet & Violet 151 Booster Bundle",
-    "Prismatic Evolutions ETB",
-    // Loose Booster Packs
-    "Evolving Skies Booster Pack (x10)", "Crown Zenith Booster Pack (x10)",
-    "151 Booster Pack (x10)", "Fusion Strike Booster Pack (x10)",
-    "Lost Origin Booster Pack (x10)", "Brilliant Stars Booster Pack (x10)",
     // In-Store Credit
     "£500 In-Store Credit", "£200 In-Store Credit", "£100 In-Store Credit",
     "£50 In-Store Credit", "£25 In-Store Credit",
