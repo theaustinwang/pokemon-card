@@ -505,9 +505,6 @@ const DRAW_PRIZES = [
     "Jungle Booster Pack (1st Ed)", "Fossil Booster Pack (1st Ed)",
     "Team Rocket Booster Pack", "Gym Heroes Booster Pack",
     "Neo Genesis Booster Pack", "Base Set Booster Pack",
-    // In-Store Credit
-    "£500 In-Store Credit", "£200 In-Store Credit", "£100 In-Store Credit",
-    "£50 In-Store Credit", "£25 In-Store Credit",
 ];
 
 function generateDrawId() {
