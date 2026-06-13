@@ -238,23 +238,6 @@ function deleteCard(id) {
     renderTable();
 }
 
-function resetAllCards() {
-    if (!confirm('Reset ALL cards and mystery products to default values? This cannot be undone!')) return;
-    cards = JSON.parse(JSON.stringify(defaultCardData));
-    localStorage.removeItem('pokemart-mystery-stock');
-    localStorage.removeItem('pokemart-mystery-prices');
-    localStorage.removeItem('pokemart-lottery-config');
-    localStorage.removeItem('pokemart-lottery-tickets');
-    saveCards();
-    renderTable();
-    mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
-    saveMysteryProducts();
-    renderMysteryTable();
-    lotteryConfig = { ...LOTTERY_DEFAULTS, drawPrizes: [...LOTTERY_DEFAULTS.drawPrizes], winningNumber: Math.floor(Math.random() * 99999) + 1 };
-    saveLotteryConfig(lotteryConfig);
-    loadLotteryUI();
-}
-
 // ========== Add Modal ==========
 function openAddModal() {
     document.getElementById('modalTitle').textContent = 'Add New Card';
@@ -494,7 +477,9 @@ function loadConditionMultipliersUI() {
 // Expose to global scope
 window.updateConditionMultiplier = updateConditionMultiplier;
 
-// ========== Lottery Admin Management ==========
+// ========== Lottery / Draws Admin Management ==========
+// Each draw is an independent prize with its own ticket price & winning number
+
 const DRAW_PRIZES = [
     // Graded Slabs
     "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
@@ -525,11 +510,21 @@ const DRAW_PRIZES = [
     "£50 In-Store Credit", "£25 In-Store Credit",
 ];
 
+function generateDrawId() {
+    return 'draw-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 7);
+}
+
+function createDefaultDraws() {
+    return DRAW_PRIZES.map(name => ({
+        id: generateDrawId(),
+        name: name,
+        ticketPrice: 3.99,
+        winningNumber: Math.floor(Math.random() * 99999) + 1,
+    }));
+}
+
 const LOTTERY_DEFAULTS = {
-    jackpotTicketPrice: 3.99,
-    winningNumber: null,
-    jackpotPrize: 'PSA 10 Charizard VMAX Slab',
-    drawPrizes: [...DRAW_PRIZES],
+    draws: createDefaultDraws(),
 };
 
 function loadLotteryConfig() {
@@ -537,15 +532,27 @@ function loadLotteryConfig() {
         const saved = localStorage.getItem('pokemart-lottery-config');
         if (saved) {
             const config = JSON.parse(saved);
-            // Migrate old instantWinPrizes to drawPrizes
-            delete config.instantWinPrizes;
-            delete config.instantWinTicketPrice;
-            return { ...LOTTERY_DEFAULTS, ...config, drawPrizes: config.drawPrizes || [...LOTTERY_DEFAULTS.drawPrizes] };
+            // Migrate old format (centralized jackpot) → new format (per-draw)
+            if (!config.draws || !Array.isArray(config.draws)) {
+                const oldDrawPrizes = config.drawPrizes || [];
+                config.draws = oldDrawPrizes.map(name => ({
+                    id: generateDrawId(),
+                    name: name,
+                    ticketPrice: config.jackpotTicketPrice || 3.99,
+                    winningNumber: config.winningNumber || Math.floor(Math.random() * 99999) + 1,
+                }));
+                delete config.jackpotTicketPrice;
+                delete config.winningNumber;
+                delete config.jackpotPrize;
+                delete config.drawPrizes;
+                delete config.instantWinPrizes;
+                delete config.instantWinTicketPrice;
+            }
+            return config;
         }
     } catch { /* ignore */ }
-    // First time: auto-generate a random winning number
-    const defaults = { ...LOTTERY_DEFAULTS, drawPrizes: [...DRAW_PRIZES] };
-    defaults.winningNumber = Math.floor(Math.random() * 99999) + 1;
+    // First time
+    const defaults = { draws: createDefaultDraws() };
     saveLotteryConfig(defaults);
     return defaults;
 }
@@ -562,81 +569,115 @@ function saveLotteryConfig(config) {
 let lotteryConfig = loadLotteryConfig();
 
 function loadLotteryUI() {
-    document.getElementById('lotteryStandardPrice').value = lotteryConfig.jackpotTicketPrice;
-    document.getElementById('lotteryJackpotPrize').value = lotteryConfig.jackpotPrize;
-    const winNumInput = document.getElementById('lotteryWinningNumber');
-    if (lotteryConfig.winningNumber !== null && lotteryConfig.winningNumber !== undefined) {
-        winNumInput.value = lotteryConfig.winningNumber;
-    } else {
-        winNumInput.value = '';
-    }
-    renderPrizePoolList();
+    if (!lotteryConfig.draws) lotteryConfig.draws = [];
+    renderDrawsTable();
 }
 
-function updateLotterySetting(key, value) {
-    if (key === 'jackpotTicketPrice') {
-        lotteryConfig[key] = Math.max(0.01, parseFloat(value) || 0.01);
-    } else if (key === 'winningNumber') {
-        const num = parseInt(value);
-        if (value === '' || isNaN(num)) {
-            lotteryConfig.winningNumber = null;
+function renderDrawsTable() {
+    const tbody = document.getElementById('lotteryDrawsTableBody');
+    if (!tbody) return;
+
+    const draws = lotteryConfig.draws || [];
+    tbody.innerHTML = draws.map((d, i) => {
+        const wonNum = d.winningNumber !== null && d.winningNumber !== undefined ? d.winningNumber : '';
+        return `
+            <tr>
+                <td><span style="font-size:0.75rem;color:var(--text-muted);">${i + 1}</span></td>
+                <td>
+                    <input type="text" value="${d.name.replace(/"/g, '&quot;')}"
+                           style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.82rem;outline:none;"
+                           onchange="updateDrawField('${d.id}', 'name', this.value)">
+                </td>
+                <td>
+                    <input type="number" step="0.01" min="0.01" value="${d.ticketPrice}"
+                           style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.82rem;outline:none;text-align:right;"
+                           onchange="updateDrawField('${d.id}', 'ticketPrice', this.value)">
+                </td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <input type="number" min="1" max="99999" value="${wonNum}"
+                               style="width:100px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.82rem;outline:none;font-family:'Courier New',monospace;text-align:center;"
+                               onchange="updateDrawField('${d.id}', 'winningNumber', this.value)">
+                        <button class="delete-btn" onclick="randomDrawNumber('${d.id}')" title="Random number" style="font-size:0.9rem;">🎲</button>
+                    </div>
+                </td>
+                <td>
+                    <button class="delete-btn" onclick="removeLotteryDraw('${d.id}')" title="Remove draw">🗑️</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateDrawField(drawId, field, value) {
+    const draw = lotteryConfig.draws.find(d => d.id === drawId);
+    if (!draw) return;
+
+    if (field === 'name') {
+        draw.name = value.trim() || draw.name;
+    } else if (field === 'ticketPrice') {
+        draw.ticketPrice = Math.max(0.01, parseFloat(value) || 0.01);
+    } else if (field === 'winningNumber') {
+        if (value === '' || isNaN(parseInt(value))) {
+            draw.winningNumber = null;
         } else {
-            lotteryConfig.winningNumber = Math.max(1, Math.min(99999, num));
+            draw.winningNumber = Math.max(1, Math.min(99999, parseInt(value)));
         }
-    } else {
-        lotteryConfig[key] = value;
     }
+
     saveLotteryConfig(lotteryConfig);
 }
 
-function randomWinningNumber() {
-    const num = Math.floor(Math.random() * 99999) + 1;
-    lotteryConfig.winningNumber = num;
+function randomDrawNumber(drawId) {
+    const draw = lotteryConfig.draws.find(d => d.id === drawId);
+    if (!draw) return;
+    draw.winningNumber = Math.floor(Math.random() * 99999) + 1;
     saveLotteryConfig(lotteryConfig);
-    document.getElementById('lotteryWinningNumber').value = num;
+    renderDrawsTable();
 }
 
-function renderPrizePoolList() {
-    const list = document.getElementById('lotteryPrizePoolList');
-    if (!list) return;
-
-    const prizes = lotteryConfig.drawPrizes || [];
-    list.innerHTML = prizes.map((p, i) => `
-        <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:0.7rem;color:var(--text-muted);min-width:22px;">${i + 1}.</span>
-            <input type="text" value="${p.replace(/"/g, '&quot;')}" 
-                   style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.78rem;outline:none;"
-                   onchange="updateLotteryPrize(${i}, this.value)">
-            <button class="delete-btn" onclick="removeLotteryPrize(${i})" title="Remove prize">🗑️</button>
-        </div>
-    `).join('');
+function removeLotteryDraw(drawId) {
+    if (!confirm('Remove this draw? This cannot be undone.')) return;
+    lotteryConfig.draws = lotteryConfig.draws.filter(d => d.id !== drawId);
+    saveLotteryConfig(lotteryConfig);
+    renderDrawsTable();
 }
 
-function updateLotteryPrize(index, value) {
-    if (!lotteryConfig.drawPrizes) lotteryConfig.drawPrizes = [];
-    lotteryConfig.drawPrizes[index] = value.trim();
+function addLotteryDraw() {
+    if (!lotteryConfig.draws) lotteryConfig.draws = [];
+    lotteryConfig.draws.push({
+        id: generateDrawId(),
+        name: 'New Draw',
+        ticketPrice: 3.99,
+        winningNumber: Math.floor(Math.random() * 99999) + 1,
+    });
     saveLotteryConfig(lotteryConfig);
+    renderDrawsTable();
 }
 
-function removeLotteryPrize(index) {
-    lotteryConfig.drawPrizes.splice(index, 1);
+// Update resetAllCards to use new format
+function resetAllCards() {
+    if (!confirm('Reset ALL cards and draws to default values? This cannot be undone!')) return;
+    cards = JSON.parse(JSON.stringify(defaultCardData));
+    localStorage.removeItem('pokemart-mystery-stock');
+    localStorage.removeItem('pokemart-mystery-prices');
+    localStorage.removeItem('pokemart-lottery-config');
+    localStorage.removeItem('pokemart-lottery-tickets');
+    saveCards();
+    renderTable();
+    mysteryProducts = JSON.parse(JSON.stringify(defaultMysteryData));
+    saveMysteryProducts();
+    renderMysteryTable();
+    lotteryConfig = { draws: createDefaultDraws() };
     saveLotteryConfig(lotteryConfig);
-    renderPrizePoolList();
-}
-
-function addLotteryPrize() {
-    if (!lotteryConfig.drawPrizes) lotteryConfig.drawPrizes = [];
-    lotteryConfig.drawPrizes.push('New Prize');
-    saveLotteryConfig(lotteryConfig);
-    renderPrizePoolList();
+    loadLotteryUI();
 }
 
 // Expose to global scope
-window.updateLotterySetting = updateLotterySetting;
-window.randomWinningNumber = randomWinningNumber;
-window.updateLotteryPrize = updateLotteryPrize;
-window.removeLotteryPrize = removeLotteryPrize;
-window.addLotteryPrize = addLotteryPrize;
+window.updateDrawField = updateDrawField;
+window.randomDrawNumber = randomDrawNumber;
+window.removeLotteryDraw = removeLotteryDraw;
+window.addLotteryDraw = addLotteryDraw;
 
 // ========== Init ==========
 if (!checkAuth()) {

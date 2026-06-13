@@ -1409,8 +1409,9 @@ function generatePrizeImage(prize) {
     return 'data:image/svg+xml,' + encodeURIComponent(svg);
 }
 
-// ========== Lottery System ==========
-// instantWinPrizes: [{ number, prize }] — each prize tied to a specific number
+// ========== Lottery / Draws ==========
+// Each draw is its own prize with its own ticket price & winning number
+
 const DRAW_PRIZES = [
     // Graded Slabs
     "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
@@ -1441,28 +1442,46 @@ const DRAW_PRIZES = [
     "£50 In-Store Credit", "£25 In-Store Credit",
 ];
 
-const LOTTERY_DEFAULTS = {
-    jackpotTicketPrice: 3.99,
-    winningNumber: null,
-    jackpotPrize: "PSA 10 Charizard VMAX Slab",
-    drawPrizes: [...DRAW_PRIZES],
-};
+function generateDrawId() {
+    return 'draw-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 7);
+}
+
+function createDefaultDraws() {
+    return DRAW_PRIZES.map(name => ({
+        id: generateDrawId(),
+        name: name,
+        ticketPrice: 3.99,
+        winningNumber: Math.floor(Math.random() * 99999) + 1,
+    }));
+}
+
+const LOTTERY_DEFAULTS = { draws: createDefaultDraws() };
 
 function loadLotteryConfig() {
     try {
         const saved = localStorage.getItem('pokemart-lottery-config');
         if (saved) {
             const config = JSON.parse(saved);
-            // Migrate old instantWinPrizes to drawPrizes
-            const drawPrizes = config.drawPrizes || [];
-            delete config.instantWinPrizes;
-            delete config.instantWinTicketPrice;
-            return { ...LOTTERY_DEFAULTS, ...config, drawPrizes: drawPrizes.length > 0 ? drawPrizes : [...LOTTERY_DEFAULTS.drawPrizes] };
+            // Migrate old centralized format → per-draw format
+            if (!config.draws || !Array.isArray(config.draws)) {
+                const oldDrawPrizes = config.drawPrizes || [];
+                config.draws = oldDrawPrizes.map(name => ({
+                    id: generateDrawId(),
+                    name: name,
+                    ticketPrice: config.jackpotTicketPrice || 3.99,
+                    winningNumber: config.winningNumber || Math.floor(Math.random() * 99999) + 1,
+                }));
+                delete config.jackpotTicketPrice;
+                delete config.winningNumber;
+                delete config.jackpotPrize;
+                delete config.drawPrizes;
+                delete config.instantWinPrizes;
+                delete config.instantWinTicketPrice;
+            }
+            return config;
         }
     } catch { /* ignore */ }
-    // First time: auto-generate a random winning number
-    const defaults = { ...LOTTERY_DEFAULTS, drawPrizes: [...DRAW_PRIZES] };
-    defaults.winningNumber = Math.floor(Math.random() * 99999) + 1;
+    const defaults = { draws: createDefaultDraws() };
     saveLotteryConfig(defaults);
     return defaults;
 }
@@ -1473,105 +1492,71 @@ function saveLotteryConfig(config) {
 
 let lotteryConfig = loadLotteryConfig();
 
+// Tickets stored as: { [drawId]: [ticket1, ticket2, ...], ... }
 function loadLotteryTickets() {
     try {
         const saved = localStorage.getItem('pokemart-lottery-tickets');
-        return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
+        if (saved) {
+            const data = JSON.parse(saved);
+            // Migrate old flat-array format
+            if (Array.isArray(data)) {
+                const byDraw = {};
+                data.forEach(t => {
+                    if (!t.drawId) t.drawId = '__unknown__';
+                    if (!byDraw[t.drawId]) byDraw[t.drawId] = [];
+                    byDraw[t.drawId].push(t);
+                });
+                saveLotteryTickets(byDraw);
+                return byDraw;
+            }
+            return data;
+        }
+    } catch { /* ignore */ }
+    return {};
 }
 
-function saveLotteryTickets(tickets) {
-    localStorage.setItem('pokemart-lottery-tickets', JSON.stringify(tickets));
+function saveLotteryTickets(ticketsByDraw) {
+    localStorage.setItem('pokemart-lottery-tickets', JSON.stringify(ticketsByDraw));
 }
 
-let lotteryTickets = loadLotteryTickets();
+let lotteryTicketsByDraw = loadLotteryTickets();
 
-function getTicketCount(type) {
-    return lotteryTickets.filter(t => t.type === type).length;
+function getDrawTicketCount(drawId) {
+    return (lotteryTicketsByDraw[drawId] || []).length;
 }
 
-function getWinningNumber() {
-    return lotteryConfig.winningNumber;
-}
-
-// Format a lottery price in pounds
+// Format a lottery price
 function formatLotteryPrice(usdPrice) {
     const gbp = usdPrice * exchangeRate;
     return '£' + gbp.toFixed(2);
 }
 
-// Render lottery section
+// Render the draws grid
 function renderLottery() {
     const grid = document.getElementById('lotteryGrid');
     if (!grid) return;
 
-    const ticketCount = getTicketCount('standard');
-    const winNum = getWinningNumber();
-    const hasWinningNumber = winNum !== null && winNum !== undefined;
-
-    // Prize gallery cards
-    const drawPrizes = lotteryConfig.drawPrizes || [];
-    const prizeCards = drawPrizes.map(p => {
-        const imgSrc = generatePrizeImage(p);
+    const draws = lotteryConfig.draws || [];
+    const drawCards = draws.map(d => {
+        const winNum = d.winningNumber;
+        const hasNum = winNum !== null && winNum !== undefined;
+        const imgSrc = generatePrizeImage(d.name);
+        const ticketCount = getDrawTicketCount(d.id);
         return `
-        <div class="prize-card">
-            <div class="prize-image-wrapper">
-                <img src="${imgSrc}" alt="${p}" loading="lazy">
+        <div class="draw-card">
+            <div class="draw-card-image">
+                <img src="${imgSrc}" alt="${d.name}" loading="lazy">
             </div>
-            <div class="prize-info">
-                <h3>${p}</h3>
+            <div class="draw-card-info">
+                <h3>${d.name}</h3>
+                <div class="draw-card-win">${hasNum ? `🎯 Winning #<span>${String(winNum).padStart(5, '0')}</span>` : '<span class="no-num">⚠️ No number set</span>'}</div>
+                <div class="draw-card-tickets">${ticketCount} sold · ${formatLotteryPrice(d.ticketPrice)} each</div>
+                <button class="btn draw-buy-btn" onclick="openDrawBuy('${d.id}')" ${!hasNum ? 'disabled' : ''}>🎫 Buy Tickets</button>
             </div>
         </div>`;
     }).join('');
 
-    // Jackpot banner image
-    const jackpotSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="180" viewBox="0 0 400 180">
-        <defs>
-            <linearGradient id="jg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1"/>
-                <stop offset="50%" style="stop-color:#e63946;stop-opacity:1"/>
-                <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1"/>
-            </linearGradient>
-            <filter id="jglow"><feGaussianBlur stdDeviation="2"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <rect width="400" height="180" rx="16" fill="url(#jg)"/>
-        <circle cx="60" cy="40" r="120" fill="rgba(255,255,255,0.08)"/>
-        <circle cx="360" cy="150" r="100" fill="rgba(255,255,255,0.05)"/>
-        <text x="200" y="85" text-anchor="middle" font-size="72" filter="url(#jglow)">👑</text>
-        <text x="200" y="135" text-anchor="middle" fill="#fff" font-family="Poppins,Arial" font-size="13" font-weight="700" letter-spacing="3">JACKPOT DRAW</text>
-    </svg>`;
-    const jackpotImg = 'data:image/svg+xml,' + encodeURIComponent(jackpotSvg);
-
-    grid.innerHTML = `
-        <!-- Jackpot -->
-        <div class="lottery-card jackpot-card">
-            <div class="jackpot-banner">
-                <img src="${jackpotImg}" alt="Jackpot Draw">
-            </div>
-            <h3>Jackpot Draw</h3>
-            <p class="lottery-subtitle">Pick a number 1–99,999. Match the winning number to claim the grand prize!</p>
-            <div class="lottery-price">${lotteryConfig.jackpotPrize}</div>
-            <p class="lottery-tickets-sold">${ticketCount} tickets sold · ${formatLotteryPrice(lotteryConfig.jackpotTicketPrice)} per ticket</p>
-            <div class="lottery-prize-info">
-                ${hasWinningNumber 
-                    ? `<div class="prize-label">🎯 Winning Number</div><div class="prize-detail" style="font-size:1.4rem;font-family:'Courier New',monospace;letter-spacing:3px;color:#fbbf24;">#${String(winNum).padStart(5, '0')}</div>`
-                    : '<div class="prize-label" style="color:#ef4444;">⚠️ No winning number set</div>'}
-            </div>
-            <button class="btn" onclick="openBuyTicket()" ${!hasWinningNumber ? 'disabled' : ''}>
-                🎫 Buy Tickets
-            </button>
-        </div>
-
-        <!-- Prize Gallery Heading -->
-        <div class="prize-gallery-heading">
-            <h3>🎁 Prizes You Could Win</h3>
-            <p>Every ticket enters you into the draw for one of these prizes!</p>
-        </div>
-
-        <!-- Prize Gallery -->
-        ${prizeCards}
-    `;
-
+    grid.innerHTML = drawCards;
     renderLotteryHistory();
 }
 
@@ -1587,78 +1572,78 @@ function renderLotteryHistory() {
         grid.parentElement.appendChild(historyEl);
     }
 
-    if (lotteryTickets.length === 0) {
-        historyEl.innerHTML = `
-            <h4>📋 Your Ticket History</h4>
-            <p class="lottery-history-empty">No tickets purchased yet. Try your luck!</p>
-        `;
+    let allTickets = [];
+    for (const drawId in lotteryTicketsByDraw) {
+        (lotteryTicketsByDraw[drawId] || []).forEach(t => {
+            allTickets.push({ ...t, drawId });
+        });
+    }
+
+    if (allTickets.length === 0) {
+        historyEl.innerHTML = `<h4>📋 Your Ticket History</h4><p class="lottery-history-empty">No tickets purchased yet. Try your luck!</p>`;
         return;
     }
 
-    const sorted = [...lotteryTickets].reverse();
-
+    const sorted = allTickets.sort((a, b) => b.purchasedAt - a.purchasedAt);
     historyEl.innerHTML = `
-        <h4>📋 Your Tickets (${lotteryTickets.length})</h4>
+        <h4>📋 Your Tickets (${allTickets.length})</h4>
         <div class="lottery-history-list">
             ${sorted.map(t => {
-                let resultClass = '';
-                let resultText = '';
-                if (t.result === 'jackpot') {
-                    resultClass = 'won';
-                    resultText = '🏆 JACKPOT!';
-                } else if (t.result === 'draw') {
-                    resultClass = 'consolation';
-                    resultText = '🎁 ' + (t.prize || 'Draw Prize');
-                } else if (t.result === 'lost') {
-                    resultClass = 'lost';
-                    resultText = 'No win';
-                } else {
-                    resultClass = '';
-                    resultText = 'Pending';
-                }
-                return `
-                <div class="lottery-history-item">
+                let rc = '', rt = '';
+                if (t.result === 'win') { rc = 'won'; rt = '🏆 WINNER!'; }
+                else if (t.result === 'lost') { rc = 'lost'; rt = 'No win'; }
+                else { rt = 'Pending'; }
+                return `<div class="lottery-history-item">
                     <span class="ticket-number">#${String(t.number).padStart(5, '0')}</span>
-                    <span class="ticket-result ${resultClass}">${resultText}</span>
+                    <span class="ticket-draw-name">${t.prize || ''}</span>
+                    <span class="ticket-result ${rc}">${rt}</span>
                 </div>`;
             }).join('')}
-        </div>
-    `;
+        </div>`;
 }
 
-// Buy ticket flow
+// ========== Buy Ticket for a Specific Draw ==========
+let pendingDrawId = null;
 let pendingTicketQty = 1;
 
-function openBuyTicket() {
+function openDrawBuy(drawId) {
+    pendingDrawId = drawId;
     pendingTicketQty = 1;
+    const draw = (lotteryConfig.draws || []).find(d => d.id === drawId);
+    if (!draw) return;
 
     const modal = document.getElementById('buyTicketModal');
     const title = document.getElementById('buyTicketTitle');
     const content = document.getElementById('buyTicketContent');
     const confirmBtn = document.getElementById('confirmBuyBtn');
+    const price = draw.ticketPrice;
 
-    const price = lotteryConfig.jackpotTicketPrice;
-
-    title.textContent = '🎟️ Buy Draw Tickets';
+    title.textContent = '🎫 Buy Tickets — ' + draw.name;
     content.innerHTML = `
-        <p class="buy-ticket-info">Numbers will be randomly assigned between <strong>1</strong> and <strong>99,999</strong>.</p>
+        <p class="buy-ticket-info">Numbers randomly assigned <strong>1–99,999</strong>.</p>
         <div class="qty-selector">
-            <label>How many tickets?</label>
+            <label>How many?</label>
             <select id="ticketQtySelect" onchange="updatePendingQty(this.value)">
                 ${[1,2,3,5,10,20].map(n => `<option value="${n}" ${n === 1 ? 'selected' : ''}>${n}</option>`).join('')}
             </select>
         </div>
-        <p class="buy-ticket-info">Price per ticket: <strong>${formatLotteryPrice(price)}</strong></p>
+        <p class="buy-ticket-info">Price: <strong>${formatLotteryPrice(price)}</strong> each</p>
         <p class="buy-ticket-info" id="totalPriceInfo">Total: <strong>${formatLotteryPrice(price)}</strong></p>
     `;
-
     confirmBtn.textContent = `Pay ${formatLotteryPrice(price)} — Buy`;
     modal.classList.add('open');
 }
 
+// Legacy alias
+function openBuyTicket() { /* no-op — use per-draw buttons instead */ }
+
 function updatePendingQty(val) {
     pendingTicketQty = parseInt(val) || 1;
-    const price = lotteryConfig.jackpotTicketPrice;
+    const drawId = pendingDrawId;
+    if (!drawId) return;
+    const draw = (lotteryConfig.draws || []).find(d => d.id === drawId);
+    if (!draw) return;
+    const price = draw.ticketPrice;
     const totalEl = document.getElementById('totalPriceInfo');
     const confirmBtn = document.getElementById('confirmBuyBtn');
     if (totalEl) totalEl.innerHTML = `Total: <strong>${formatLotteryPrice(price * pendingTicketQty)}</strong>`;
@@ -1667,165 +1652,88 @@ function updatePendingQty(val) {
 
 function closeBuyTicket() {
     document.getElementById('buyTicketModal').classList.remove('open');
+    pendingDrawId = null;
     pendingTicketQty = 1;
 }
 
 function confirmBuyTicket() {
+    const drawId = pendingDrawId;
     const qty = pendingTicketQty || 1;
-    const winNum = getWinningNumber();
-    const results = [];
+    if (!drawId) return;
 
-    // Generate unique numbers
-    const usedNumbers = new Set(lotteryTickets.map(t => t.number));
-    const generatedNumbers = [];
+    const draw = (lotteryConfig.draws || []).find(d => d.id === drawId);
+    if (!draw) return;
+
+    const drawTickets = lotteryTicketsByDraw[drawId] || [];
+    const usedNumbers = new Set(drawTickets.map(t => t.number));
+    const numbers = [];
+    let totalCredit = 0;
 
     for (let i = 0; i < qty; i++) {
-        let num;
-        let attempts = 0;
+        let n, attempts = 0;
         do {
-            num = Math.floor(Math.random() * 99999) + 1;
-            attempts++;
-            if (attempts > 1000) {
-                showToast('❌ Could not generate unique numbers. Try fewer tickets.');
-                return;
-            }
-        } while (usedNumbers.has(num) || generatedNumbers.includes(num));
-        generatedNumbers.push(num);
-        usedNumbers.add(num);
+            n = Math.floor(Math.random() * 99999) + 1;
+            if (++attempts > 1000) { showToast('❌ Too many tickets. Try fewer.'); return; }
+        } while (usedNumbers.has(n) || numbers.includes(n));
+        numbers.push(n);
+        usedNumbers.add(n);
     }
 
-    // Draw a random prize for each ticket from the draw pool
-    const drawPrizes = lotteryConfig.drawPrizes || [];
-    let totalCreditAwarded = 0;
-
-    // Create and evaluate each ticket
-    generatedNumbers.forEach(num => {
+    const winNum = draw.winningNumber;
+    const results = [];
+    numbers.forEach(n => {
+        const isWin = (winNum !== null && winNum !== undefined && n === parseInt(winNum));
         const ticket = {
             id: Date.now() + Math.random(),
-            type: 'standard',
-            number: num,
+            drawId: drawId,
+            number: n,
             purchasedAt: Date.now(),
-            result: null,
-            prize: null,
+            result: isWin ? 'win' : 'lost',
+            prize: draw.name,
         };
 
-        // Check if jackpot winner
-        if (winNum !== null && winNum !== undefined) {
-            if (ticket.number === parseInt(winNum)) {
-                ticket.result = 'jackpot';
-                ticket.prize = lotteryConfig.jackpotPrize;
-            }
+        if (isWin) {
+            const cm = draw.name.match(/£(\d+)\s*in-store\s*credit/i);
+            if (cm) { creditStoreBalance(parseFloat(cm[1])); totalCredit += parseFloat(cm[1]); }
         }
 
-        // If not jackpot, draw a random prize from the pool
-        if (ticket.result !== 'jackpot' && drawPrizes.length > 0) {
-            const randomIndex = Math.floor(Math.random() * drawPrizes.length);
-            const drawnPrize = drawPrizes[randomIndex];
-            ticket.result = 'draw';
-            ticket.prize = drawnPrize;
-
-            // If the prize is in-store credit, credit the account
-            const creditMatch = drawnPrize.match(/£(\d+)\s*in-store\s*credit/i);
-            if (creditMatch) {
-                const creditAmount = parseFloat(creditMatch[1]);
-                creditStoreBalance(creditAmount);
-                totalCreditAwarded += creditAmount;
-            }
-        } else if (ticket.result !== 'jackpot') {
-            ticket.result = 'lost';
-        }
-
-        lotteryTickets.push(ticket);
+        if (!lotteryTicketsByDraw[drawId]) lotteryTicketsByDraw[drawId] = [];
+        lotteryTicketsByDraw[drawId].push(ticket);
         results.push(ticket);
     });
 
-    saveLotteryTickets(lotteryTickets);
+    saveLotteryTickets(lotteryTicketsByDraw);
     closeBuyTicket();
     renderLottery();
 
-    // Show toast if credit was awarded
-    if (totalCreditAwarded > 0) {
-        const awardedDisplay = formatCreditAmount(totalCreditAwarded);
-        showToast(`🏪 ${awardedDisplay} store credit added to your account!`);
-    }
-
-    // Show results
-    showLotteryResults(results, 'standard');
+    if (totalCredit > 0) showToast(`🏪 ${formatCreditAmount(totalCredit)} store credit added!`);
+    showDrawResults(draw, results);
 }
 
-function showLotteryResults(tickets, type) {
+function showDrawResults(draw, tickets) {
     const modal = document.getElementById('lotteryResultModal');
     const title = document.getElementById('lotteryResultTitle');
     const content = document.getElementById('lotteryResultContent');
+    const winNumStr = draw.winningNumber !== null ? String(draw.winningNumber).padStart(5, '0') : '?????';
+    const winner = tickets.find(t => t.result === 'win');
+    const isCredit = /in-store\s*credit/i.test(draw.name);
 
-    const winNum = getWinningNumber();
-    const winNumStr = winNum !== null ? String(winNum).padStart(5, '0') : '?????';
-    const jackpotWinner = tickets.find(t => t.result === 'jackpot');
-    const drawWins = tickets.filter(t => t.result === 'draw');
-    const losers = tickets.filter(t => t.result === 'lost');
-
-    let resultHTML = '';
-    if (jackpotWinner) {
-        title.innerHTML = '🏆 JACKPOT WINNER!';
-        resultHTML = `
-            <div class="lottery-spinning">
-                <div class="lottery-result-number win">#${String(jackpotWinner.number).padStart(5, '0')}</div>
-            </div>
-            <p class="lottery-result-detail">🎉 Matches winning number <strong>#${winNumStr}</strong>!</p>
-            <p class="lottery-result-prize">🏆 ${jackpotWinner.prize}</p>
-        `;
-        if (tickets.length > 1) {
-            resultHTML += `<p class="lottery-result-detail">${tickets.length - 1} other ticket${tickets.length > 2 ? 's' : ''} also drew prizes below.</p>`;
-        }
-        // Show draw prize results for other tickets
-        const otherDraws = tickets.filter(t => t.result === 'draw');
-        if (otherDraws.length > 0) {
-            resultHTML += '<hr style="border-color:var(--border);margin:12px 0;">';
-            resultHTML += '<p class="lottery-result-detail" style="color:#a78bfa;">🎁 Your Draw Prizes:</p>';
-            resultHTML += otherDraws.map(t => `
-                <div class="lottery-result-detail" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:0.8rem;">
-                    <span style="font-family:'Courier New',monospace;color:var(--text-muted);">#${String(t.number).padStart(5, '0')}</span>
-                    <span style="color:#22c55e;font-weight:600;">${t.prize}</span>
-                </div>
-            `).join('');
-        }
-    } else if (drawWins.length > 0) {
-        title.innerHTML = '🎁 You Won!';
-        resultHTML = `<p class="lottery-result-detail">Winning number is <strong>#${winNumStr}</strong></p>`;
-        resultHTML += drawWins.map(t => {
-            const isCredit = /in-store\s*credit/i.test(t.prize || '');
-            const prizeClass = isCredit ? 'draw-credit' : 'draw-prize';
-            const prizeColor = isCredit ? '#4ade80' : '#a78bfa';
-            return `
-            <div class="lottery-spinning">
-                <div class="lottery-result-number">#${String(t.number).padStart(5, '0')}</div>
-            </div>
-            <p class="lottery-result-prize ${prizeClass}" style="color:${prizeColor};">🎁 ${t.prize}</p>
-            ${isCredit ? '<p class="lottery-result-detail" style="color:#22c55e;">💰 Added to your store credit balance!</p>' : ''}
-            `;
-        }).join('<hr style="border-color:var(--border);margin:12px 0;">');
-        if (losers.length > 0) {
-            resultHTML += `<p class="lottery-result-detail">${losers.length} other ticket${losers.length > 1 ? 's' : ''} didn't win.</p>`;
-        }
+    if (winner) {
+        title.innerHTML = '🏆 YOU WON!';
+        let html = `<div class="lottery-spinning"><div class="lottery-result-number win">#${String(winner.number).padStart(5, '0')}</div></div>
+            <p class="lottery-result-detail">🎉 Matches <strong>#${winNumStr}</strong>!</p>
+            <p class="lottery-result-prize">🏆 ${draw.name}</p>`;
+        if (isCredit) html += `<p class="lottery-result-detail" style="color:#22c55e;">💰 Added to your store credit!</p>`;
+        const losers = tickets.filter(t => t.result !== 'win');
+        if (losers.length > 0) html += `<hr style="border-color:var(--border);margin:12px 0;"><p class="lottery-result-detail">${losers.length} other ticket${losers.length>1?'s':''} didn't win.</p>`;
+        content.innerHTML = html;
     } else {
         title.innerHTML = '😔 Better Luck Next Time';
-        resultHTML = tickets.length === 1
-            ? `
-            <div class="lottery-spinning">
-                <div class="lottery-result-number">#${String(tickets[0].number).padStart(5, '0')}</div>
-            </div>
-            <p class="lottery-result-detail">Winning number is <strong>#${winNumStr}</strong></p>
-            <p class="lottery-result-detail">No match. Try again!</p>`
-            : `
-            <p class="lottery-result-detail">${tickets.length} tickets purchased. Winning number is <strong>#${winNumStr}</strong>.</p>
-            <p class="lottery-result-detail">None matched. Try again!</p>
-            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:8px;">
-                ${tickets.slice(0, 20).map(t => `<span style="font-family:'Courier New',monospace;font-size:0.75rem;color:var(--text-muted);">#${String(t.number).padStart(5, '0')}</span>`).join(' ')}
-                ${tickets.length > 20 ? `<span style="font-size:0.7rem;color:var(--text-muted);">+${tickets.length - 20} more</span>` : ''}
-            </div>`;
+        let html = `<p class="lottery-result-detail">Draw: <strong>${draw.name}</strong></p>
+            <p class="lottery-result-detail">Winning #: <strong>#${winNumStr}</strong></p>`;
+        html += tickets.map(t => `<div class="lottery-spinning"><div class="lottery-result-number">#${String(t.number).padStart(5, '0')}</div></div>`).join('');
+        content.innerHTML = html;
     }
-
-    content.innerHTML = resultHTML;
     modal.classList.add('open');
 }
 
@@ -1834,7 +1742,8 @@ function closeLotteryResult() {
 }
 
 // Expose to global scope
-window.openBuyTicket = openBuyTicket;
+window.openDrawBuy = openDrawBuy;
+window.openBuyTicket = openDrawBuy;
 window.closeBuyTicket = closeBuyTicket;
 window.updatePendingQty = updatePendingQty;
 window.confirmBuyTicket = confirmBuyTicket;
@@ -1843,36 +1752,25 @@ window.refreshLotteryConfig = refreshLotteryConfig;
 window.getStoreCredit = getStoreCredit;
 window.creditStoreBalance = creditStoreBalance;
 
-// Refresh lottery config from localStorage (called when admin updates)
+// Refresh lottery config from localStorage
 function refreshLotteryConfig() {
     lotteryConfig = loadLotteryConfig();
-    const winNum = getWinningNumber();
-    const drawPrizes = lotteryConfig.drawPrizes || [];
-    let changed = false;
-    lotteryTickets.forEach(t => {
-        if (t.result === null && winNum !== null) {
-            if (t.number === parseInt(winNum)) {
-                t.result = 'jackpot';
-                t.prize = lotteryConfig.jackpotPrize;
-                changed = true;
-            } else if (drawPrizes.length > 0) {
-                const randomIndex = Math.floor(Math.random() * drawPrizes.length);
-                t.result = 'draw';
-                t.prize = drawPrizes[randomIndex];
-                changed = true;
-                
-                // Credit in-store credit prizes
-                const creditMatch = (t.prize || '').match(/£(\d+)\s*in-store\s*credit/i);
-                if (creditMatch) {
-                    creditStoreBalance(parseFloat(creditMatch[1]));
-                }
-            } else {
-                t.result = 'lost';
-                changed = true;
+    const draws = lotteryConfig.draws || [];
+    for (const drawId in lotteryTicketsByDraw) {
+        const draw = draws.find(d => d.id === drawId);
+        const tickets = lotteryTicketsByDraw[drawId] || [];
+        tickets.forEach(t => {
+            if (t.result === null && draw) {
+                const wn = draw.winningNumber;
+                if (wn !== null && wn !== undefined && t.number === parseInt(wn)) {
+                    t.result = 'win';
+                    const cm = draw.name.match(/£(\d+)\s*in-store\s*credit/i);
+                    if (cm) creditStoreBalance(parseFloat(cm[1]));
+                } else { t.result = 'lost'; }
             }
-        }
-    });
-    if (changed) saveLotteryTickets(lotteryTickets);
+        });
+    }
+    saveLotteryTickets(lotteryTicketsByDraw);
     renderLottery();
 }
 

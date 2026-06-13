@@ -505,49 +505,28 @@
             <!-- Lottery Management -->
             <div class="admin-table-wrap" style="margin-bottom:32px;">
                 <div class="admin-table-header">
-                    <h3>🎰 Lottery Management</h3>
+                    <h3>🎰 Draws Management</h3>
                     <span class="saved-indicator" id="lotterySaveIndicator">✅ Auto-saved</span>
                 </div>
                 <div style="padding:20px 24px;">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-                        <!-- Left Column: Ticket Prices & Winning Number -->
-                        <div>
-                            <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:16px;color:var(--text-muted);">Ticket Settings</h4>
-                            <div style="display:flex;flex-direction:column;gap:14px;">
-                                <div>
-                                    <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:4px;">🎟️ Ticket Price ($)</label>
-                                    <input type="number" id="lotteryStandardPrice" step="0.01" min="0.01" value="3.99"
-                                           style="width:140px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.9rem;outline:none;"
-                                           onchange="updateLotterySetting('jackpotTicketPrice', this.value)">
-                                </div>
-                                <div>
-                                    <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:4px;">🎯 Jackpot Winning Number (1–99,999)</label>
-                                    <div style="display:flex;align-items:center;gap:8px;">
-                                        <input type="number" id="lotteryWinningNumber" min="1" max="99999" placeholder="Set number..."
-                                               style="width:160px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.9rem;outline:none;font-family:'Courier New',monospace;"
-                                               onchange="updateLotterySetting('winningNumber', this.value)">
-                                        <button class="btn btn-sm btn-secondary" onclick="randomWinningNumber()" style="white-space:nowrap;">🎲 Random</button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:4px;">🏆 Jackpot Prize</label>
-                                    <input type="text" id="lotteryJackpotPrize" value="PSA 10 Charizard VMAX Slab"
-                                           style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.9rem;outline:none;"
-                                           onchange="updateLotterySetting('jackpotPrize', this.value)">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Column: Draw Prize Pool -->
-                        <div>
-                            <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:16px;color:var(--text-muted);">🎁 Draw Prizes</h4>
-                            <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px;">All possible prizes that can be won in the draw. Add, edit, or remove items below.</p>
-                            <div id="lotteryPrizePoolList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:400px;overflow-y:auto;">
+                    <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:16px;">Each prize is its own draw — set name, ticket price, and winning number individually.</p>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table" style="min-width:700px;">
+                            <thead>
+                                <tr>
+                                    <th style="width:36px;">#</th>
+                                    <th>Prize Name</th>
+                                    <th style="width:120px;">Price ($)</th>
+                                    <th style="width:220px;">Winning #</th>
+                                    <th style="width:44px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="lotteryDrawsTableBody">
                                 <!-- Rendered by JS -->
-                            </div>
-                            <button class="btn btn-sm btn-secondary" onclick="addLotteryPrize()">+ Add Prize</button>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
+                    <button class="btn btn-sm btn-secondary" onclick="addLotteryDraw()" style="margin-top:12px;">+ Add Draw</button>
                 </div>
             </div>
 
