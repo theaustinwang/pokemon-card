@@ -28,8 +28,10 @@ Invoke this skill immediately after any file modification (edits, creations, del
    - `refactor:` for code restructuring
    - `chore:` for maintenance or minor changes
    - `docs:` for documentation changes
-5. Run `git add -A` to stage all changes.
-6. Run `git commit -m "<generated message>"` to commit.
+5. **Update `OVERVIEW.md`** — If the changes altered the project structure, data model, files, features, design system, or any other aspect documented in OVERVIEW.md, reflect those changes in OVERVIEW.md so it stays accurate.
+6. **Update `README.md`** — If the changes affect the project description, setup instructions, or anything else noted in README.md, update it accordingly.
+7. Run `git add -A` to stage all changes (including the updated OVERVIEW.md / README.md).
+8. Run `git commit -m "<generated message>"` to commit.
 
 ## Commit Message Convention
 
