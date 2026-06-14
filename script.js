@@ -1584,6 +1584,17 @@ function generateDrawId() {
     return 'draw-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 7);
 }
 
+// Convert a prize name to a safe filename slug for real images
+function prizeToSlug(prize) {
+    return prize
+        .toLowerCase()
+        .replace(/[()]/g, '')              // remove parentheses
+        .replace(/[^a-z0-9\s-]/g, '')      // remove special chars
+        .replace(/\s+/g, '-')               // spaces to hyphens
+        .replace(/-+/g, '-')                // collapse hyphens
+        .replace(/^-|-$/g, '');            // trim leading/trailing hyphens
+}
+
 function createDefaultDraws() {
     return DRAW_PRIZES.map(name => ({
         id: generateDrawId(),
@@ -1678,12 +1689,13 @@ function renderLottery() {
     const drawCards = draws.map(d => {
         const winNum = d.winningNumber;
         const hasNum = winNum !== null && winNum !== undefined;
-        const imgSrc = generatePrizeImage(d.name);
+        const slug = prizeToSlug(d.name);
+        const svgFallback = generatePrizeImage(d.name);
         const ticketCount = getDrawTicketCount(d.id);
         return `
         <div class="draw-card">
             <div class="draw-card-image">
-                <img src="${imgSrc}" alt="${d.name}" loading="lazy">
+                <img src="images/lotto/${slug}.jpg" onerror="this.onerror=null;this.src='${svgFallback}'" alt="${d.name}" loading="lazy">
             </div>
             <div class="draw-card-info">
                 <h3>${d.name}</h3>
