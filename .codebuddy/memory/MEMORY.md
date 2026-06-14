@@ -8,10 +8,11 @@
 - **Admin password**: `admin123` (session-based auth via `sessionStorage`)
 
 ## Key Files
-- `OVERVIEW.md` — Complete project documentation; use as AI context for future sessions
+- `OVERVIEW.md` — Complete project documentation; use as AI context for future sessions. **Must be kept updated when code changes.**
+- `README.md` — Public-facing project readme with quick start, features, file table, tech summary
 - `index.html` + `script.js` + `style.css` — Storefront
 - `admin.html` + `admin.js` — Admin dashboard
-- `.codebuddy/skills/auto-commit/` — Git auto-commit skill
+- `.codebuddy/skills/auto-commit/` — Git auto-commit skill (includes OVERVIEW.md and README.md update steps)
 
 ## Design Decisions
 - Card images from `images.pokemontcg.io` with inline SVG placeholders on error
