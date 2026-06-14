@@ -1,0 +1,3 @@
+# CodeBuddy internal files — not tracked in git
+.codebuddy/memory/
+.codebuddy/skills/

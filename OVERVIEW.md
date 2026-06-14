@@ -29,12 +29,13 @@ pokemon card shop/
 ├── admin.js            # Admin logic (~736 lines)
 ├── OVERVIEW.md         # This file — project documentation
 ├── README.md           # Original readme
+├── .gitignore          # Excludes .codebuddy/memory/ and .codebuddy/skills/
 ├── images/
 │   └── lotto/          # Lottery prize images (optional, uses SVG fallback)
 └── .codebuddy/
     ├── skills/
-    │   └── auto-commit/   # Auto-commit skill for git
-    └── memory/            # Cross-session AI context files
+    │   └── auto-commit/   # Auto-commit skill (gitignored — local only)
+    └── memory/            # Cross-session AI context (gitignored — local only)
 ```
 
 ---
@@ -160,10 +161,12 @@ Draw data is shared between admin and storefront via `localStorage`.
 
 ## Auto-Commit Skill
 
-Project skill at `.codebuddy/skills/auto-commit/`:
+Project skill at `.codebuddy/skills/auto-commit/` (gitignored — local only):
 - Activated after code changes
 - Runs `git add -A` and commits with a conventional-commit message
+- Pushes to `origin main` after each successful commit
 - Includes `scripts/auto_commit.py` for standalone use
+- **Exclusions**: `.codebuddy/memory/` and `.codebuddy/skills/` are in `.gitignore` and will never be committed — the skill itself and AI memory stay local
 
 ---
 
