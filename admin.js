@@ -517,6 +517,7 @@ function createDefaultDraws() {
         name: name,
         ticketPrice: 3.99,
         winningNumber: Math.floor(Math.random() * 99999) + 1,
+        image: null,
     }));
 }
 
@@ -537,6 +538,7 @@ function loadLotteryConfig() {
                     name: name,
                     ticketPrice: config.jackpotTicketPrice || 3.99,
                     winningNumber: config.winningNumber || Math.floor(Math.random() * 99999) + 1,
+                    image: null,
                 }));
                 delete config.jackpotTicketPrice;
                 delete config.winningNumber;
@@ -577,9 +579,24 @@ function renderDrawsTable() {
     const draws = lotteryConfig.draws || [];
     tbody.innerHTML = draws.map((d, i) => {
         const wonNum = d.winningNumber !== null && d.winningNumber !== undefined ? d.winningNumber : '';
+        const imgPreview = d.image
+            ? `<img src="${d.image.replace(/"/g, '&quot;')}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;cursor:pointer;" onclick="this.nextElementSibling.click()" title="Click to change image">`
+            : `<div style="width:40px;height:40px;border-radius:6px;background:var(--bg);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.7rem;color:var(--text-muted);" onclick="this.nextElementSibling.click()" title="Click to upload">🖼️</div>`;
         return `
             <tr>
                 <td><span style="font-size:0.75rem;color:var(--text-muted);">${i + 1}</span></td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        ${imgPreview}
+                        <input type="file" accept="image/*" style="display:none;"
+                               onchange="updateDrawImage('${d.id}', this)">
+                        <input type="text" placeholder="or paste URL"
+                               value="${(d.image && d.image.length < 200 ? d.image : '').replace(/"/g, '&quot;')}"
+                               style="width:100px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:0.75rem;outline:none;"
+                               onchange="updateDrawImageURL('${d.id}', this.value)">
+                        ${d.image ? `<button class="delete-btn" onclick="updateDrawImageURL('${d.id}', '')" title="Remove image" style="font-size:0.75rem;padding:2px 6px;">✕</button>` : ''}
+                    </div>
+                </td>
                 <td>
                     <input type="text" value="${d.name.replace(/"/g, '&quot;')}"
                            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.82rem;outline:none;"
@@ -647,7 +664,30 @@ function addLotteryDraw() {
         name: 'New Draw',
         ticketPrice: 3.99,
         winningNumber: Math.floor(Math.random() * 99999) + 1,
+        image: null,
     });
+    saveLotteryConfig(lotteryConfig);
+    renderDrawsTable();
+}
+
+function updateDrawImage(drawId, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const draw = lotteryConfig.draws.find(d => d.id === drawId);
+        if (!draw) return;
+        draw.image = e.target.result;
+        saveLotteryConfig(lotteryConfig);
+        renderDrawsTable();
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateDrawImageURL(drawId, url) {
+    const draw = lotteryConfig.draws.find(d => d.id === drawId);
+    if (!draw) return;
+    draw.image = url.trim() || null;
     saveLotteryConfig(lotteryConfig);
     renderDrawsTable();
 }
@@ -675,6 +715,8 @@ window.updateDrawField = updateDrawField;
 window.randomDrawNumber = randomDrawNumber;
 window.removeLotteryDraw = removeLotteryDraw;
 window.addLotteryDraw = addLotteryDraw;
+window.updateDrawImage = updateDrawImage;
+window.updateDrawImageURL = updateDrawImageURL;
 
 // ========== Init ==========
 if (!checkAuth()) {

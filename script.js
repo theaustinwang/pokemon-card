@@ -1692,10 +1692,17 @@ function renderLottery() {
         const slug = prizeToSlug(d.name);
         const svgFallback = generatePrizeImage(d.name);
         const ticketCount = getDrawTicketCount(d.id);
+        // Image priority: custom admin image > local lotto image > SVG fallback
+        let imgSrc;
+        if (d.image) {
+            imgSrc = d.image.replace(/'/g, "\\'");
+        } else {
+            imgSrc = `images/lotto/${slug}.jpg`;
+        }
         return `
         <div class="draw-card">
             <div class="draw-card-image">
-                <img src="images/lotto/${slug}.jpg" onerror="this.onerror=null;this.src='${svgFallback}'" alt="${d.name}" loading="lazy">
+                <img src="${imgSrc}" onerror="this.onerror=null;this.src='${svgFallback}'" alt="${d.name}" loading="lazy">
             </div>
             <div class="draw-card-info">
                 <h3>${d.name}</h3>
