@@ -1257,156 +1257,297 @@ function renderTopCards() {
 }
 
 // ========== Prize Image Generator ==========
-function generatePrizeImage(prize) {
-    const name = prize.toLowerCase();
-    let theme, icon;
-    
-    // Graded Slabs — diamond/trophy theme
-    if (name.includes('cgc 10') || name.includes('psa 10') || name.includes('bgs 10')) {
-        theme = ['#fbbf24', '#b45309']; icon = '💎';
-    } else if (name.includes('cgc 9.5') || name.includes('bgs 9.5')) {
-        theme = ['#c084fc', '#7e22ce']; icon = '💎';
-    } else if (name.includes('cgc 9') || name.includes('psa 9') || name.includes('bgs 9')) {
-        theme = ['#60a5fa', '#2563eb']; icon = '💎';
-    } else if (name.includes('cgc') || name.includes('psa') || name.includes('bgs')) {
-        theme = ['#a78bfa', '#6d28d9']; icon = '💎';
-    }
-    // Elite Trainer Boxes
-    else if (name.includes('etb') || name.includes('elite trainer')) {
-        if (name.includes('evolving skies')) { theme = ['#8b5cf6', '#6d28d9']; icon = '📦'; }
-        else if (name.includes('151')) { theme = ['#fbbf24', '#d97706']; icon = '📦'; }
-        else if (name.includes('crown zenith')) { theme = ['#facc15', '#eab308']; icon = '📦'; }
-        else if (name.includes('lost origin')) { theme = ['#06b6d4', '#0891b2']; icon = '📦'; }
-        else if (name.includes('fusion strike')) { theme = ['#ec4899', '#db2777']; icon = '📦'; }
-        else if (name.includes('paldean fates')) { theme = ['#f472b6', '#ec4899']; icon = '📦'; }
-        else if (name.includes('shrouded fable')) { theme = ['#22c55e', '#16a34a']; icon = '📦'; }
-        else if (name.includes('twilight masquerade')) { theme = ['#6366f1', '#4f46e5']; icon = '📦'; }
-        else if (name.includes('temporal forces')) { theme = ['#0ea5e9', '#0284c7']; icon = '📦'; }
-        else if (name.includes('paradox rift')) { theme = ['#ef4444', '#dc2626']; icon = '📦'; }
-        else if (name.includes('obsidian flames')) { theme = ['#f97316', '#ea580c']; icon = '📦'; }
-        else if (name.includes('chilling reign')) { theme = ['#14b8a6', '#0d9488']; icon = '📦'; }
-        else if (name.includes('brilliant stars')) { theme = ['#fbbf24', '#f59e0b']; icon = '📦'; }
-        else if (name.includes('sword & shield')) { theme = ['#a1a1aa', '#71717a']; icon = '📦'; }
-        else if (name.includes('scarlet & violet')) { theme = ['#dc2626', '#991b1b']; icon = '📦'; }
-        else { theme = ['#06b6d4', '#0891b2']; icon = '📦'; }
-    }
-    // Booster Boxes
-    else if (name.includes('booster box')) {
-        if (name.includes('evolving skies')) { theme = ['#8b5cf6', '#5b21b6']; icon = '🃏🃏'; }
-        else if (name.includes('151')) { theme = ['#fbbf24', '#b45309']; icon = '🃏🃏'; }
-        else if (name.includes('crown zenith')) { theme = ['#facc15', '#ca8a04']; icon = '🃏🃏'; }
-        else if (name.includes('lost origin')) { theme = ['#06b6d4', '#0e7490']; icon = '🃏🃏'; }
-        else if (name.includes('chilling reign')) { theme = ['#14b8a6', '#0f766e']; icon = '🃏🃏'; }
-        else if (name.includes('fusion strike')) { theme = ['#ec4899', '#be185d']; icon = '🃏🃏'; }
-        else if (name.includes('brilliant stars')) { theme = ['#f59e0b', '#b45309']; icon = '🃏🃏'; }
-        else if (name.includes('silver tempest')) { theme = ['#c084fc', '#7e22ce']; icon = '🃏🃏'; }
-        else if (name.includes('astral radiance')) { theme = ['#60a5fa', '#1d4ed8']; icon = '🃏🃏'; }
-        else if (name.includes('darkness ablaze')) { theme = ['#dc2626', '#991b1b']; icon = '🃏🃏'; }
-        else if (name.includes('vivid voltage')) { theme = ['#fbbf24', '#d97706']; icon = '🃏🃏'; }
-        else if (name.includes('rebel clash')) { theme = ['#ef4444', '#b91c1c']; icon = '🃏🃏'; }
-        else { theme = ['#7c3aed', '#6d28d9']; icon = '🃏🃏'; }
-    }
-    // Premium / Ultra Premium Collections
-    else if (name.includes('upc') || name.includes('ultra premium') || name.includes('premium collection')) {
-        if (name.includes('charizard')) { theme = ['#f97316', '#ea580c']; icon = '🔥'; }
-        else if (name.includes('celebrations')) { theme = ['#fbbf24', '#d97706']; icon = '🎉'; }
-        else if (name.includes('mew')) { theme = ['#f472b6', '#ec4899']; icon = '🌟'; }
-        else if (name.includes('arceus')) { theme = ['#facc15', '#eab308']; icon = '🌟'; }
-        else if (name.includes('eevee')) { theme = ['#c084fc', '#a855f7']; icon = '🦊'; }
-        else if (name.includes('reshiram') || name.includes('charizard gx')) { theme = ['#dc2626', '#991b1b']; icon = '🔥'; }
-        else if (name.includes('zacian')) { theme = ['#3b82f6', '#1d4ed8']; icon = '⚔️'; }
-        else if (name.includes('zamazenta')) { theme = ['#dc2626', '#b91c1c']; icon = '🛡️'; }
-        else if (name.includes('pikachu')) { theme = ['#fbbf24', '#d97706']; icon = '⚡'; }
-        else { theme = ['#f59e0b', '#d97706']; icon = '🏆'; }
-    }
-    // Collector's Boxes / Special Collections
-    else if (name.includes('special illustration') || name.includes('special collection') || name.includes('special case') || name.includes('special box')) {
-        if (name.includes('charizard')) { theme = ['#ef4444', '#b91c1c']; icon = '🔥'; }
-        else if (name.includes('pikachu')) { theme = ['#fbbf24', '#d97706']; icon = '⚡'; }
-        else if (name.includes('eevee')) { theme = ['#a78bfa', '#7e22ce']; icon = '🦊'; }
-        else if (name.includes('detective pikachu')) { theme = ['#fbbf24', '#b45309']; icon = '🔍'; }
-        else if (name.includes('anniversary')) { theme = ['#f59e0b', '#d97706']; icon = '🎂'; }
-        else { theme = ['#f59e0b', '#d97706']; icon = '🎁'; }
-    }
-    // Trainer's Toolkit
-    else if (name.includes("trainer's toolkit")) { theme = ['#ef4444', '#dc2626']; icon = '🎒'; }
-    // In-Store Credit
-    else if (name.includes('in-store credit') || name.includes('store credit')) {
-        if (name.includes('500')) { theme = ['#fbbf24', '#b45309']; icon = '🏪💷'; }
-        else if (name.includes('200')) { theme = ['#f59e0b', '#d97706']; icon = '🏪💷'; }
-        else if (name.includes('100')) { theme = ['#22c55e', '#16a34a']; icon = '🏪💷'; }
-        else if (name.includes('50')) { theme = ['#3b82f6', '#2563eb']; icon = '🏪💷'; }
-        else if (name.includes('25')) { theme = ['#8b5cf6', '#6d28d9']; icon = '🏪💷'; }
-        else { theme = ['#14b8a6', '#0d9488']; icon = '🏪💰'; }
-    }
-    // Vintage Packs
-    else if (name.includes('1st ed') || name.includes('base set') || name.includes('jungle') || name.includes('fossil') || name.includes('team rocket') || name.includes('gym heroes') || name.includes('neo genesis')) {
-        theme = ['#d4a574', '#8b5e3c']; icon = '📜';
-    }
-    // Japanese Sets
-    else if (name.includes('shiny star') || name.includes('vmax climax') || name.includes('tag team') || name.includes('dream league') || name.includes('remix bout') || name.includes('matchless fighters')) {
-        theme = ['#dc2626', '#991b1b']; icon = '🏯';
-    }
-    // Booster Packs / Bundles
-    else if (name.includes('booster pack') || name.includes('booster bundle')) {
-        if (name.includes('evolving skies')) { theme = ['#8b5cf6', '#5b21b6']; icon = '🃏'; }
-        else if (name.includes('151')) { theme = ['#fbbf24', '#b45309']; icon = '🃏'; }
-        else if (name.includes('crown zenith')) { theme = ['#facc15', '#ca8a04']; icon = '🃏'; }
-        else if (name.includes('lost origin')) { theme = ['#06b6d4', '#0e7490']; icon = '🃏'; }
-        else if (name.includes('fusion strike')) { theme = ['#ec4899', '#be185d']; icon = '🃏'; }
-        else if (name.includes('brilliant stars')) { theme = ['#f59e0b', '#b45309']; icon = '🃏'; }
-        else { theme = ['#ec4899', '#db2777']; icon = '🃏'; }
-    }
-    // Pokémon Center ETB
-    else if (name.includes('pokémon center')) {
-        theme = ['#3b82f6', '#1d4ed8']; icon = '🏪';
-    }
-    // Prismatic Evolutions
-    else if (name.includes('prismatic evolutions')) {
-        theme = ['#c084fc', '#a855f7']; icon = '💎';
-    }
-    // Stellar Crown
-    else if (name.includes('stellar crown')) {
-        theme = ['#fbbf24', '#f59e0b']; icon = '👑';
-    }
-    // Surging Sparks
-    else if (name.includes('surging sparks')) {
-        theme = ['#facc15', '#eab308']; icon = '⚡';
-    }
-    // Paldea Evolved
-    else if (name.includes('paldea evolved')) {
-        theme = ['#22c55e', '#16a34a']; icon = '🌿';
-    }
-    // Vintage Pack (generic)
-    else if (name.includes('booster pack')) { theme = ['#d4a574', '#8b5e3c']; icon = '📜'; }
-    // Fallback
-    else { theme = ['#7c5cfc', '#6d28d9']; icon = '🎰'; }
+// Cache to avoid regenerating identical SVGs
+const _prizeImageCache = {};
 
-    const gradientId = 'g' + Math.random().toString(36).slice(2, 8);
+function _getSetColors(name) {
+    const n = name.toLowerCase();
+    if (n.includes('evolving skies')) return { primary: '#8b5cf6', accent: '#d946ef', bg: '#1e1040' };
+    if (n.includes('151')) return { primary: '#fbbf24', accent: '#f59e0b', bg: '#1a1204' };
+    if (n.includes('crown zenith')) return { primary: '#facc15', accent: '#eab308', bg: '#1a1404' };
+    if (n.includes('lost origin')) return { primary: '#06b6d4', accent: '#22d3ee', bg: '#041a20' };
+    if (n.includes('fusion strike')) return { primary: '#ec4899', accent: '#f472b6', bg: '#1a0414' };
+    if (n.includes('chilling reign')) return { primary: '#14b8a6', accent: '#2dd4bf', bg: '#041614' };
+    if (n.includes('brilliant stars')) return { primary: '#f59e0b', accent: '#fbbf24', bg: '#1a0e04' };
+    if (n.includes('silver tempest')) return { primary: '#a78bfa', accent: '#c4b5fd', bg: '#120820' };
+    if (n.includes('astral radiance')) return { primary: '#3b82f6', accent: '#60a5fa', bg: '#041030' };
+    if (n.includes('darkness ablaze')) return { primary: '#ef4444', accent: '#f87171', bg: '#1a0404' };
+    if (n.includes('vivid voltage')) return { primary: '#fbbf24', accent: '#fcd34d', bg: '#1a1004' };
+    if (n.includes('rebel clash')) return { primary: '#ef4444', accent: '#f87171', bg: '#1a0404' };
+    if (n.includes('paldean fates')) return { primary: '#f472b6', accent: '#fb7185', bg: '#1a0410' };
+    if (n.includes('shrouded fable')) return { primary: '#22c55e', accent: '#4ade80', bg: '#041408' };
+    if (n.includes('twilight masquerade')) return { primary: '#6366f1', accent: '#818cf8', bg: '#0a0820' };
+    if (n.includes('temporal forces')) return { primary: '#0ea5e9', accent: '#38bdf8', bg: '#041420' };
+    if (n.includes('paradox rift')) return { primary: '#ef4444', accent: '#f87171', bg: '#180808' };
+    if (n.includes('obsidian flames')) return { primary: '#f97316', accent: '#fb923c', bg: '#1a0c04' };
+    if (n.includes('paldea evolved')) return { primary: '#22c55e', accent: '#4ade80', bg: '#041408' };
+    if (n.includes('stellar crown')) return { primary: '#eab308', accent: '#facc15', bg: '#1a1404' };
+    if (n.includes('surging sparks')) return { primary: '#eab308', accent: '#fde047', bg: '#1a1404' };
+    if (n.includes('prismatic evolutions')) return { primary: '#c084fc', accent: '#e879f9', bg: '#180820' };
+    if (n.includes('sword & shield')) return { primary: '#94a3b8', accent: '#cbd5e1', bg: '#0c0c14' };
+    if (n.includes('scarlet & violet')) return { primary: '#dc2626', accent: '#f87171', bg: '#1a0408' };
+    if (n.includes('base set')) return { primary: '#d4a574', accent: '#e8c9a0', bg: '#1a1008' };
+    if (n.includes('jungle')) return { primary: '#4ade80', accent: '#86efac', bg: '#041408' };
+    if (n.includes('fossil')) return { primary: '#a8a29e', accent: '#d6d3d1', bg: '#120e0c' };
+    if (n.includes('team rocket')) return { primary: '#dc2626', accent: '#f87171', bg: '#140808' };
+    if (n.includes('gym heroes')) return { primary: '#f97316', accent: '#fb923c', bg: '#1a0c04' };
+    if (n.includes('neo genesis')) return { primary: '#14b8a6', accent: '#2dd4bf', bg: '#041614' };
+    // Default
+    return { primary: '#7c5cfc', accent: '#a78bfa', bg: '#100820' };
+}
+
+function _encodeSvg(svg) {
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+// --- Graded Slab Mockup ---
+function _drawSlabSVG(prize, id) {
+    const n = prize.toLowerCase();
+    // Extract Pokemon name (strip grade prefix)
+    let pokemon = prize.replace(/^(CGC|PSA|BGS)\s*(10|9\.5|9|8\.5|8)\s*/i, '').trim();
+    let grade = '';
+    let company = 'PSA';
+    const gm = prize.match(/^(CGC|PSA|BGS)\s*(10|9\.5|9|8\.5|8)/i);
+    if (gm) { company = gm[1].toUpperCase(); grade = gm[2]; }
+
+    // Grade colors
+    const gradeColors = { '10': ['#fbbf24', '#b45309'], '9.5': ['#c084fc', '#7e22ce'], '9': ['#60a5fa', '#2563eb'] };
+    const gc = gradeColors[grade] || ['#a78bfa', '#6d28d9'];
+    const companyColor = company === 'CGC' ? '#06b6d4' : company === 'BGS' ? '#fbbf24' : '#ef4444';
+
+    // Pokemon-specific colors
+    const pokeColors = {
+        'charizard': ['#f97316', '#dc2626'], 'mewtwo': ['#a78bfa', '#7c3aed'],
+        'rayquaza': ['#22c55e', '#166534'], 'pikachu': ['#fbbf24', '#f59e0b'],
+        'umbreon': ['#fbbf24', '#1e1b4b'], 'giratina': ['#fbbf24', '#92400e'],
+        'lugia': ['#60a5fa', '#1e3a5f'], 'mew': ['#f472b6', '#ec4899'],
+        'celebi': ['#4ade80', '#166534'], 'snorlax': ['#3b82f6', '#1e3a5f'],
+        'blaziken': ['#ef4444', '#f97316'], 'gengar': ['#a855f7', '#581c87'],
+    };
+    let pc = ['#64748b', '#334155'];
+    for (const [k, v] of Object.entries(pokeColors)) {
+        if (pokemon.toLowerCase().includes(k)) { pc = v; break; }
+    }
+
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200">
         <defs>
-            <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:${theme[0]};stop-opacity:0.9"/>
-                <stop offset="100%" style="stop-color:${theme[1]};stop-opacity:0.95"/>
+            <linearGradient id="${id}bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="${pc[0]}" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="${pc[1]}" stop-opacity="0.35"/>
             </linearGradient>
-            <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <linearGradient id="${id}grade" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="${gc[0]}"/>
+                <stop offset="100%" stop-color="${gc[1]}"/>
+            </linearGradient>
+            <filter id="${id}shadow"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/></filter>
         </defs>
-        <rect width="280" height="200" rx="16" fill="url(#${gradientId})"/>
-        <!-- Decorative circles -->
-        <circle cx="40" cy="30" r="80" fill="rgba(255,255,255,0.06)"/>
-        <circle cx="250" cy="170" r="100" fill="rgba(255,255,255,0.04)"/>
-        <circle cx="260" cy="30" r="50" fill="rgba(255,255,255,0.05)"/>
-        <!-- Diagonal lines pattern -->
-        <line x1="0" y1="60" x2="280" y2="60" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="0" y1="140" x2="280" y2="140" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <!-- Main icon -->
-        <text x="140" y="110" text-anchor="middle" font-size="64" filter="url(#glow)">${icon}</text>
-        <!-- Bottom label -->
-        <rect x="0" y="155" width="280" height="45" fill="rgba(0,0,0,0.25)" rx="0 0 16 16"/>
-        <text x="140" y="183" text-anchor="middle" fill="#fff" font-family="Poppins,Arial" font-size="12" font-weight="700" letter-spacing="2">DRAW PRIZE</text>
+        <!-- Background -->
+        <rect width="280" height="200" rx="14" fill="#12122a"/>
+        <rect width="280" height="200" rx="14" fill="url(#${id}bg)"/>
+        <!-- Card silhouette -->
+        <rect x="70" y="24" width="108" height="148" rx="8" fill="#1a1a35" stroke="${pc[0]}" stroke-width="1.5" filter="url(#${id}shadow)"/>
+        <rect x="74" y="28" width="100" height="140" rx="6" fill="url(#${id}bg)"/>
+        <!-- Poke ball icon center -->
+        <circle cx="124" cy="98" r="30" fill="none" stroke="${pc[0]}" stroke-width="2" opacity="0.4"/>
+        <circle cx="124" cy="98" r="16" fill="none" stroke="${pc[0]}" stroke-width="1.5" opacity="0.3"/>
+        <line x1="124" y1="82" x2="124" y2="114" stroke="${pc[0]}" stroke-width="1.5" opacity="0.2"/>
+        <circle cx="124" cy="98" r="4" fill="${pc[0]}" opacity="0.5"/>
+        <!-- Slab frame border -->
+        <rect x="62" y="16" width="124" height="164" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+        <rect x="66" y="20" width="116" height="156" rx="8" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <!-- Grade badge -->
+        <rect x="202" y="28" width="62" height="56" rx="10" fill="#1a1a35" stroke="${gc[0]}" stroke-width="1.5" filter="url(#${id}shadow)"/>
+        <rect x="202" y="28" width="62" height="56" rx="10" fill="url(#${id}grade)" opacity="0.15"/>
+        <text x="233" y="52" text-anchor="middle" fill="${companyColor}" font-family="Arial,sans-serif" font-size="9" font-weight="900" letter-spacing="1">${company}</text>
+        <text x="233" y="76" text-anchor="middle" fill="${gc[0]}" font-family="Arial,sans-serif" font-size="22" font-weight="900">${grade}</text>
+        <!-- Pokemon name -->
+        <rect x="0" y="162" width="280" height="38" rx="0 0 14 14" fill="rgba(0,0,0,0.35)"/>
+        <text x="140" y="187" text-anchor="middle" fill="#f1f5f9" font-family="Poppins,Arial,sans-serif" font-size="12" font-weight="700">${pokemon}</text>
     </svg>`;
-    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+    return _encodeSvg(svg);
+}
+
+// --- Elite Trainer Box Mockup ---
+function _drawETBSVG(prize, id) {
+    const set = prize.replace(/\s*ETB\s*$|\s*\(Pokémon\s*Center\)\s*$/i, '').trim();
+    const isPC = /pokémon\s*center/i.test(prize);
+    const sc = _getSetColors(prize);
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200">
+        <defs>
+            <linearGradient id="${id}grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="${sc.primary}" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="${sc.accent}" stop-opacity="0.85"/>
+            </linearGradient>
+            <filter id="${id}sh"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.3"/></filter>
+            <linearGradient id="${id}shine" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fff" stop-opacity="0.08"/>
+                <stop offset="50%" stop-color="#fff" stop-opacity="0.01"/>
+                <stop offset="100%" stop-color="#fff" stop-opacity="0.06"/>
+            </linearGradient>
+        </defs>
+        <rect width="280" height="200" rx="14" fill="${sc.bg}"/>
+        <!-- Box shape -->
+        <rect x="50" y="20" width="180" height="156" rx="10" fill="url(#${id}grad)" filter="url(#${id}sh)"/>
+        <!-- Shine overlay -->
+        <rect x="50" y="20" width="180" height="156" rx="10" fill="url(#${id}shine)"/>
+        <!-- Box lid line -->
+        <line x1="50" y1="52" x2="230" y2="52" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+        <!-- Pokemon Center badge if applicable -->
+        ${isPC ? `<rect x="82" y="62" width="116" height="32" rx="6" fill="#3b82f6" opacity="0.9"/>
+        <text x="140" y="83" text-anchor="middle" fill="#fff" font-family="Poppins,Arial,sans-serif" font-size="11" font-weight="800" letter-spacing="1">POKÉMON CENTER</text>` : ''}
+        <!-- Set name -->
+        <text x="140" y="${isPC ? '118' : '110'}" text-anchor="middle" fill="#fff" font-family="Poppins,Arial,sans-serif" font-size="14" font-weight="800" letter-spacing="0.5">${set}</text>
+        <!-- Divider -->
+        <line x1="90" y1="${isPC ? '128' : '120'}" x2="190" y2="${isPC ? '128' : '120'}" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <!-- Bottom features -->
+        <text x="140" y="${isPC ? '148' : '140'}" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="Poppins,Arial,sans-serif" font-size="9" letter-spacing="0.5">9 Booster Packs · 65 Sleeves</text>
+        <text x="140" y="${isPC ? '162' : '154'}" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="Poppins,Arial,sans-serif" font-size="9" letter-spacing="0.5">Dice · Condition Markers · Dividers</text>
+        <!-- ETB label -->
+        <rect x="0" y="162" width="280" height="38" rx="0 0 14 14" fill="rgba(0,0,0,0.35)"/>
+        <text x="140" y="187" text-anchor="middle" fill="#f1f5f9" font-family="Poppins,Arial,sans-serif" font-size="12" font-weight="700">${prize.length > 30 ? set + ' ETB' : prize}</text>
+    </svg>`;
+    return _encodeSvg(svg);
+}
+
+// --- Booster Box Mockup ---
+function _drawBoosterBoxSVG(prize, id) {
+    const set = prize.replace(/\s*Booster\s*Box\s*$/i, '').trim();
+    const sc = _getSetColors(prize);
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200">
+        <defs>
+            <linearGradient id="${id}grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="${sc.primary}" stop-opacity="0.92"/>
+                <stop offset="100%" stop-color="${sc.accent}" stop-opacity="0.88"/>
+            </linearGradient>
+            <filter id="${id}sh"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.3"/></filter>
+            <linearGradient id="${id}shine" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fff" stop-opacity="0.07"/>
+                <stop offset="40%" stop-color="#fff" stop-opacity="0.02"/>
+                <stop offset="100%" stop-color="#fff" stop-opacity="0.05"/>
+            </linearGradient>
+        </defs>
+        <rect width="280" height="200" rx="14" fill="${sc.bg}"/>
+        <!-- Wide box shape -->
+        <rect x="30" y="28" width="220" height="140" rx="10" fill="url(#${id}grad)" filter="url(#${id}sh)"/>
+        <rect x="30" y="28" width="220" height="140" rx="10" fill="url(#${id}shine)"/>
+        <!-- Box top flap -->
+        <rect x="30" y="28" width="220" height="36" rx="10" fill="rgba(0,0,0,0.2)"/>
+        <rect x="30" y="54" width="220" height="10" fill="rgba(0,0,0,0.2)"/>
+        <!-- Pack grid (3 rows of 6) -->
+        ${[0, 1, 2].map(row => {
+            return [0, 1, 2, 3, 4, 5].map(col => {
+                const rx = 50 + col * 30;
+                const ry = 68 + row * 32;
+                const packColors = [
+                    [sc.primary, sc.accent], [sc.accent, sc.primary],
+                    ['rgba(255,255,255,0.15)', 'rgba(255,255,255,0.08)'],
+                    [sc.primary, sc.accent], [sc.accent, sc.primary],
+                    ['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)'],
+                ][col];
+                return `<rect x="${rx}" y="${ry}" width="26" height="28" rx="4" fill="${packColors[0]}" opacity="0.6" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>`;
+            }).join('');
+        }).join('')}
+        <!-- Set name overlay -->
+        <text x="140" y="165" text-anchor="middle" fill="#fff" font-family="Poppins,Arial,sans-serif" font-size="13" font-weight="800" letter-spacing="0.5">${set}</text>
+        <!-- Bottom label -->
+        <rect x="0" y="162" width="280" height="38" rx="0 0 14 14" fill="rgba(0,0,0,0.35)"/>
+        <text x="140" y="187" text-anchor="middle" fill="#f1f5f9" font-family="Poppins,Arial,sans-serif" font-size="12" font-weight="700">${prize}</text>
+    </svg>`;
+    return _encodeSvg(svg);
+}
+
+// --- Vintage Booster Pack Mockup ---
+function _drawVintagePackSVG(prize, id) {
+    const n = prize.toLowerCase();
+    const sc = _getSetColors(prize);
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200">
+        <defs>
+            <linearGradient id="${id}grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="${sc.primary}" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="${sc.accent}" stop-opacity="0.9"/>
+            </linearGradient>
+            <filter id="${id}sh"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/></filter>
+            <linearGradient id="${id}shine" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fff" stop-opacity="0.06"/>
+                <stop offset="50%" stop-color="#fff" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#fff" stop-opacity="0.04"/>
+            </linearGradient>
+        </defs>
+        <rect width="280" height="200" rx="14" fill="${sc.bg}"/>
+        <!-- Booster pack shape (tall, narrow) -->
+        <rect x="72" y="16" width="136" height="162" rx="8" fill="url(#${id}grad)" filter="url(#${id}sh)"/>
+        <rect x="72" y="16" width="136" height="162" rx="8" fill="url(#${id}shine)"/>
+        <!-- Crimp top -->
+        <path d="M72 16 Q76 8 140 8 Q204 8 208 16" fill="rgba(0,0,0,0.25)"/>
+        <path d="M72 16 L72 22 Q76 14 140 14 Q204 14 208 22 L208 16" fill="rgba(0,0,0,0.15)"/>
+        <!-- Crimp bottom -->
+        <path d="M72 178 L72 172 Q76 180 140 180 Q204 180 208 172 L208 178" fill="rgba(0,0,0,0.2)"/>
+        <!-- Pack art area -->
+        <rect x="84" y="36" width="112" height="112" rx="6" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <!-- Pokeball in art -->
+        <circle cx="140" cy="92" r="28" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+        <line x1="112" y1="92" x2="168" y2="92" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+        <circle cx="140" cy="92" r="8" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+        <circle cx="140" cy="92" r="3" fill="rgba(255,255,255,0.3)"/>
+        <!-- Set name on pack -->
+        <text x="140" y="166" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-family="Poppins,Arial,sans-serif" font-size="8" font-weight="600">${prize.split(' ').slice(0, 2).join(' ')}</text>
+        <!-- 1st Edition stamp -->
+        ${n.includes('1st ed') ? `<text x="140" y="46" text-anchor="middle" fill="#fbbf24" font-family="Arial,sans-serif" font-size="12" font-weight="900" letter-spacing="1">1st EDITION</text>` : ''}
+        <!-- Bottom label -->
+        <rect x="0" y="162" width="280" height="38" rx="0 0 14 14" fill="rgba(0,0,0,0.35)"/>
+        <text x="140" y="187" text-anchor="middle" fill="#f1f5f9" font-family="Poppins,Arial,sans-serif" font-size="12" font-weight="700">${prize}</text>
+    </svg>`;
+    return _encodeSvg(svg);
+}
+
+function generatePrizeImage(prize) {
+    if (_prizeImageCache[prize]) return _prizeImageCache[prize];
+
+    const id = 'g' + Math.random().toString(36).slice(2, 8);
+    const name = prize.toLowerCase();
+    let result;
+
+    // Graded Slabs — slab case with card + grade badge
+    if (/(cgc|psa|bgs)\s*(10|9\.5|9|8\.5|8)/i.test(prize)) {
+        result = _drawSlabSVG(prize, id);
+    }
+    // Elite Trainer Boxes — box mockup
+    else if (name.includes('etb') || name.includes('elite trainer')) {
+        result = _drawETBSVG(prize, id);
+    }
+    // Booster Boxes — wide box with pack grid
+    else if (name.includes('booster box')) {
+        result = _drawBoosterBoxSVG(prize, id);
+    }
+    // Vintage Booster Packs — classic booster pack
+    else if (name.includes('booster pack') || name.includes('1st ed') || name.includes('base set') || name.includes('jungle') || name.includes('fossil') || name.includes('team rocket') || name.includes('gym heroes') || name.includes('neo genesis')) {
+        result = _drawVintagePackSVG(prize, id);
+    }
+    // Fallback
+    else {
+        const sc = _getSetColors(prize);
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200">
+            <defs>
+                <linearGradient id="${id}g" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="${sc.primary}" stop-opacity="0.9"/>
+                    <stop offset="100%" stop-color="${sc.accent}" stop-opacity="0.85"/>
+                </linearGradient>
+                <filter id="${id}f"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/></filter>
+            </defs>
+            <rect width="280" height="200" rx="14" fill="${sc.bg}"/>
+            <rect x="40" y="28" width="200" height="138" rx="12" fill="url(#${id}g)" filter="url(#${id}f)"/>
+            <text x="140" y="108" text-anchor="middle" fill="#fff" font-family="Poppins,Arial,sans-serif" font-size="20" font-weight="800">🎰</text>
+            <rect x="0" y="162" width="280" height="38" rx="0 0 14 14" fill="rgba(0,0,0,0.35)"/>
+            <text x="140" y="187" text-anchor="middle" fill="#f1f5f9" font-family="Poppins,Arial,sans-serif" font-size="12" font-weight="700">${prize.length > 32 ? prize.substring(0, 30) + '…' : prize}</text>
+        </svg>`;
+        result = _encodeSvg(svg);
+    }
+
+    _prizeImageCache[prize] = result;
+    return result;
 }
 
 // ========== Lottery / Draws ==========
