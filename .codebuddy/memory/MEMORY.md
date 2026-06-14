@@ -1,5 +1,8 @@
 # PokéMart — Project Memory
 
+## User Preferences
+- **Language**: Always respond in English. The user cannot read Chinese.
+
 ## Project Conventions
 - **Commit format**: Conventional Commits (`feat:`, `fix:`, `style:`, `refactor:`, `chore:`, `docs:`)
 - **Branch**: `main`
