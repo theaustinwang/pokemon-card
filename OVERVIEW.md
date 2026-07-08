@@ -70,9 +70,9 @@ Data model for a card:
 ```js
 {
   id: 1,
-  name: "Eevee ex",
-  setName: "Prismatic Evolutions",
-  setCode: "PRE",
+  name: "Charizard Star δ",
+  setName: "Dragon Frontiers",
+  setCode: "ex15",
   type: "normal",        // fire, water, grass, electric, psychic, etc.
   rarity: "ultra-rare",  // common, rare-holo, ultra-rare, hyper-rare
   price: 249.99,         // USD base price (NM)
