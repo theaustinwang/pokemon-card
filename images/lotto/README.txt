@@ -6,64 +6,57 @@ The system will automatically use them instead of the SVG fallbacks.
 Supported formats: .jpg (recommended), .png, .webp
 Recommended size: 560x400px (2x the display size for retina)
 
---- GRADED SLABS ---
-  cgc-10-charizard-vmax.jpg
-  psa-9-mewtwo-gx.jpg
-  bgs-95-rayquaza-v.jpg
-  cgc-95-pikachu-vmax.jpg
-  psa-10-umbreon-v.jpg
-  bgs-10-giratina-vstar.jpg
-  cgc-10-lugia-v.jpg
-  psa-9-charizard-v.jpg
-  bgs-9-mew-vmax.jpg
-  psa-10-celebi-v.jpg
-  cgc-9-snorlax-vmax.jpg
-  bgs-95-blaziken-vmax.jpg
-  psa-10-gengar-vmax.jpg
-  cgc-10-mew-vmax.jpg
-  bgs-95-charizard-gx.jpg
+--- FOSSIL (base3) — Vintage Holos ---
+  moltres-fossil-holo.jpg
+  zapdos-fossil-holo.jpg
+  articuno-fossil-holo.jpg
+  raichu-fossil-holo.jpg
+  dragonite-fossil-holo.jpg
+  gengar-fossil-holo.jpg
+  lapras-fossil-holo.jpg
+  kabutops-fossil-holo.jpg
+  magneton-fossil-holo.jpg
+  muk-fossil-holo.jpg
+  aerodactyl-fossil-holo.jpg
+  hitmonlee-fossil-holo.jpg
+  hypno-fossil-holo.jpg
+  ditto-fossil-holo.jpg
+  haunter-fossil-holo.jpg
 
---- ELITE TRAINER BOXES ---
-  sword-shield-etb.jpg
-  scarlet-violet-etb.jpg
-  paldean-fates-etb.jpg
-  151-etb.jpg
-  obsidian-flames-etb.jpg
-  paradox-rift-etb.jpg
-  temporal-forces-etb.jpg
-  twilight-masquerade-etb.jpg
-  shrouded-fable-etb.jpg
-  crown-zenith-etb.jpg
-  evolving-skies-etb.jpg
-  lost-origin-etb.jpg
-  fusion-strike-etb.jpg
-  chilling-reign-etb.jpg
-  brilliant-stars-etb.jpg
-  evolving-skies-etb-pokmon-center.jpg
-  151-etb-pokmon-center.jpg
-  prismatic-evolutions-etb.jpg
+--- LEGEND MAKER (ex12) — ex, Star & Secret Rare ---
+  pikachu-legend-maker.jpg
+  mew-ex-legend-maker.jpg
+  registeel-legend-maker.jpg
+  regice-legend-maker.jpg
+  regirock-legend-maker.jpg
+  flygon-ex-legend-maker.jpg
+  arcanine-ex-legend-maker.jpg
+  banette-ex-legend-maker.jpg
+  armaldo-ex-legend-maker.jpg
+  walrein-ex-legend-maker.jpg
+  dustox-ex-legend-maker.jpg
 
---- BOOSTER BOXES ---
-  evolving-skies-booster-box.jpg
-  151-booster-box.jpg
-  crown-zenith-booster-box.jpg
-  lost-origin-booster-box.jpg
-  fusion-strike-booster-box.jpg
-  chilling-reign-booster-box.jpg
-  vivid-voltage-booster-box.jpg
-  darkness-ablaze-booster-box.jpg
-  rebel-clash-booster-box.jpg
-  silver-tempest-booster-box.jpg
-  astral-radiance-booster-box.jpg
-  brilliant-stars-booster-box.jpg
-  paldea-evolved-booster-box.jpg
-  stellar-crown-booster-box.jpg
-  surging-sparks-booster-box.jpg
+--- FIRERED & LEAFGREEN (ex6) — ex & Secret Rare ---
+  zapdos-ex-firered-leafgreen.jpg
+  moltres-ex-firered-leafgreen.jpg
+  articuno-ex-firered-leafgreen.jpg
+  charmander-firered-leafgreen-secret.jpg
+  charizard-ex-firered-leafgreen.jpg
+  blastoise-ex-firered-leafgreen.jpg
+  venusaur-ex-firered-leafgreen.jpg
+  gengar-ex-firered-leafgreen.jpg
+  gyarados-ex-firered-leafgreen.jpg
+  electrode-ex-firered-leafgreen.jpg
+  clefable-ex-firered-leafgreen.jpg
+  mr-mime-ex-firered-leafgreen.jpg
 
---- VINTAGE BOOSTER PACKS ---
-  jungle-booster-pack-1st-ed.jpg
-  fossil-booster-pack-1st-ed.jpg
-  team-rocket-booster-pack.jpg
-  gym-heroes-booster-pack.jpg
-  neo-genesis-booster-pack.jpg
-  base-set-booster-pack.jpg
+--- UNLEASHED (hgss2) — LEGEND & Prime ---
+  raikou-suicune-legend-unleashed.jpg
+  entei-raikou-legend-unleashed.jpg
+  suicune-entei-legend-unleashed.jpg
+  tyranitar-prime-unleashed.jpg
+  kingdra-prime-unleashed.jpg
+  steelix-prime-unleashed.jpg
+  crobat-prime-unleashed.jpg
+  ursaring-prime-unleashed.jpg
+  lanturn-prime-unleashed.jpg

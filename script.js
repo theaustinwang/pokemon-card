@@ -1292,6 +1292,9 @@ function _getSetColors(name) {
     if (n.includes('team rocket')) return { primary: '#dc2626', accent: '#f87171', bg: '#140808' };
     if (n.includes('gym heroes')) return { primary: '#f97316', accent: '#fb923c', bg: '#1a0c04' };
     if (n.includes('neo genesis')) return { primary: '#14b8a6', accent: '#2dd4bf', bg: '#041614' };
+    if (n.includes('legend maker')) return { primary: '#c084fc', accent: '#e879f9', bg: '#180820' };
+    if (n.includes('firered') || n.includes('fire red') || n.includes('leaf green')) return { primary: '#ef4444', accent: '#22c55e', bg: '#1a0a04' };
+    if (n.includes('unleashed')) return { primary: '#3b82f6', accent: '#60a5fa', bg: '#041030' };
     // Default
     return { primary: '#7c5cfc', accent: '#a78bfa', bg: '#100820' };
 }
@@ -1554,30 +1557,26 @@ function generatePrizeImage(prize) {
 // Each draw is its own prize with its own ticket price & winning number
 
 const DRAW_PRIZES = [
-    // Graded Slabs
-    "CGC 10 Charizard VMAX", "PSA 9 Mewtwo GX", "BGS 9.5 Rayquaza V",
-    "CGC 9.5 Pikachu VMAX", "PSA 10 Umbreon V", "BGS 10 Giratina VSTAR",
-    "CGC 10 Lugia V", "PSA 9 Charizard V", "BGS 9 Mew VMAX",
-    "PSA 10 Celebi V", "CGC 9 Snorlax VMAX", "BGS 9.5 Blaziken VMAX",
-    "PSA 10 Gengar VMAX", "CGC 10 Mew VMAX", "BGS 9.5 Charizard GX",
-    // Elite Trainer Boxes
-    "Sword & Shield ETB", "Scarlet & Violet ETB", "Paldean Fates ETB",
-    "151 ETB", "Obsidian Flames ETB", "Paradox Rift ETB",
-    "Temporal Forces ETB", "Twilight Masquerade ETB", "Shrouded Fable ETB",
-    "Crown Zenith ETB", "Evolving Skies ETB", "Lost Origin ETB",
-    "Fusion Strike ETB", "Chilling Reign ETB", "Brilliant Stars ETB",
-    "Evolving Skies ETB (Pokémon Center)", "151 ETB (Pokémon Center)",
-    "Prismatic Evolutions ETB",
-    // Booster Boxes
-    "Evolving Skies Booster Box", "151 Booster Box", "Crown Zenith Booster Box",
-    "Lost Origin Booster Box", "Fusion Strike Booster Box", "Chilling Reign Booster Box",
-    "Vivid Voltage Booster Box", "Darkness Ablaze Booster Box", "Rebel Clash Booster Box",
-    "Silver Tempest Booster Box", "Astral Radiance Booster Box", "Brilliant Stars Booster Box",
-    "Paldea Evolved Booster Box", "Stellar Crown Booster Box", "Surging Sparks Booster Box",
-    // Vintage Booster Packs
-    "Jungle Booster Pack (1st Ed)", "Fossil Booster Pack (1st Ed)",
-    "Team Rocket Booster Pack", "Gym Heroes Booster Pack",
-    "Neo Genesis Booster Pack", "Base Set Booster Pack",
+    // Fossil (base3) — Vintage Holos
+    "Moltres (Fossil Holo)", "Zapdos (Fossil Holo)", "Articuno (Fossil Holo)",
+    "Raichu (Fossil Holo)", "Dragonite (Fossil Holo)", "Gengar (Fossil Holo)",
+    "Lapras (Fossil Holo)", "Kabutops (Fossil Holo)", "Magneton (Fossil Holo)",
+    "Muk (Fossil Holo)", "Aerodactyl (Fossil Holo)", "Hitmonlee (Fossil Holo)",
+    "Hypno (Fossil Holo)", "Ditto (Fossil Holo)", "Haunter (Fossil Holo)",
+    // Legend Maker (ex12) — ex, Star & Secret Rare
+    "Pikachu δ (Legend Maker)", "Mew ex (Legend Maker)", "Registeel ★ (Legend Maker)",
+    "Regice ★ (Legend Maker)", "Regirock ★ (Legend Maker)", "Flygon ex (Legend Maker)",
+    "Arcanine ex (Legend Maker)", "Banette ex (Legend Maker)", "Armaldo ex (Legend Maker)",
+    "Walrein ex (Legend Maker)", "Dustox ex (Legend Maker)",
+    // FireRed & LeafGreen (ex6) — ex & Secret Rare
+    "Zapdos ex (FireRed & LeafGreen)", "Moltres ex (FireRed & LeafGreen)", "Articuno ex (FireRed & LeafGreen)",
+    "Charmander (FireRed & LeafGreen Secret)", "Charizard ex (FireRed & LeafGreen)", "Blastoise ex (FireRed & LeafGreen)",
+    "Venusaur ex (FireRed & LeafGreen)", "Gengar ex (FireRed & LeafGreen)", "Gyarados ex (FireRed & LeafGreen)",
+    "Electrode ex (FireRed & LeafGreen)", "Clefable ex (FireRed & LeafGreen)", "Mr. Mime ex (FireRed & LeafGreen)",
+    // Unleashed (hgss2) — LEGEND & Prime
+    "Raikou & Suicune LEGEND (Unleashed)", "Entei & Raikou LEGEND (Unleashed)", "Suicune & Entei LEGEND (Unleashed)",
+    "Tyranitar Prime (Unleashed)", "Kingdra Prime (Unleashed)", "Steelix Prime (Unleashed)",
+    "Crobat Prime (Unleashed)", "Ursaring Prime (Unleashed)", "Lanturn Prime (Unleashed)",
 ];
 
 function generateDrawId() {
