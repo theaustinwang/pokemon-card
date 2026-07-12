@@ -1557,26 +1557,29 @@ function generatePrizeImage(prize) {
 // Each draw is its own prize with its own ticket price & winning number
 
 const DRAW_PRIZES = [
-    // Fossil (base3) — Vintage Holos
-    "Moltres (Fossil Holo)", "Zapdos (Fossil Holo)", "Articuno (Fossil Holo)",
-    "Raichu (Fossil Holo)", "Dragonite (Fossil Holo)", "Gengar (Fossil Holo)",
-    "Lapras (Fossil Holo)", "Kabutops (Fossil Holo)", "Magneton (Fossil Holo)",
-    "Muk (Fossil Holo)", "Aerodactyl (Fossil Holo)", "Hitmonlee (Fossil Holo)",
-    "Hypno (Fossil Holo)", "Ditto (Fossil Holo)", "Haunter (Fossil Holo)",
-    // Legend Maker (ex12) — ex, Star & Secret Rare
-    "Pikachu δ (Legend Maker)", "Mew ex (Legend Maker)", "Registeel ★ (Legend Maker)",
-    "Regice ★ (Legend Maker)", "Regirock ★ (Legend Maker)", "Flygon ex (Legend Maker)",
-    "Arcanine ex (Legend Maker)", "Banette ex (Legend Maker)", "Armaldo ex (Legend Maker)",
-    "Walrein ex (Legend Maker)", "Dustox ex (Legend Maker)",
-    // FireRed & LeafGreen (ex6) — ex & Secret Rare
-    "Zapdos ex (FireRed & LeafGreen)", "Moltres ex (FireRed & LeafGreen)", "Articuno ex (FireRed & LeafGreen)",
-    "Charmander (FireRed & LeafGreen Secret)", "Charizard ex (FireRed & LeafGreen)", "Blastoise ex (FireRed & LeafGreen)",
-    "Venusaur ex (FireRed & LeafGreen)", "Gengar ex (FireRed & LeafGreen)", "Gyarados ex (FireRed & LeafGreen)",
-    "Electrode ex (FireRed & LeafGreen)", "Clefable ex (FireRed & LeafGreen)", "Mr. Mime ex (FireRed & LeafGreen)",
-    // Unleashed (hgss2) — LEGEND & Prime
-    "Raikou & Suicune LEGEND (Unleashed)", "Entei & Raikou LEGEND (Unleashed)", "Suicune & Entei LEGEND (Unleashed)",
-    "Tyranitar Prime (Unleashed)", "Kingdra Prime (Unleashed)", "Steelix Prime (Unleashed)",
-    "Crobat Prime (Unleashed)", "Ursaring Prime (Unleashed)", "Lanturn Prime (Unleashed)",
+    // Fossil (base3) — Vintage Holos (all $36+, top: Gengar $212, Dragonite $177)
+    "Gengar (Fossil Holo)", "Dragonite (Fossil Holo)", "Moltres (Fossil Holo)",
+    "Articuno (Fossil Holo)", "Haunter (Fossil Holo)", "Raichu (Fossil Holo)",
+    "Zapdos (Fossil Holo)", "Aerodactyl (Fossil Holo)", "Ditto (Fossil Holo)",
+    "Hitmonlee (Fossil Holo)", "Hypno (Fossil Holo)", "Kabutops (Fossil Holo)",
+    // Legend Maker (ex12) — ex, Star, Secret & Holo (all $49+, top: Regice ★ $1,250, Regirock ★ $747)
+    "Regice ★ (Legend Maker)", "Regirock ★ (Legend Maker)", "Arcanine ex (Legend Maker)",
+    "Registeel ★ (Legend Maker)", "Pikachu δ (Legend Maker)", "Mew (Legend Maker Holo)",
+    "Flygon ex (Legend Maker)", "Banette ex (Legend Maker)", "Gengar (Legend Maker Holo)",
+    "Mew ex (Legend Maker)", "Armaldo ex (Legend Maker)", "Aerodactyl (Legend Maker Holo)",
+    "Walrein ex (Legend Maker)", "Wailord (Legend Maker Holo)", "Lapras (Legend Maker Holo)",
+    "Dustox ex (Legend Maker)",
+    // FireRed & LeafGreen (ex6) — ex, Secret & Holo (all $70+, top: Gengar ex $1,400, Charizard ex $500)
+    "Gengar ex (FireRed & LeafGreen)", "Charizard ex (FireRed & LeafGreen)", "Venusaur ex (FireRed & LeafGreen)",
+    "Blastoise ex (FireRed & LeafGreen)", "Moltres ex (FireRed & LeafGreen)", "Articuno ex (FireRed & LeafGreen)",
+    "Gyarados ex (FireRed & LeafGreen)", "Zapdos ex (FireRed & LeafGreen)", "Snorlax (FireRed & LeafGreen Holo)",
+    "Ditto (FireRed & LeafGreen Holo)", "Electrode ex (FireRed & LeafGreen)", "Clefable ex (FireRed & LeafGreen)",
+    "Charmander (FireRed & LeafGreen Secret)", "Kangaskhan (FireRed & LeafGreen Holo)", "Mr. Mime ex (FireRed & LeafGreen)",
+    // Unleashed (hgss2) — LEGEND, Prime & Secret (all $41+, top: Tyranitar Prime $214, Suicune & Entei LEGEND $180)
+    "Tyranitar Prime (Unleashed)", "Suicune & Entei LEGEND (Unleashed)", "Raikou & Suicune LEGEND (Unleashed)",
+    "Alph Lithograph (Unleashed)", "Entei & Raikou LEGEND (Unleashed)", "Steelix Prime (Unleashed)",
+    "Kingdra Prime (Unleashed)", "Crobat Prime (Unleashed)", "Ursaring Prime (Unleashed)",
+    "Lanturn Prime (Unleashed)",
 ];
 
 function generateDrawId() {
