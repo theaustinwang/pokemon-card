@@ -7,7 +7,7 @@ A fully client-side Pokémon TCG storefront web application. Built with vanilla 
 ```bash
 # Just open in a browser:
 start index.html     # Storefront
-start admin.html     # Admin (password: admin123)
+start admin.html     # Admin
 ```
 
 No `npm install`, no build step.
