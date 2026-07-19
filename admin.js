@@ -46,12 +46,12 @@ const TYPE_EMOJI = {
 
 // ========== Data ==========
 const defaultCardData = [
-    // --- Dragon Frontiers (ex15) — Delta Species Star & ex Cards ---
-    { id: 1,  name: "Charizard Star δ",  setName: "Dragon Frontiers", setCode: "ex15", type: "fire",    rarity: "hyper-rare",  price: 599.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex15/100_hires.png", description: "Pokémon Star δ — the ultimate Dragon Frontiers chase card! Charizard blazes in delta species form." },
-    { id: 2,  name: "Mew Star δ",        setName: "Dragon Frontiers", setCode: "ex15", type: "psychic", rarity: "hyper-rare",  price: 299.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex15/101_hires.png", description: "Pokémon Star δ — the mythical Mew in shimmering delta species holo!" },
-    { id: 3,  name: "Rayquaza ex δ",     setName: "Dragon Frontiers", setCode: "ex15", type: "dragon",  rarity: "ultra-rare", price: 179.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex15/97_hires.png",  description: "Delta Species ex — Rayquaza soars through the skies with ancient power!" },
-    { id: 4,  name: "Salamence ex δ",    setName: "Dragon Frontiers", setCode: "ex15", type: "dragon",  rarity: "ultra-rare", price: 149.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex15/98_hires.png",  description: "Delta Species ex — Salamence unleashes its devastating dragon fury!" },
-    { id: 5,  name: "Tyranitar ex δ",    setName: "Dragon Frontiers", setCode: "ex15", type: "dark",    rarity: "ultra-rare", price: 129.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex15/99_hires.png",  description: "Delta Species ex — Tyranitar rampages with dark delta energy!" },
+    // --- Dragon (ex3) — Dragon-type ex Cards ---
+    { id: 1,  name: "Rayquaza ex",       setName: "Dragon", setCode: "ex3", type: "dragon",  rarity: "ultra-rare", price: 499.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex3/97_hires.png",  description: "Dragon ex — the mighty Rayquaza dominates the skies with devastating power!" },
+    { id: 2,  name: "Salamence ex",      setName: "Dragon", setCode: "ex3", type: "dragon",  rarity: "ultra-rare", price: 349.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex3/98_hires.png",  description: "Dragon ex — Salamence unleashes its fearsome dragon fury!" },
+    { id: 3,  name: "Dragonite ex",      setName: "Dragon", setCode: "ex3", type: "dragon",  rarity: "ultra-rare", price: 299.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex3/99_hires.png",  description: "Dragon ex — Dragonite soars as the beloved dragon powerhouse!" },
+    { id: 4,  name: "Flygon ex",         setName: "Dragon", setCode: "ex3", type: "dragon",  rarity: "ultra-rare", price: 199.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex3/100_hires.png", description: "Dragon ex — Flygon whips up a devastating sandstorm!" },
+    { id: 5,  name: "Kingdra ex",        setName: "Dragon", setCode: "ex3", type: "dragon",  rarity: "ultra-rare", price: 179.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/ex3/101_hires.png", description: "Dragon ex — Kingdra rules the depths with dragon and water might!" },
 
     // --- Burning Shadows (sm3) — Rainbow Rare GX Cards ---
     { id: 6,  name: "Charizard-GX",      setName: "Burning Shadows", setCode: "sm3", type: "fire",     rarity: "hyper-rare",  price: 549.99, stocks: { NM: 1 }, image: "https://images.pokemontcg.io/sm3/150_hires.png", description: "Rainbow Rare — the iconic Burning Shadows Charizard-GX chase card!" },

@@ -1,0 +1,403 @@
+- generic [active] [ref=f1e1]:
+  - banner [ref=f1e2]:
+    - generic [ref=f1e3]:
+      - link "⚡ PokéMart" [ref=f1e4] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=f1e5]: ⚡
+        - generic [ref=f1e6]: PokéMart
+      - navigation [ref=f1e7]:
+        - link "Shop" [ref=f1e8] [cursor=pointer]:
+          - /url: "#"
+        - link "✨ New Arrivals" [ref=f1e9] [cursor=pointer]:
+          - /url: "#"
+        - link "🎰 Draws" [ref=f1e10] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=f1e11]:
+        - textbox "Search cards..." [ref=f1e13]
+        - generic [ref=f1e14]:
+          - button "Wishlist" [ref=f1e15] [cursor=pointer]
+          - generic:
+            - generic:
+              - heading "❤️ Your Wishlist" [level=4]
+            - generic:
+              - paragraph: No wishlisted cards yet
+        - button "0" [ref=f1e18] [cursor=pointer]
+  - generic [ref=f1e25]:
+    - generic [ref=f1e26]:
+      - generic [ref=f1e27]: 🔥 Limited Stock Available
+      - heading "Collect the Rarest Pokémon Cards" [level=1] [ref=f1e28]
+      - paragraph [ref=f1e29]: Discover premium Pokémon TCG cards from every generation. From classic Charizards to ultra-rare full arts — start your collection today.
+      - generic [ref=f1e30]:
+        - link "Browse Collection" [ref=f1e31] [cursor=pointer]:
+          - /url: "#products"
+        - link "Learn More" [ref=f1e34] [cursor=pointer]:
+          - /url: "#products"
+    - generic [ref=f1e35]:
+      - heading "🏆 Most Valuable Cards" [level=3] [ref=f1e36]
+      - generic [ref=f1e37]:
+        - generic [ref=f1e38]:
+          - generic [ref=f1e39]: 🥇
+          - img "Charizard Star δ" [ref=f1e40]
+          - generic [ref=f1e41]:
+            - generic [ref=f1e42]: Charizard Star δ
+            - generic [ref=f1e43]: £473.99
+        - generic [ref=f1e44]:
+          - generic [ref=f1e45]: 🥈
+          - img "Charizard-GX" [ref=f1e46]
+          - generic [ref=f1e47]:
+            - generic [ref=f1e48]: Charizard-GX
+            - generic [ref=f1e49]: £434.49
+        - generic [ref=f1e50]:
+          - generic [ref=f1e51]: 🥉
+          - img "Mew Star δ" [ref=f1e52]
+          - generic [ref=f1e53]:
+            - generic [ref=f1e54]: Mew Star δ
+            - generic [ref=f1e55]: £236.99
+  - generic [ref=f1e60]:
+    - generic [ref=f1e61]:
+      - button "All Cards" [ref=f1e62] [cursor=pointer]
+      - button "🔥 Fire" [ref=f1e63] [cursor=pointer]
+      - button "💧 Water" [ref=f1e64] [cursor=pointer]
+      - button "🌿 Grass" [ref=f1e65] [cursor=pointer]
+      - button "⚡ Electric" [ref=f1e66] [cursor=pointer]
+      - button "🔮 Psychic" [ref=f1e67] [cursor=pointer]
+      - button "👊 Fighting" [ref=f1e68] [cursor=pointer]
+      - button "🌑 Dark" [ref=f1e69] [cursor=pointer]
+      - button "🐉 Dragon" [ref=f1e70] [cursor=pointer]
+      - button "🧚 Fairy" [ref=f1e71] [cursor=pointer]
+      - button "⭐ Ultra Rare" [ref=f1e72] [cursor=pointer]
+      - button "✨ Holo" [ref=f1e73] [cursor=pointer]
+    - combobox [ref=f1e75] [cursor=pointer]:
+      - 'option "Sort: Featured" [selected]'
+      - 'option "Price: Low to High"'
+      - 'option "Price: High to Low"'
+      - 'option "Name: A-Z"'
+      - 'option "Name: Z-A"'
+  - generic [ref=f1e77]:
+    - heading "Our Collection" [level=2] [ref=f1e79]
+    - generic [ref=f1e80]:
+      - generic [ref=f1e81]:
+        - generic [ref=f1e82]:
+          - generic [ref=f1e85]: "?"
+          - generic [ref=f1e86]: 1 PACK
+        - generic [ref=f1e87]:
+          - heading "Mystery Pack" [level=3] [ref=f1e88]
+          - paragraph [ref=f1e89]: 1 Booster Pack
+          - paragraph [ref=f1e90]:
+            - generic [ref=f1e91]: 10 in stock
+            - text: 1 sealed booster pack — what treasures await inside?
+          - generic [ref=f1e92]:
+            - generic [ref=f1e93]: £19.74
+            - button "🎲 Add" [ref=f1e94] [cursor=pointer]:
+              - generic [ref=f1e95]: 🎲
+              - text: Add
+      - generic [ref=f1e96]:
+        - generic [ref=f1e97]:
+          - generic [ref=f1e99]: "?"
+          - generic [ref=f1e100]: PSA SLAB
+          - generic [ref=f1e101]: PSA 7–10
+        - generic [ref=f1e102]:
+          - heading "Mystery PSA Slab" [level=3] [ref=f1e103]
+          - paragraph [ref=f1e104]: 1 Graded Card
+          - paragraph [ref=f1e105]:
+            - generic [ref=f1e106]: 5 in stock
+            - text: 1 PSA-graded card — guaranteed rare holo or better!
+          - generic [ref=f1e107]:
+            - generic [ref=f1e108]: £78.99
+            - button "🎲 Add" [ref=f1e109] [cursor=pointer]:
+              - generic [ref=f1e110]: 🎲
+              - text: Add
+      - generic [ref=f1e111]:
+        - generic [ref=f1e112]:
+          - generic [ref=f1e113]: fire
+          - generic [ref=f1e114]: 👑⭐⭐⭐
+          - generic [ref=f1e115]: NEW
+          - img "Charizard Star δ" [ref=f1e116]
+          - button "🤍" [ref=f1e117] [cursor=pointer]
+        - generic [ref=f1e118]:
+          - heading "Charizard Star δ" [level=3] [ref=f1e119]
+          - paragraph [ref=f1e120]: Dragon (ex3)
+          - paragraph [ref=f1e121]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e123] [cursor=pointer]:
+            - generic [ref=f1e125]: NM
+            - generic [ref=f1e126]: £473.99
+            - generic [ref=f1e127]: ×1
+      - generic [ref=f1e128]:
+        - generic [ref=f1e129]:
+          - generic [ref=f1e130]: psychic
+          - generic [ref=f1e131]: 👑⭐⭐⭐
+          - generic [ref=f1e132]: NEW
+          - img "Mew Star δ" [ref=f1e133]
+          - button "🤍" [ref=f1e134] [cursor=pointer]
+        - generic [ref=f1e135]:
+          - heading "Mew Star δ" [level=3] [ref=f1e136]
+          - paragraph [ref=f1e137]: Dragon (ex3)
+          - paragraph [ref=f1e138]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e140] [cursor=pointer]:
+            - generic [ref=f1e142]: NM
+            - generic [ref=f1e143]: £236.99
+            - generic [ref=f1e144]: ×1
+      - generic [ref=f1e145]:
+        - generic [ref=f1e146]:
+          - generic [ref=f1e147]: dragon
+          - generic [ref=f1e148]: ⭐⭐⭐
+          - generic [ref=f1e149]: NEW
+          - img "Rayquaza ex δ" [ref=f1e150]
+          - button "🤍" [ref=f1e151] [cursor=pointer]
+        - generic [ref=f1e152]:
+          - heading "Rayquaza ex δ" [level=3] [ref=f1e153]
+          - paragraph [ref=f1e154]: Dragon (ex3)
+          - paragraph [ref=f1e155]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e157] [cursor=pointer]:
+            - generic [ref=f1e159]: NM
+            - generic [ref=f1e160]: £142.19
+            - generic [ref=f1e161]: ×1
+      - generic [ref=f1e162]:
+        - generic [ref=f1e163]:
+          - generic [ref=f1e164]: dragon
+          - generic [ref=f1e165]: ⭐⭐⭐
+          - generic [ref=f1e166]: NEW
+          - img "Salamence ex δ" [ref=f1e167]
+          - button "🤍" [ref=f1e168] [cursor=pointer]
+        - generic [ref=f1e169]:
+          - heading "Salamence ex δ" [level=3] [ref=f1e170]
+          - paragraph [ref=f1e171]: Dragon (ex3)
+          - paragraph [ref=f1e172]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e174] [cursor=pointer]:
+            - generic [ref=f1e176]: NM
+            - generic [ref=f1e177]: £118.49
+            - generic [ref=f1e178]: ×1
+      - generic [ref=f1e179]:
+        - generic [ref=f1e180]:
+          - generic [ref=f1e181]: dark
+          - generic [ref=f1e182]: ⭐⭐⭐
+          - generic [ref=f1e183]: NEW
+          - img "Tyranitar ex δ" [ref=f1e184]
+          - button "🤍" [ref=f1e185] [cursor=pointer]
+        - generic [ref=f1e186]:
+          - heading "Tyranitar ex δ" [level=3] [ref=f1e187]
+          - paragraph [ref=f1e188]: Dragon (ex3)
+          - paragraph [ref=f1e189]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e191] [cursor=pointer]:
+            - generic [ref=f1e193]: NM
+            - generic [ref=f1e194]: £102.69
+            - generic [ref=f1e195]: ×1
+      - generic [ref=f1e196]:
+        - generic [ref=f1e197]:
+          - generic [ref=f1e198]: fire
+          - generic [ref=f1e199]: 👑⭐⭐⭐
+          - generic [ref=f1e200]: NEW
+          - img "Charizard-GX" [ref=f1e201]
+          - button "🤍" [ref=f1e202] [cursor=pointer]
+        - generic [ref=f1e203]:
+          - heading "Charizard-GX" [level=3] [ref=f1e204]
+          - paragraph [ref=f1e205]: Burning Shadows (sm3)
+          - paragraph [ref=f1e206]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e208] [cursor=pointer]:
+            - generic [ref=f1e210]: NM
+            - generic [ref=f1e211]: £434.49
+            - generic [ref=f1e212]: ×1
+      - generic [ref=f1e213]:
+        - generic [ref=f1e214]:
+          - generic [ref=f1e215]: psychic
+          - generic [ref=f1e216]: 👑⭐⭐⭐
+          - generic [ref=f1e217]: NEW
+          - img "Gardevoir-GX"
+          - button "🤍" [ref=f1e218] [cursor=pointer]
+        - generic [ref=f1e219]:
+          - heading "Gardevoir-GX" [level=3] [ref=f1e220]
+          - paragraph [ref=f1e221]: Burning Shadows (sm3)
+          - paragraph [ref=f1e222]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e224] [cursor=pointer]:
+            - generic [ref=f1e226]: NM
+            - generic [ref=f1e227]: £102.69
+            - generic [ref=f1e228]: ×1
+      - generic [ref=f1e229]:
+        - generic [ref=f1e230]:
+          - generic [ref=f1e231]: fighting
+          - generic [ref=f1e232]: 👑⭐⭐⭐
+          - generic [ref=f1e233]: NEW
+          - img "Marshadow-GX"
+          - button "🤍" [ref=f1e234] [cursor=pointer]
+        - generic [ref=f1e235]:
+          - heading "Marshadow-GX" [level=3] [ref=f1e236]
+          - paragraph [ref=f1e237]: Burning Shadows (sm3)
+          - paragraph [ref=f1e238]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e240] [cursor=pointer]:
+            - generic [ref=f1e242]: NM
+            - generic [ref=f1e243]: £94.79
+            - generic [ref=f1e244]: ×1
+      - generic [ref=f1e245]:
+        - generic [ref=f1e246]:
+          - generic [ref=f1e247]: dark
+          - generic [ref=f1e248]: 👑⭐⭐⭐
+          - generic [ref=f1e249]: NEW
+          - img "Darkrai-GX"
+          - button "🤍" [ref=f1e250] [cursor=pointer]
+        - generic [ref=f1e251]:
+          - heading "Darkrai-GX" [level=3] [ref=f1e252]
+          - paragraph [ref=f1e253]: Burning Shadows (sm3)
+          - paragraph [ref=f1e254]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e256] [cursor=pointer]:
+            - generic [ref=f1e258]: NM
+            - generic [ref=f1e259]: £71.09
+            - generic [ref=f1e260]: ×1
+      - generic [ref=f1e261]:
+        - generic [ref=f1e262]:
+          - generic [ref=f1e263]: fighting
+          - generic [ref=f1e264]: ⭐⭐⭐
+          - generic [ref=f1e265]: NEW
+          - img "Lycanroc-GX"
+          - button "🤍" [ref=f1e266] [cursor=pointer]
+        - generic [ref=f1e267]:
+          - heading "Lycanroc-GX" [level=3] [ref=f1e268]
+          - paragraph [ref=f1e269]: Burning Shadows (sm3)
+          - paragraph [ref=f1e270]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e272] [cursor=pointer]:
+            - generic [ref=f1e274]: NM
+            - generic [ref=f1e275]: £47.39
+            - generic [ref=f1e276]: ×1
+      - generic [ref=f1e277]:
+        - generic [ref=f1e278]:
+          - generic [ref=f1e279]: psychic
+          - generic [ref=f1e280]: 👑⭐⭐⭐
+          - generic [ref=f1e281]: NEW
+          - img "Jirachi"
+          - button "🤍" [ref=f1e282] [cursor=pointer]
+        - generic [ref=f1e283]:
+          - heading "Jirachi" [level=3] [ref=f1e284]
+          - paragraph [ref=f1e285]: Team Magma vs Team Aqua (ex4)
+          - paragraph [ref=f1e286]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e288] [cursor=pointer]:
+            - generic [ref=f1e290]: NM
+            - generic [ref=f1e291]: £197.49
+            - generic [ref=f1e292]: ×1
+      - generic [ref=f1e293]:
+        - generic [ref=f1e294]:
+          - generic [ref=f1e295]: dark
+          - generic [ref=f1e296]: 👑⭐⭐⭐
+          - generic [ref=f1e297]: NEW
+          - img "Absol"
+          - button "🤍" [ref=f1e298] [cursor=pointer]
+        - generic [ref=f1e299]:
+          - heading "Absol" [level=3] [ref=f1e300]
+          - paragraph [ref=f1e301]: Team Magma vs Team Aqua (ex4)
+          - paragraph [ref=f1e302]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e304] [cursor=pointer]:
+            - generic [ref=f1e306]: NM
+            - generic [ref=f1e307]: £142.19
+            - generic [ref=f1e308]: ×1
+      - generic [ref=f1e309]:
+        - generic [ref=f1e310]:
+          - generic [ref=f1e311]: grass
+          - generic [ref=f1e312]: ⭐⭐⭐
+          - generic [ref=f1e313]: NEW
+          - img "Sceptile ex"
+          - button "🤍" [ref=f1e314] [cursor=pointer]
+        - generic [ref=f1e315]:
+          - heading "Sceptile ex" [level=3] [ref=f1e316]
+          - paragraph [ref=f1e317]: Team Magma vs Team Aqua (ex4)
+          - paragraph [ref=f1e318]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e320] [cursor=pointer]:
+            - generic [ref=f1e322]: NM
+            - generic [ref=f1e323]: £78.99
+            - generic [ref=f1e324]: ×1
+      - generic [ref=f1e325]:
+        - generic [ref=f1e326]:
+          - generic [ref=f1e327]: electric
+          - generic [ref=f1e328]: ⭐⭐⭐
+          - generic [ref=f1e329]: NEW
+          - img "Raikou ex"
+          - button "🤍" [ref=f1e330] [cursor=pointer]
+        - generic [ref=f1e331]:
+          - heading "Raikou ex" [level=3] [ref=f1e332]
+          - paragraph [ref=f1e333]: Team Magma vs Team Aqua (ex4)
+          - paragraph [ref=f1e334]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e336] [cursor=pointer]:
+            - generic [ref=f1e338]: NM
+            - generic [ref=f1e339]: £71.09
+            - generic [ref=f1e340]: ×1
+      - generic [ref=f1e341]:
+        - generic [ref=f1e342]:
+          - generic [ref=f1e343]: water
+          - generic [ref=f1e344]: ⭐⭐⭐
+          - generic [ref=f1e345]: NEW
+          - img "Suicune ex"
+          - button "🤍" [ref=f1e346] [cursor=pointer]
+        - generic [ref=f1e347]:
+          - heading "Suicune ex" [level=3] [ref=f1e348]
+          - paragraph [ref=f1e349]: Team Magma vs Team Aqua (ex4)
+          - paragraph [ref=f1e350]: "Condition & Price:"
+          - generic "Add Near Mint to cart" [ref=f1e352] [cursor=pointer]:
+            - generic [ref=f1e354]: NM
+            - generic [ref=f1e355]: £63.19
+            - generic [ref=f1e356]: ×1
+  - generic [ref=f1e359]:
+    - generic [ref=f1e360]:
+      - heading "Join the PokéMart Community" [level=3] [ref=f1e361]
+      - paragraph [ref=f1e362]: Get notified about new arrivals, restocks, and exclusive deals.
+      - generic [ref=f1e363]:
+        - textbox "Enter your email" [ref=f1e364]
+        - button "Subscribe" [ref=f1e365] [cursor=pointer]
+    - generic [ref=f1e366]: ⚡
+  - contentinfo [ref=f1e368]:
+    - generic [ref=f1e369]:
+      - generic [ref=f1e370]:
+        - generic [ref=f1e371]:
+          - link "⚡ PokéMart" [ref=f1e372] [cursor=pointer]:
+            - /url: "#"
+            - text: ⚡
+            - generic [ref=f1e373]: PokéMart
+          - paragraph [ref=f1e374]: The premier destination for Pokémon TCG collectors worldwide.
+        - generic [ref=f1e375]:
+          - heading "Shop" [level=4] [ref=f1e376]
+          - link "All Cards" [ref=f1e377] [cursor=pointer]:
+            - /url: "#products"
+          - link "New Arrivals" [ref=f1e378] [cursor=pointer]:
+            - /url: "#products"
+          - link "Sale Items" [ref=f1e379] [cursor=pointer]:
+            - /url: "#products"
+        - generic [ref=f1e380]:
+          - heading "Support" [level=4] [ref=f1e381]
+          - link "Contact Us" [ref=f1e382] [cursor=pointer]:
+            - /url: "#"
+          - link "FAQs" [ref=f1e383] [cursor=pointer]:
+            - /url: "#"
+          - link "Shipping Info" [ref=f1e384] [cursor=pointer]:
+            - /url: "#"
+          - link "Returns" [ref=f1e385] [cursor=pointer]:
+            - /url: "#"
+        - generic [ref=f1e386]:
+          - heading "Connect" [level=4] [ref=f1e387]
+          - generic [ref=f1e388]:
+            - link "📱" [ref=f1e389] [cursor=pointer]:
+              - /url: "#"
+            - link "📘" [ref=f1e390] [cursor=pointer]:
+              - /url: "#"
+            - link "📸" [ref=f1e391] [cursor=pointer]:
+              - /url: "#"
+            - link "🐦" [ref=f1e392] [cursor=pointer]:
+              - /url: "#"
+      - paragraph [ref=f1e394]:
+        - text: © 2026 PokéMart. This is a fan project and is not affiliated with Nintendo or The Pokémon Company.
+        - generic "Admin" [ref=f1e395]
+  - complementary [ref=f1e396]:
+    - generic [ref=f1e397]:
+      - heading "Your Cart" [level=3] [ref=f1e398]
+      - button [ref=f1e399] [cursor=pointer]
+    - paragraph [ref=f1e403]: Your cart is empty
+  - generic:
+    - generic:
+      - heading "🎉 Order Confirmed!" [level=2]
+      - paragraph: Your Pokémon cards are on the way!
+      - button "Continue Shopping"
+  - generic:
+    - generic:
+      - heading "🎰 Lottery Result" [level=2]
+      - button "Close"
+  - generic:
+    - generic:
+      - heading "🎫 Buy Tickets" [level=2]
+      - generic:
+        - button "Buy Tickets"
+        - button "Cancel"
