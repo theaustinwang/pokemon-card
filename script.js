@@ -1011,6 +1011,11 @@ function closeCheckout() {
     checkoutModal.classList.remove('open');
 }
 
+function closeWelcome() {
+    document.getElementById('welcomeModal').classList.remove('open');
+    localStorage.setItem('pokemart-welcome-seen', '1');
+}
+
 // ========== Cart Sidebar ==========
 function openCart() {
     cartSidebar.classList.add('open');
@@ -1941,6 +1946,10 @@ renderWishlist();
 renderTopCards();
 updateCartUI();
 renderLottery();
+
+if (!localStorage.getItem('pokemart-welcome-seen')) {
+    document.getElementById('welcomeModal').classList.add('open');
+}
 
 console.log('⚡ PokéMart ready! Browse our collection of premium Pokémon cards.');
 console.log('💡 Tip: Press Ctrl+K to search, Esc to close panels.');
